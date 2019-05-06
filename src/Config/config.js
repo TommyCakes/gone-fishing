@@ -1,8 +1,17 @@
 import 'phaser';
  
-export default {
+export default {  
   type: Phaser.AUTO,
+  pixelArt: true,
+  roundPixels: true,
   parent: "phaser-example",
   width: 640,
-  height: 400
+  height: 400,
+  physics: {
+    default: 'arcade',
+    arcade: {        
+        debug: false
+    }
+},
+
 };
