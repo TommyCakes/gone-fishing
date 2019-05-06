@@ -1,4 +1,12 @@
-import { showMessage } from './messenger';
-import path from 'path';
+import 'phaser';
 
-showMessage(`Woo from another file: ${path.resolve(__dirname, 'src')}`);
+import { SimpleScene } from './scenes/simple-scene';
+import { pctDecChars } from 'uri-js';
+
+const gameConfig = {
+    width: 680,
+    height: 400,
+    scene: SimpleScene
+};
+
+new Phaser.Game(gameConfig);
