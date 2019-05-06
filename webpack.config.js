@@ -4,7 +4,8 @@ const webpack = require('webpack');
 
 module.exports = {
     entry: {
-        app: './src/index.js'
+        app: './src/index.js',
+        'production-dependencies': ['phaser']
     },
 
     output: {
@@ -27,8 +28,11 @@ module.exports = {
         ]
     },
 
-    devServer: {
-        contentBase: path.resolve(__dirname, 'build'),
+    optimization: {
+        splitChunks: {
+            name: 'production-dependencies',
+            chunks: 'all'
+        }
     },
 
     plugins: [
@@ -36,11 +40,19 @@ module.exports = {
             {
                 from: path.resolve(__dirname, 'index.html'),
                 to: path.resolve(__dirname, 'build')
+            },
+            {
+                from: path.resolve(__dirname, 'assets', '**', '*'),
+                to: path.resolve(__dirname, 'build'),
             }
         ]),
         new webpack.DefinePlugin({
             'typeof CANVAS_RENDERER': JSON.stringify(true),
             'typeof WEBGL_RENDERER': JSON.stringify(true)
         })
-    ]
+    ],
+
+    devServer: {
+        contentBase: path.resolve(__dirname, 'build'),
+    },
 };

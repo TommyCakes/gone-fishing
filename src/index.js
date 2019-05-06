@@ -1,7 +1,6 @@
 import 'phaser';
 
 import { SimpleScene } from './scenes/simple-scene';
-import { pctDecChars } from 'uri-js';
 
 const gameConfig = {
     width: 680,
