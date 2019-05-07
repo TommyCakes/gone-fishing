@@ -86,7 +86,7 @@ export default class PreloadScene extends Scene {
             ready();
         }.bind(this));
 
-        this.timedEvent = this.time.delayedCall(3000, this.ready, [], this);
+        this.timedEvent = this.time.delayedCall(3000, ready, [], this);
         
         // load assets needed in our game
         // this.load.image('blueButton1', 'assets/ui/blue_button02.png');
