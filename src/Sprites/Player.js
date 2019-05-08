@@ -7,12 +7,15 @@ export default class Player extends Entity {
         this.setData("isFishing", false);
         this.setData("timerFishingDelay", 5000);
         this.body.setCircle(30);
+        this.body.onCollide = true;
+        
         // this.play("sprPlayer");
 
         /* The player object */
         this.info = {
             name: "TommyCakes",
             level: 1,    
+            catchesRemainingForTheDay: 3,
             inventory: {
                 fish: [
                     
@@ -66,40 +69,42 @@ export default class Player extends Entity {
         } else if (rdmNum <= 80) {
             fishCaught = false;
         } else if (rdmNum < 100) {
-            fishCaught = false;
+            fishCaught = true;
         }
         return fishCaught;
     }
         
     collectFish() {     
-        if (this.checkForFish()) {
-            this.caughtFish = true;
+        if (this.checkForFish()) {            
+            this.info.inventory.fish.push('fish');
+            console.log('you caught a fish');
+            console.log(this.info)
             // increaseScore();        
         } else {
-            this.caughtFish = true;      
+            console.log('unlucky you fished up nothing...');
+            console.log(this.info)
         }
+        this.caughtFish = true;
         // resetFish();              
     }
     
-    fishing(player) {
-        // if (catchesRemaining <= 0) {
-        //     dayOver = true;
-        //     fish.destroy();
-        //     infoText.setText(`You have run out of attempts... 
-        //     Time to go home`);
-        // }
-    
-        // if (!canUpdateFish) {
-        //     return;
-        // }
-    
-        // canUpdateFish = false;     
-        // decreaseCatchesRemaining(playerObject);  
+    fishing(player) {      
+        console.log('kjhsefjhsed');         
+        this.decreaseCatchesRemaining();  
         // this.cameras.main.shake(100, 0.01, 0.01); 
-        // hasFished = true; 
         this.collectFish();      
     }
 
+    decreaseCatchesRemaining() {
+        this.info.catchesRemainingForTheDay -= 1;
+    }
+
+    setRandomCatchAttempts() {
+        this.info.catchesRemainingForTheDay = 0;
+        // TODO: set catch attempt based on quality of rod
+        this.info.catchesRemainingForTheDay = getRandomIntBetween(10);
+    }    
+    
     update() {
         this.body.setVelocity(0, 0);
 

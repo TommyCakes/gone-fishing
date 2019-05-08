@@ -18,22 +18,7 @@ export default class GameScene extends Scene {
         });
     }
 
-    createTimer() {
-        this.timer = this.time.addEvent({
-            delay: 1000,               
-            callback: () => console.log('hello!'),
-            args: [],
-            callbackScope: this,
-            repeat: 0,
-            startAt: 0,
-            timeScale: 1,
-            paused: true
-        });
-    }
-
-    updateTime() {       
-        this.timer.paused = false;
-
+    updateTime() {        
         if (this.cooldown === 0) {            
             this.timer.paused = true;
         }
@@ -43,16 +28,13 @@ export default class GameScene extends Scene {
     create() {
 
         console.log('create method called');
-        this.COOLDOWN_DELAY = 2;
-        this.cooldown = this.COOLDOWN_DELAY;
-        // let cooldown = 2000;
+        this.FISHING_COOLDOWN_DELAY = 2;
+        this.cooldown = this.FISHING_COOLDOWN_DELAY;
         this.second = 1000;
-        // let cooldownDelay = this.time.addEvent(cooldown, this.updateTime);
 
         this.timer = this.time.addEvent({
-            delay: this.second * this.COOLDOWN_DELAY,           
+            delay: this.second * this.FISHING_COOLDOWN_DELAY,           
             callback: this.updateTime,
-            //args: [],
             callbackScope: this,
             loop: true
         });      
@@ -65,7 +47,6 @@ export default class GameScene extends Scene {
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        // this.keySpace.on("down", timer.getElapsedSeconds, this);
         let bg = this.add.image(0, 0, 'bg');
         bg.displayWidth = 800;
         bg.setScale(2);
@@ -77,15 +58,27 @@ export default class GameScene extends Scene {
             "sprPlayer"
         );
         
-        this.lake = new Lake(
+        let lake1 = new Lake(
             this,
             500,
             200,
             "water"
         );
-                
-        this.lake.setDepth(1);
-        this.physics.add.collider(this.player, this.lake);
+
+        let lake2 = new Lake(
+            this,
+            30,
+            310,
+            "water"
+        );
+        
+        this.lakeGroups = this.add.group();
+        this.lakeGroups.add(lake1, lake2);
+        this.player.setDepth(1);
+        
+        this.physics.add.overlap(this.player, this.lakeGroups);            
+        this.isColliding = this.player.body.checkCollision.none ? true : false;
+        console.log(this.isColliding)
 
         this.anims.create({
             key: 'left',
@@ -126,12 +119,28 @@ export default class GameScene extends Scene {
         });
     }
     
+    test() {
+        this.lake.body = false;
+    }
+
     update() {
-        if (this.cooldown === 0) {
-            console.log('ready to fish');
-            this.player.fishing();
-            this.timer.paused = true; 
-            this.cooldown = this.COOLDOWN_DELAY;           
+        
+        // console.log(this.isColliding);
+        this.player.body.debugBodyColor = this.isColliding ? 0x0099ff : 0xff9900;
+        // this.player.body.touching.none ? console.log(true) : console.log(false)
+        if (this.isColliding && this.player.info.catchesRemainingForTheDay > 0 && this.keySpace.isDown) {
+            this.timer.paused = false; 
+            this.input.disabled = true;
+            this.player.body.velocity.x = 0;
+
+            if (this.cooldown === 0) {
+                // this.isColliding = false;
+                console.log('ready to fish');
+                this.player.fishing();
+                this.timer.paused = true; 
+                this.cooldown = this.FISHING_COOLDOWN_DELAY;                   
+            } 
+            this.isColliding = false;
         }
 
         this.player.update();
@@ -151,11 +160,12 @@ export default class GameScene extends Scene {
         } else {      
             this.player.anims.stop();
         }
-        if (this.keySpace.isDown) {
-            this.timer.paused = false;
-            this.physics.add.overlap(this.player, this.lake, this.updateTime, null, this);            
-            console.log(this.cooldown);
-        }
+        // if (this.keySpace.isDown) {
+        //     if (this.isColliding) {
+        //         this.timer.paused = false;   
+        //     }                         
+        //     // console.log(this.cooldown);
+        // }
         
     }
 }
