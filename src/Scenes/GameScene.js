@@ -220,9 +220,11 @@ export default class GameScene extends Scene {
             if (this.cooldown > 0) {                
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {
+                this.toggleKeyboard(true);
                 this.timer.paused = true;                                 
                 if (this.keySpace.isDown) {                      
-                    if (touching && wasTouching) {                                         
+                    if (touching && wasTouching) {   
+                        this.toggleKeyboard(false);                                      
                         this.player.anims.play('fish', true); 
                         console.log('is fishing!')  
                         this.timer.paused = false;                                                                 
@@ -235,9 +237,11 @@ export default class GameScene extends Scene {
             if (this.cooldown > 0) {
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {
+                this.toggleKeyboard(true);
                 this.timer.paused = true; 
                 if (this.keySpace.isDown) {
                     if (touching && wasTouching) { 
+                        this.toggleKeyboard(false);
                         this.timer.paused = false;   
                         this.shopObj.sellAllFish(this.player);
                         this.cooldown = this.FISHING_COOLDOWN_DELAY; 

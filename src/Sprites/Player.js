@@ -1,6 +1,7 @@
 import Entity from './Entity';
 import Bobble from './Bobble';
 import Game from '../Scenes/GameScene'
+// import Text from './Text'
 
 export default class Player extends Entity {
     constructor(scene, x, y, key) {        
@@ -41,9 +42,34 @@ export default class Player extends Entity {
         let style = { font: '20px Arial', fill: '#fff' } 
         let catchesRemaining = this.info.catchesRemainingForTheDay       
         this.catchesRemainingText = this.scene.add.text(200, 20, `Catch attempts left: ${catchesRemaining}`, style);
+        this.infoText = this.scene.add.text(100, 360, "", style); 
         
     }
     
+    textDelay(text)
+    {
+        //WHEN TWEEN IS DONE PAUSE HERE FOR TEXT DELAY
+        //SET A FADE OBJECT IN THE SCOPE OF THE STATE,
+        //SINCE WE CAN NOT PASS THE OBJECT IN THE TIMER
+        
+    	this.scene.time.addEvent(1000 * 2, this.textDelayDone, text);
+    }
+    textDelayDone(text)
+    {
+        //NOW THAT DELAY IS DONE CALL FADE OUT
+        text.visible = true;
+    	this.fadeOutText(text);
+    }
+    fadeOutText(text) {
+        let tween = this.scene.add.tween(text)
+                .to({alpha: 0}, 1000, Phaser.Easing.Default, true, 3000)
+                .onComplete.add(this.fadeDoneText, text)
+    }
+    fadeDoneText(text)
+    {
+        text.visible = false;
+    }
+
     moveUp() {
         this.body.velocity.y = -this.getData("speed");
     }
@@ -82,18 +108,22 @@ export default class Player extends Entity {
         return fishCaught;
     }
         
-    collectFish() {    
-        this.scene.cameras.main.shake(100, 0.01, 0.01); 
+    collectFish() {            
         if (this.checkForFish()) {            
             this.info.inventory.fish.push('fish');
+        
             console.log('you caught a fish');
-            console.log(this.info)      
+            console.log(this.info)    
+            this.infoText.setText('you caught a fish');
         } else {
             console.log('unlucky you fished up nothing...');
+            this.infoText.setText('unlucky you fished up nothing...');
             console.log(this.info)
         }
         // this.caughtFish = true;  
+        this.scene.cameras.main.shake(100, 0.01, 0.01); 
         this.bobble.destroy();
+        this.textDelay(this.infoText);
         this.catchesRemainingText.setText(`Catch attempts left tofay: ${this.info.catchesRemainingForTheDay }`)
         return true;          
     }
