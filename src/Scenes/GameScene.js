@@ -111,13 +111,16 @@ export default class GameScene extends Scene {
             500,
             200,
             "water"
-        );
-                
+        );                
         
         this.shopObj = new Shop();
         this.canFish = true;
         this.canShop = true;
-
+        
+        // basic text feedback
+        let style = { font: '20px Arial', fill: '#fff' } 
+        this.infoText = this.add.text(100, 360, "", style);        
+        
         let lakeZone = this.createNewZone(400, 100, 200, 200);
         let shopZone = this.createNewZone(0, 90, 180, 100);
         let fisherman = this.physics.add.sprite(500, 60, 'fisherman');
@@ -208,6 +211,11 @@ export default class GameScene extends Scene {
     
         this.player.body.debugBodyColor = this.player.body.touching.none ? 0x0099ff : 0xff9900;
         
+        if (this.player.info.catchesRemainingForTheDay === 0) {
+            infoText.setText(`You have run out of attempts... 
+                Time to go home`);
+        }
+
         if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
             if (this.cooldown > 0) {                
                 this.timer.paused = false;             

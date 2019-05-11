@@ -37,6 +37,10 @@ export default class Player extends Entity {
                 ]
             }
         }
+
+        let style = { font: '20px Arial', fill: '#fff' } 
+        let catchesRemaining = this.info.catchesRemainingForTheDay       
+        this.catchesRemainingText = this.scene.add.text(200, 20, `Catch attempts left: ${catchesRemaining}`, style);
         
     }
     
@@ -83,14 +87,14 @@ export default class Player extends Entity {
         if (this.checkForFish()) {            
             this.info.inventory.fish.push('fish');
             console.log('you caught a fish');
-            console.log(this.info)
-            // increaseScore();        
+            console.log(this.info)      
         } else {
             console.log('unlucky you fished up nothing...');
             console.log(this.info)
         }
         // this.caughtFish = true;  
         this.bobble.destroy();
+        this.catchesRemainingText.setText(`Catch attempts left tofay: ${this.info.catchesRemainingForTheDay }`)
         return true;          
     }
     
