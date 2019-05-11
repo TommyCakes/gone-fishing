@@ -14,6 +14,8 @@ export default class GameScene extends Scene {
         this.load.image('water', 'assets/water.png');
         this.load.image('shop', 'assets/shop.png');
         this.load.image('bg', 'assets/grass.png');
+        this.load.image('energyBar', 'assets/energybar.png');
+        this.load.image("energyContainer", "assets/energycontainer.png");
         this.load.spritesheet('sprPlayer', 'assets/player.png', { 
             frameWidth: 48, 
             frameHeight: 64 
@@ -21,12 +23,19 @@ export default class GameScene extends Scene {
     }
 
     updateTime() {        
-        if (this.cooldown === 0) {            
-            this.timer.paused = true;
-        }
-        this.cooldown -= 1;        
+        // if (this.cooldown === 0) {            
+        //     this.timer.paused = true;
+        // } else {
+            this.cooldown -= 1;  
+            let stepWidth = this.barMask.displayWidth / this.FISHING_COOLDOWN_DELAY;
+            this.barMask.x -= stepWidth; 
+        // }         
     }
 
+    resetTimeBar() {
+        this.barMask.x = 1000;
+    }
+    
     toggleKeyboard(bool) {
         this.keyW.enabled = bool;
         this.keyS.enabled = bool;
@@ -46,19 +55,34 @@ export default class GameScene extends Scene {
     }
 
     create() {
-        this.FISHING_COOLDOWN_DELAY = 2;
+        this.FISHING_COOLDOWN_DELAY = 4;
         this.cooldown = 0;
         this.second = 1000;
+        
+        let energyContainer = this.add.sprite(180, 20, "energyContainer");
+        let energyBar = this.add.sprite(energyContainer.x + 13, energyContainer.y, 'energyBar');        
+        this.barMask = this.add.sprite(energyBar.x, energyBar.y, "energyBar");
+        this.barMask.visible = false;
+        energyBar.setScale(0.3, 0.4);
+        energyContainer.setScale(0.3, 0.4);
+        this.barMask.setScale(0.3, 0.4);
+        energyBar.mask = new Phaser.Display.Masks.BitmapMask(this, this.barMask);
 
         this.timer = this.time.addEvent({
             delay: this.second * this.FISHING_COOLDOWN_DELAY,           
-            callback: this.updateTime,
+            callback: function(){
+                this.cooldown -= 1;  
+                // dividing enery bar width by the number of seconds gives us the amount
+                // of pixels we need to move the energy bar each second
+                let stepWidth = this.barMask.displayWidth / this.FISHING_COOLDOWN_DELAY;
+                this.barMask.x -= stepWidth;
+            },
+            // callback: this.updateTime,
             callbackScope: this,
             loop: true
         });      
         
         this.timer.paused = false;
-
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -103,6 +127,8 @@ export default class GameScene extends Scene {
         this.shopKeeper.body.setCircle(25);
 
         this.player.setDepth(1);
+        energyContainer.setDepth(1);
+        energyBar.setDepth(1);
         this.player.body.setCircle(25);
         let lakes = this.add.group(this.lake);
         
@@ -151,8 +177,7 @@ export default class GameScene extends Scene {
         });
     }
     
-    update() {  
-
+    update() {          
         if (this.player.body.embedded) this.player.body.touching.none = false;
         let touching = !this.player.body.touching.none;
         let wasTouching = !this.player.body.wasTouching.none;
