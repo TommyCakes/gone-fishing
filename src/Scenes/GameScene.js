@@ -14,26 +14,34 @@ export default class GameScene extends Scene {
         this.load.image('water', 'assets/water.png');
         this.load.image('shop', 'assets/shop.png');
         this.load.image('bg', 'assets/grass.png');
-        this.load.image('energyBar', 'assets/energybar.png');
-        this.load.image("energyContainer", "assets/energycontainer.png");
-        this.load.spritesheet('sprPlayer', 'assets/player.png', { 
+        // this.load.image('energyBar', 'assets/energybar.png');
+        // this.load.image("energyContainer", "assets/energycontainer.png");
+        this.load.spritesheet('sprPlayer', 'assets/yan.png', { 
+            frameWidth: 48, 
+            frameHeight: 64 
+        });        
+        this.load.spritesheet('shopKeeper', 'assets/elder.png', { 
+            frameWidth: 48, 
+            frameHeight: 64 
+        });        
+        this.load.spritesheet('waterMoving', 'assets/water_moving.png', { 
             frameWidth: 48, 
             frameHeight: 64 
         });
+        this.load.spritesheet('fishingBobble', 'assets/fishing_bobbles.png', { 
+            frameWidth: 24, 
+            frameHeight: 24 
+        });
     }
 
-    updateTime() {        
-        // if (this.cooldown === 0) {            
-        //     this.timer.paused = true;
-        // } else {
-            this.cooldown -= 1;  
-            let stepWidth = this.barMask.displayWidth / this.FISHING_COOLDOWN_DELAY;
-            this.barMask.x -= stepWidth; 
-        // }         
+    updateTime() {                
+        this.cooldown -= 1;  
+        // let stepWidth = this.barMask.displayWidth / this.FISHING_COOLDOWN_DELAY;
+        // this.barMask.x -= stepWidth;        
     }
 
     resetTimeBar() {
-        this.barMask.x = 1000;
+        // this.barMask.x = 1000;
     }
     
     toggleKeyboard(bool) {
@@ -55,29 +63,22 @@ export default class GameScene extends Scene {
     }
 
     create() {
-        this.FISHING_COOLDOWN_DELAY = 4;
+        this.FISHING_COOLDOWN_DELAY = 2;
         this.cooldown = 0;
         this.second = 1000;
         
-        let energyContainer = this.add.sprite(180, 20, "energyContainer");
-        let energyBar = this.add.sprite(energyContainer.x + 13, energyContainer.y, 'energyBar');        
-        this.barMask = this.add.sprite(energyBar.x, energyBar.y, "energyBar");
-        this.barMask.visible = false;
-        energyBar.setScale(0.3, 0.4);
-        energyContainer.setScale(0.3, 0.4);
-        this.barMask.setScale(0.3, 0.4);
-        energyBar.mask = new Phaser.Display.Masks.BitmapMask(this, this.barMask);
+        // let energyContainer = this.add.sprite(180, 20, "energyContainer");
+        // let energyBar = this.add.sprite(energyContainer.x + 13, energyContainer.y, 'energyBar');        
+        // this.barMask = this.add.sprite(energyBar.x, energyBar.y, "energyBar");
+        // this.barMask.visible = false;
+        // energyBar.setScale(0.3, 0.4);
+        // energyContainer.setScale(0.3, 0.4);
+        // this.barMask.setScale(0.3, 0.4);
+        // energyBar.mask = new Phaser.Display.Masks.BitmapMask(this, this.barMask);
 
         this.timer = this.time.addEvent({
-            delay: this.second * this.FISHING_COOLDOWN_DELAY,           
-            callback: function(){
-                this.cooldown -= 1;  
-                // dividing enery bar width by the number of seconds gives us the amount
-                // of pixels we need to move the energy bar each second
-                let stepWidth = this.barMask.displayWidth / this.FISHING_COOLDOWN_DELAY;
-                this.barMask.x -= stepWidth;
-            },
-            // callback: this.updateTime,
+            delay: this.second * this.FISHING_COOLDOWN_DELAY,                
+            callback: this.updateTime,
             callbackScope: this,
             loop: true
         });      
@@ -104,13 +105,14 @@ export default class GameScene extends Scene {
             230,
             "sprPlayer"
         );
-        
+                
         this.lake = new Lake(
             this,
             500,
             200,
             "water"
         );
+                
         
         this.shopObj = new Shop();
         this.canFish = true;
@@ -118,17 +120,17 @@ export default class GameScene extends Scene {
 
         let lakeZone = this.createNewZone(400, 100, 200, 200);
         let shopZone = this.createNewZone(0, 90, 180, 100);
-
+        let fisherman = this.physics.add.sprite(500, 60, 'fisherman');
+        fisherman.setScale(0.3, 0.3);
         this.shop = this.physics.add.sprite(90, 70, 'shop');
-        this.shopKeeper = this.physics.add.sprite(100, 150, 'fisherman');
-        this.shopKeeper.setScale(0.3, 0.3);
+        this.shopKeeper = this.physics.add.sprite(100, 150, 'shopKeeper', 8);        
         this.shop.body.moves = false;
         this.shopKeeper.body.moves = false;
         this.shopKeeper.body.setCircle(25);
 
         this.player.setDepth(1);
-        energyContainer.setDepth(1);
-        energyBar.setDepth(1);
+        // energyContainer.setDepth(1);
+        // energyBar.setDepth(1);
         this.player.body.setCircle(25);
         let lakes = this.add.group(this.lake);
         
@@ -140,7 +142,7 @@ export default class GameScene extends Scene {
         
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 12
+            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 11
         }),
             frameRate: 10,
             repeat: -1
@@ -158,6 +160,20 @@ export default class GameScene extends Scene {
             key: 'turn',
             frames: [ { key: 'sprPlayer', frame: 8} ],
             framerate: 20
+        });
+
+        this.anims.create({
+            key: 'finish',
+            frames: [ { key: 'sprPlayer', frame: 3} ],
+            framerate: 20
+        });
+
+        this.anims.create({
+            key: 'fish',
+            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 13, end: 15
+        }),
+            frameRate: 10,
+            repeat: -1
         });
             
         this.anims.create({
@@ -192,16 +208,17 @@ export default class GameScene extends Scene {
     
         this.player.body.debugBodyColor = this.player.body.touching.none ? 0x0099ff : 0xff9900;
         
-        if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) { 
-            if (this.cooldown > 0) {
+        if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
+            if (this.cooldown > 0) {                
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {
-                this.timer.paused = true; 
-                if (this.keySpace.isDown) {  
-                    if (touching && wasTouching) {                        
+                this.timer.paused = true;                                 
+                if (this.keySpace.isDown) {                      
+                    if (touching && wasTouching) {                                         
+                        this.player.anims.play('fish', true); 
                         console.log('is fishing!')  
                         this.timer.paused = false;                                                                 
-                        this.player.fishing();                               
+                        this.player.fishing();                                    
                         this.cooldown = this.FISHING_COOLDOWN_DELAY;                     
                     }                                                                                              
                 } 

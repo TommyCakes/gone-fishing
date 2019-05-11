@@ -1,4 +1,5 @@
 import Entity from './Entity';
+import Bobble from './Bobble';
 import Game from '../Scenes/GameScene'
 
 export default class Player extends Entity {
@@ -8,16 +9,15 @@ export default class Player extends Entity {
         this.setData("speed", 200);
         this.setData("isFishing", false);
         this.setData("timerFishingDelay", 5000);
-        // this.body.setCircle(30);
-        this.body.moves = true;        
-        
+        this.body.moves = true;  
         // this.play("sprPlayer");
 
         /* The player object */
         this.info = {
             name: "TommyCakes",
             level: 1,    
-            catchesRemainingForTheDay: 3,
+            // for testing...
+            catchesRemainingForTheDay: 100,
             cash: 10,
             inventory: {
                 fish: [
@@ -89,12 +89,26 @@ export default class Player extends Entity {
             console.log('unlucky you fished up nothing...');
             console.log(this.info)
         }
-        // this.caughtFish = true;   
+        // this.caughtFish = true;  
+        this.bobble.destroy();
         return true;          
     }
     
-    fishing(player) {      
-        console.log('fishing');  
+    spawnBobble() {
+        this.bobble = this.scene.add.sprite(this.x + 100, this.y, 'fishingBobble');                                         
+        this.bobble.visible = true; 
+        this.scene.anims.create({
+            key: 'bob',
+            frames: this.scene.anims.generateFrameNumbers('fishingBobble', { start: 1, end: 4
+            }),
+                frameRate: 4,
+                repeat: -1
+        });
+        this.bobble.anims.play('bob', true);
+    }
+
+    fishing(player) {           
+        this.spawnBobble();
         // this.decreaseCatchesRemaining();
         this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.decreaseCatchesRemaining, [], this);                                                                                                      
     }
