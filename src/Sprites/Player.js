@@ -18,9 +18,10 @@ export default class Player extends Entity {
             name: "TommyCakes",
             level: 1,    
             catchesRemainingForTheDay: 3,
+            cash: 10,
             inventory: {
                 fish: [
-                    
+                    'fish', 'fish'
                 ],
                 rods: [
                 
