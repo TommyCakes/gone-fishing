@@ -1,13 +1,15 @@
 import Entity from './Entity';
+import Game from '../Scenes/GameScene'
 
 export default class Player extends Entity {
-    constructor(scene, x, y, key) {
+    constructor(scene, x, y, key) {        
         super(scene, x, y, key, "Player");
+        
         this.setData("speed", 200);
         this.setData("isFishing", false);
         this.setData("timerFishingDelay", 5000);
-        this.body.setCircle(30);
-        this.body.onCollide = true;
+        // this.body.setCircle(30);
+        this.body.moves = true;        
         
         // this.play("sprPlayer");
 
@@ -34,6 +36,7 @@ export default class Player extends Entity {
                 ]
             }
         }
+        
     }
     
     moveUp() {
@@ -74,7 +77,8 @@ export default class Player extends Entity {
         return fishCaught;
     }
         
-    collectFish() {     
+    collectFish() {    
+        this.scene.cameras.main.shake(100, 0.01, 0.01); 
         if (this.checkForFish()) {            
             this.info.inventory.fish.push('fish');
             console.log('you caught a fish');
@@ -84,19 +88,20 @@ export default class Player extends Entity {
             console.log('unlucky you fished up nothing...');
             console.log(this.info)
         }
-        this.caughtFish = true;
-        // resetFish();              
+        // this.caughtFish = true;   
+        return true;          
     }
     
     fishing(player) {      
-        console.log('kjhsefjhsed');         
-        this.decreaseCatchesRemaining();  
-        // this.cameras.main.shake(100, 0.01, 0.01); 
-        this.collectFish();      
+        console.log('fishing');  
+        // this.decreaseCatchesRemaining();
+        this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.decreaseCatchesRemaining, [], this);                                                                                                      
     }
 
-    decreaseCatchesRemaining() {
+    decreaseCatchesRemaining() {        
         this.info.catchesRemainingForTheDay -= 1;
+        this.collectFish();
+        // catchesRemainingText.setText(`Catch attempts left: ${catchesRemainingForTheDay}`);
     }
 
     setRandomCatchAttempts() {

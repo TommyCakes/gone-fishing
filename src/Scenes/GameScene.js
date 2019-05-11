@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import Player from "../Sprites/Player";
 import Lake from '../Sprites/Lake';
+import Shop from '../Classes/Shop';
 
 export default class GameScene extends Scene {
     constructor() {
@@ -9,8 +10,9 @@ export default class GameScene extends Scene {
 
     preload() {
         this.load.image('fish', 'assets/fish.png');
-        this.load.image('fisherman', 'assets/fishman.png');
+        this.load.image('fisherman', 'assets/fisherman.png');
         this.load.image('water', 'assets/water.png');
+        this.load.image('shop', 'assets/shop.png');
         this.load.image('bg', 'assets/grass.png');
         this.load.spritesheet('sprPlayer', 'assets/player.png', { 
             frameWidth: 48, 
@@ -25,11 +27,27 @@ export default class GameScene extends Scene {
         this.cooldown -= 1;        
     }
 
-    create() {
+    toggleKeyboard(bool) {
+        this.keyW.enabled = bool;
+        this.keyS.enabled = bool;
+        this.keyA.enabled = bool;
+        this.keyD.enabled = bool;
+        this.player.body.velocity.x = 0;
+        this.player.body.velocity.y = 0;
+        this.player.anims.stop();
+    }
 
-        console.log('create method called');
-        this.FISHING_COOLDOWN_DELAY = 2;
-        this.cooldown = this.FISHING_COOLDOWN_DELAY;
+    createNewZone(x, y, w, h) {
+        this.zone = this.add.zone(x, y).setSize(w, h);
+        // this.zone.body.setCircle(45)
+        this.physics.world.enable(this.zone, 0);
+        this.zone.body.moves = false;
+        return this.zone;
+    }
+
+    create() {
+        this.FISHING_COOLDOWN_DELAY = 3;
+        this.cooldown = 0;
         this.second = 1000;
 
         this.timer = this.time.addEvent({
@@ -39,47 +57,58 @@ export default class GameScene extends Scene {
             loop: true
         });      
         
-        this.timer.paused = true;
+        this.timer.paused = false;
 
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        let bg = this.add.image(0, 0, 'bg');
-        bg.displayWidth = 800;
-        bg.setScale(2);
+        this.canFish = true;
+
+        let world = this.physics.add.group({
+            key: 'bg',
+            repeat: 4,
+            setXY: { x: 300, y: 300, stepX: 650 }
+        });
 
         this.player = new Player(
             this,
-            100,
-            300,
+            160,
+            200,
             "sprPlayer"
         );
         
-        let lake1 = new Lake(
+        this.lake = new Lake(
             this,
             500,
             200,
             "water"
         );
-
-        let lake2 = new Lake(
-            this,
-            30,
-            310,
-            "water"
-        );
         
-        this.lakeGroups = this.add.group();
-        this.lakeGroups.add(lake1, lake2);
+        this.shopObj = new Shop();
+
+        let lakeZone = this.createNewZone(400, 100, 200, 200);
+        let shopZone = this.createNewZone(0, 90, 180, 100);
+
+        this.shop = this.physics.add.sprite(90, 70, 'shop');
+        this.shopKeeper = this.physics.add.sprite(100, 150, 'fisherman');
+        this.shopKeeper.setScale(0.3, 0.3);
+        this.shop.body.moves = false;
+        this.shopKeeper.body.moves = false;
+
         this.player.setDepth(1);
+        this.player.body.setCircle(25);
+        let lakes = this.add.group(this.lake);
         
-        this.physics.add.overlap(this.player, this.lakeGroups);            
-        this.isColliding = this.player.body.checkCollision.none ? true : false;
-        console.log(this.isColliding)
-
+        this.physics.add.overlap(this.player, this.lake, () => { this.isFishing = true; this.canShop = false;});            
+        this.physics.add.collider(this.player, lakeZone);            
+        this.physics.add.collider(this.player, this.shop);            
+        this.physics.add.overlap(this.player, shopZone, () => { this.shopping = true; this.canFish = false});          
+        this.physics.add.collider(this.player, this.shopKeeper);            
+        
         this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 12
@@ -119,32 +148,41 @@ export default class GameScene extends Scene {
         });
     }
     
-    test() {
-        this.lake.body = false;
-    }
+    update() {  
 
-    update() {
-        
-        // console.log(this.isColliding);
-        this.player.body.debugBodyColor = this.isColliding ? 0x0099ff : 0xff9900;
-        // this.player.body.touching.none ? console.log(true) : console.log(false)
-        if (this.isColliding && this.player.info.catchesRemainingForTheDay > 0 && this.keySpace.isDown) {
-            this.timer.paused = false; 
-            this.input.disabled = true;
-            this.player.body.velocity.x = 0;
+        if (this.player.body.embedded) this.player.body.touching.none = false;
+        let touching = !this.player.body.touching.none;
+        let wasTouching = !this.player.body.wasTouching.none;
 
-            if (this.cooldown === 0) {
-                // this.isColliding = false;
-                console.log('ready to fish');
-                this.player.fishing();
-                this.timer.paused = true; 
-                this.cooldown = this.FISHING_COOLDOWN_DELAY;                   
-            } 
-            this.isColliding = false;
+        if (touching && !wasTouching) {
+        } else if (!touching && wasTouching) { 
+            this.isShopping = false; 
+            this.canShop = true; 
+            this.isFishing = false;
+            this.canFish = true;
         }
-
+    
+        this.player.body.debugBodyColor = this.player.body.touching.none ? 0x0099ff : 0xff9900;
+        
+        if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) { 
+            if (this.cooldown > 0) {
+                this.timer.paused = false;             
+            } else if (this.cooldown === 0) {
+                this.timer.paused = true; 
+                if (this.keySpace.isDown) {  
+                    if (touching && wasTouching) {                        
+                        console.log('is fishing!')  
+                        this.timer.paused = false;                                                                 
+                        this.player.fishing();                               
+                        this.cooldown = this.FISHING_COOLDOWN_DELAY;                     
+                    }                                                                                              
+                } 
+            }               
+        } 
+                                                
         this.player.update();
-
+        
+        this.player.body.velocity.x = 0;
         if (this.keyW.isDown) {
             this.player.moveUp();
             this.player.anims.play('up', true);               
@@ -157,15 +195,8 @@ export default class GameScene extends Scene {
         } else if (this.keyD.isDown) {
             this.player.moveRight();
             this.player.anims.play('right', true);
-        } else {      
+        } else {     
             this.player.anims.stop();
-        }
-        // if (this.keySpace.isDown) {
-        //     if (this.isColliding) {
-        //         this.timer.paused = false;   
-        //     }                         
-        //     // console.log(this.cooldown);
-        // }
-        
+        }        
     }
 }
