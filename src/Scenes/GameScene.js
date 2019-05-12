@@ -40,6 +40,10 @@ export default class GameScene extends Scene {
             frameWidth: 32, 
             frameHeight: 32 
         });
+        this.load.spritesheet('goldCoin', 'assets/coin_gold.png', { 
+            frameWidth: 32, 
+            frameHeight: 32 
+        });
     }
 
     updateTime() {                
@@ -202,6 +206,23 @@ export default class GameScene extends Scene {
         });
     }
     
+    spawnCoins() {
+        let coins = this.add.group({
+            key: 'goldCoin',
+            repeat: this.player.info.inventory.fish.length + 1 ,
+            setXY: {
+                x: this.player.x + Phaser.Math.RND.between(40, 340),
+                y: this.player.y + 100,
+            }
+        });  
+        return coins;      
+    }        
+    
+    fadeInfo() {
+        this.time.delayedCall(1000, () => {                             
+            this.infoText.visible = false;
+    }, [], this);
+    }
     update() {          
         if (this.player.body.embedded) this.player.body.touching.none = false;
         let touching = !this.player.body.touching.none;
@@ -212,7 +233,7 @@ export default class GameScene extends Scene {
             this.isShopping = false; 
             this.canShop = true; 
             this.isFishing = false;
-            this.canFish = true;
+            this.canFish = true;                 
         }
     
         this.player.body.debugBodyColor = this.player.body.touching.none ? 0x0099ff : 0xff9900;
@@ -220,16 +241,18 @@ export default class GameScene extends Scene {
         if (this.player.info.catchesRemainingForTheDay === 0) {
             infoText.setText(`You have run out of attempts... 
                 Time to go home`);
+            this.fadeInfo();
         }
 
         if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
             if (this.cooldown > 0) {                
                 this.timer.paused = false;             
-            } else if (this.cooldown === 0) {
+            } else if (this.cooldown === 0) {                
                 this.toggleKeyboard(true);                
                 this.timer.paused = true;                                 
                 if (this.keySpace.isDown) {                      
-                    if (touching && wasTouching) {   
+                    if (touching && wasTouching) {  
+                        this.player.anims.stop(); 
                         this.toggleKeyboard(false);                                      
                         this.player.anims.play('fish', true); 
                         console.log('is fishing!')  
@@ -242,15 +265,19 @@ export default class GameScene extends Scene {
         } else if (this.canShop) {
             if (this.cooldown > 0) {
                 this.timer.paused = false;             
-            } else if (this.cooldown === 0) {
+            } else if (this.cooldown === 0) {                                                    
                 this.toggleKeyboard(true);
                 this.timer.paused = true; 
                 if (this.keySpace.isDown) {
                     if (touching && wasTouching) { 
+                        this.player.anims.stop();
                         this.toggleKeyboard(false);
                         this.timer.paused = false;   
                         this.shopObj.sellAllFish(this.player);
                         this.cooldown = this.FISHING_COOLDOWN_DELAY; 
+                        // this.coins = this.spawnCoins();
+                        this.infoText.setText(`You sold a total of ${this.player.info.inventory.fish.length} fish!`); 
+                        this.fadeInfo();
                     }
                 }
             }                     

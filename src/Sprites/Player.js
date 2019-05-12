@@ -127,7 +127,7 @@ export default class Player extends Entity {
         this.scene.time.delayedCall(200, () => {             
             this.splash.destroy();
         }, [], this);                                                                                                              
-        this.textDelay(this.infoText);        
+        this.scene.fadeInfo();       
     }
     
     spawnBobble() {
