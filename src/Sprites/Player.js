@@ -18,7 +18,7 @@ export default class Player extends Entity {
             name: "TommyCakes",
             level: 1,    
             // for testing...
-            catchesRemainingForTheDay: 100,
+            catchesRemainingForTheDay: 5,
             cash: 10,
             inventory: {
                 fish: [
@@ -40,36 +40,20 @@ export default class Player extends Entity {
         }
 
         let style = { font: '20px Arial', fill: '#fff' } 
-        let catchesRemaining = this.info.catchesRemainingForTheDay       
-        this.catchesRemainingText = this.scene.add.text(200, 20, `Catch attempts left: ${catchesRemaining}`, style);
+        // let catchesRemaining = this.info.catchesRemainingForTheDay       
+        // this.catchesRemainingText = this.scene.add.text(200, 20, `Catch attempts left: ${catchesRemaining}`, style);
         this.infoText = this.scene.add.text(100, 360, "", style); 
         
     }
     
-    textDelay(text)
-    {
-        //WHEN TWEEN IS DONE PAUSE HERE FOR TEXT DELAY
-        //SET A FADE OBJECT IN THE SCOPE OF THE STATE,
-        //SINCE WE CAN NOT PASS THE OBJECT IN THE TIMER
-        
-    	this.scene.time.addEvent(1000 * 2, this.textDelayDone, text);
-    }
-    textDelayDone(text)
-    {
-        //NOW THAT DELAY IS DONE CALL FADE OUT
-        text.visible = true;
-    	this.fadeOutText(text);
-    }
-    fadeOutText(text) {
-        let tween = this.scene.add.tween(text)
-                .to({alpha: 0}, 1000, Phaser.Easing.Default, true, 3000)
-                .onComplete.add(this.fadeDoneText, text)
-    }
-    fadeDoneText(text)
-    {
-        text.visible = false;
+    getInfo() {
+        return this.info;
     }
 
+    getInventory() {
+        return this.info.inventory;
+    }
+    
     moveUp() {
         this.body.velocity.y = -this.getData("speed");
     }
@@ -175,7 +159,7 @@ export default class Player extends Entity {
     }    
     
     update() {
-        this.catchesRemainingText.setText(`Catch attempts left today: ${this.info.catchesRemainingForTheDay }`)     
+        // this.catchesRemainingText.setText(`Catch attempts left today: ${this.info.catchesRemainingForTheDay }`)     
         this.body.setVelocity(0, 0);
 
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);

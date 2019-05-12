@@ -10,6 +10,7 @@ export default class GameScene extends Scene {
 
     preload() {
         this.load.image('fish', 'assets/fish.png');
+        this.load.image('rod', 'assets/fishing_rod.png');
         this.load.image('fisherman', 'assets/fisherman.png');
         this.load.image('water', 'assets/water.png');
         this.load.image('shop', 'assets/shop.png');
@@ -73,6 +74,31 @@ export default class GameScene extends Scene {
         return this.zone;
     }
 
+    createUI(catches, cash, fishAmount, style) {
+        this.ui = this.add.group();
+        this.uiBg = this.add.rectangle(0, 20, 700, 80, '0x000000', 0.5).setScrollFactor(0);  
+
+        this.money = this.add.text(32, 20, cash, style).setScrollFactor(0);
+        this.moneyIcon = this.add.sprite(this.money.x - 16, this.money.y + 16, 'goldCoin', 2).setScrollFactor(0);                     
+
+        this.catchesRemainingText = this.add.text(200, 20, `Left: ${catches}`, style).setScrollFactor(0);                                               
+        this.catchesIcon = this.add.image(this.catchesRemainingText.x - 22, this.catchesRemainingText.y + 8, 'rod').setScrollFactor(0);     
+        this.catchesIcon.setScale(0.7);
+
+        this.amountOfFish = this.add.text(123, 20, `${fishAmount}`, style).setScrollFactor(0);                                               
+        this.fishIcon = this.add.image(this.amountOfFish.x - 16, this.amountOfFish.y + 8, 'fish').setScrollFactor(0);     
+        this.fishIcon.setScale(0.4);
+
+        this.ui.add(this.uiBg);
+        this.ui.add(this.money);
+        this.ui.add(this.moneyIcon);
+        this.ui.add(this.catchesRemainingText);
+        this.ui.add(this.catchesIcon);
+        this.ui.add(this.amountOfFish);
+        this.ui.add(this.fishIcon);
+        return this.ui;
+    }
+
     create() {
         this.FISHING_COOLDOWN_DELAY = 2;
         this.cooldown = 0;
@@ -117,8 +143,9 @@ export default class GameScene extends Scene {
             "sprPlayer"
         );
         
-        // this.camera.follow(this.player);
-
+        this.cameras.main.startFollow(this.player);
+        this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
+        
         this.lake = new Lake(
             this,
             500,
@@ -130,9 +157,20 @@ export default class GameScene extends Scene {
         this.canFish = true;
         this.canShop = true;
         
+        this.playerInfo = this.player.getInfo();
+        this.playerInventory = this.player.getInventory();
+
+        let catchesRemaining = this.playerInfo.catchesRemainingForTheDay 
+        let cash = this.playerInfo.cash 
+        let totalFish = this.playerInventory.fish.length
+
         // basic text feedback
         let style = { font: '20px Arial', fill: '#fff' } 
-        this.infoText = this.add.text(100, 360, "", style);        
+        this.infoText = this.add.text(100, 360, "", style);  
+        
+        this.ui = this.createUI(catchesRemaining, cash, totalFish, style);
+        this.ui.setDepth(1)
+
         
         let lakeZone = this.createNewZone(400, 100, 200, 200);
         let shopZone = this.createNewZone(0, 90, 180, 100);
@@ -221,9 +259,17 @@ export default class GameScene extends Scene {
     fadeInfo() {
         this.time.delayedCall(1000, () => {                             
             this.infoText.visible = false;
-    }, [], this);
+        }, [], this);
     }
-    update() {          
+
+    update() {    
+        let catchesLeft = this.playerInfo.catchesRemainingForTheDay 
+        let cash = this.playerInfo.cash  
+        let totalFish = this.playerInventory.fish.length
+        this.catchesRemainingText.setText(`Attempts left: ${catchesLeft}`) ;    
+        this.money.setText(cash);     
+        this.amountOfFish.setText(totalFish);     
+
         if (this.player.body.embedded) this.player.body.touching.none = false;
         let touching = !this.player.body.touching.none;
         let wasTouching = !this.player.body.wasTouching.none;
@@ -239,7 +285,7 @@ export default class GameScene extends Scene {
         this.player.body.debugBodyColor = this.player.body.touching.none ? 0x0099ff : 0xff9900;
         
         if (this.player.info.catchesRemainingForTheDay === 0) {
-            infoText.setText(`You have run out of attempts... 
+            this.infoText.setText(`You have run out of attempts... 
                 Time to go home`);
             this.fadeInfo();
         }
