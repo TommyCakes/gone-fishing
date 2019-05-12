@@ -14,6 +14,7 @@ export default class GameScene extends Scene {
         this.load.image('fisherman', 'assets/fisherman.png');
         this.load.image('water', 'assets/water.png');
         this.load.image('shop', 'assets/shop.png');
+        this.load.image('home', 'assets/house.png');
         this.load.image('bg', 'assets/grass.png');
         // this.load.image('energyBar', 'assets/energybar.png');
         // this.load.image("energyContainer", "assets/energycontainer.png");
@@ -53,6 +54,10 @@ export default class GameScene extends Scene {
         // this.barMask.x -= stepWidth;        
     }
 
+    resetTimeBar() {
+        // this.barMask.x = 1000;
+    }
+    
     toggleKeyboard(bool) {
         this.keyW.enabled = bool;
         this.keyS.enabled = bool;
@@ -97,7 +102,6 @@ export default class GameScene extends Scene {
 
     create() {
         this.FISHING_COOLDOWN_DELAY = 2;
-        this.SHOPPING_COOLDOWN_DELAY = 1;
         this.cooldown = 0;
         this.second = 1000;
         
@@ -110,22 +114,14 @@ export default class GameScene extends Scene {
         // this.barMask.setScale(0.3, 0.4);
         // energyBar.mask = new Phaser.Display.Masks.BitmapMask(this, this.barMask);
 
-        this.fishingTimer = this.time.addEvent({
+        this.timer = this.time.addEvent({
             delay: this.second * this.FISHING_COOLDOWN_DELAY,                
             callback: this.updateTime,
             callbackScope: this,
             loop: true
         });      
-
-        this.shoppingTimer = this.time.addEvent({
-            delay: this.second * this.SHOPPING_COOLDOWN_DELAY,                
-            callback: this.updateTime,
-            callbackScope: this,
-            loop: true
-        });      
         
-        this.fishingTimer.paused = false;
-        this.shoppingTimer.paused = false;
+        this.timer.paused = false;
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -143,7 +139,8 @@ export default class GameScene extends Scene {
 
         this.player = new Player(
             this,
-            230,
+            // 230,
+            1200,
             230,
             "sprPlayer"
         );
@@ -161,6 +158,7 @@ export default class GameScene extends Scene {
         this.shopObj = new Shop();
         this.canFish = true;
         this.canShop = true;
+        this.canSleep = true;
         
         this.playerInfo = this.player.getInfo();
         this.playerInventory = this.player.getInventory();
@@ -175,18 +173,24 @@ export default class GameScene extends Scene {
         
         this.ui = this.createUI(catchesRemaining, cash, totalFish, style);
         this.ui.setDepth(1)
-
         
+        // Zones
         let lakeZone = this.createNewZone(400, 100, 200, 200);
         let shopZone = this.createNewZone(0, 90, 180, 100);
+        let homeZone = this.createNewZone(900, 90, 180, 100);
+
         let fisherman = this.physics.add.sprite(500, 60, 'fisherman');
         fisherman.setScale(0.3, 0.3);
+                
         this.shop = this.physics.add.sprite(90, 70, 'shop');
         this.shopKeeper = this.physics.add.sprite(100, 150, 'shopKeeper', 8);        
         this.shop.body.moves = false;
         this.shopKeeper.body.moves = false;
         this.shopKeeper.body.setCircle(25);
         
+        this.home = this.physics.add.sprite(1000, 70, 'home');
+        this.home.body.moves = false;
+
         let chest = this.add.sprite(this.shop.x + -40, this.shop.y + 80, 'chests', 1);                                         
         let chest2 = this.add.sprite(this.shop.x -70, this.shop.y + 80, 'chests', 2);                                         
 
@@ -196,11 +200,61 @@ export default class GameScene extends Scene {
         this.player.body.setCircle(25);
         let lakes = this.add.group(this.lake);
         
-        this.physics.add.overlap(this.player, this.lake, () => { this.isFishing = true; this.canShop = false;});            
-        this.physics.add.collider(this.player, lakeZone);            
+        this.physics.add.overlap(this.player, this.lake, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
+        this.physics.add.collider(this.player, lakeZone);    
+
         this.physics.add.collider(this.player, this.shop);            
-        this.physics.add.overlap(this.player, shopZone, () => { this.shopping = true; this.canFish = false});          
-        this.physics.add.collider(this.player, this.shopKeeper);                           
+        this.physics.add.overlap(this.player, shopZone, () => { this.isShopping = true; this.canFish = false; this.canSleep = false;});          
+        this.physics.add.collider(this.player, this.shopKeeper);  
+        
+        this.physics.add.collider(this.player, this.home);            
+        this.physics.add.overlap(this.player, homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false;});          
+        
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 11
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'up',
+            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 0, end: 2
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turn',
+            frames: [ { key: 'sprPlayer', frame: 8} ],
+            framerate: 20
+        });
+
+        this.anims.create({
+            key: 'fish',
+            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 13, end: 15
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+            
+        this.anims.create({
+            key: 'down',
+            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 6, end: 8
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 3, end: 5
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
     }
     
     spawnCoins() {
@@ -222,6 +276,7 @@ export default class GameScene extends Scene {
     }
 
     update() {    
+        
         let catchesLeft = this.playerInfo.catchesRemainingForTheDay 
         let cash = this.playerInfo.cash  
         let totalFish = this.playerInventory.fish.length
@@ -239,10 +294,27 @@ export default class GameScene extends Scene {
             this.canShop = true; 
             this.isFishing = false;
             this.canFish = true;                 
+            this.isSleeping = false;
+            this.canSleep = true;                 
         }
-    
+        
+        console.log(this.canSleep)
+
         this.player.body.debugBodyColor = this.player.body.touching.none ? 0x0099ff : 0xff9900;
         
+        if (this.canSleep) {                                                             
+            this.toggleKeyboard(true);
+            this.timer.paused = true; 
+            if (this.keySpace.isDown) {
+                if (touching && wasTouching) { 
+                    this.player.anims.stop();
+                    this.toggleKeyboard(false);
+                    this.scene.pause();
+                    this.player.sleep(this.scene)
+                }
+            }
+        }    
+
         if (this.player.info.catchesRemainingForTheDay === 0) {
             this.infoText.setText(`You have run out of attempts... 
                 Time to go home`);
@@ -251,17 +323,17 @@ export default class GameScene extends Scene {
 
         if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
             if (this.cooldown > 0) {                
-                this.fishingTimer.paused = false;             
+                this.timer.paused = false;             
             } else if (this.cooldown === 0) {                
                 this.toggleKeyboard(true);                
-                this.fishingTimer.paused = true;                                 
+                this.timer.paused = true;                                 
                 if (this.keySpace.isDown) {                      
                     if (touching && wasTouching) {  
                         this.player.anims.stop(); 
                         this.toggleKeyboard(false);                                      
                         this.player.anims.play('fish', true); 
                         console.log('is fishing!')  
-                        this.fishingTimer.paused = false;                                                                 
+                        this.timer.paused = false;                                                                 
                         this.player.fishing();                                    
                         this.cooldown = this.FISHING_COOLDOWN_DELAY;                     
                     }                                                                                              
@@ -269,15 +341,15 @@ export default class GameScene extends Scene {
             }
         } else if (this.canShop) {
             if (this.cooldown > 0) {
-                this.shoppingTimer.paused = false;             
+                this.timer.paused = false;             
             } else if (this.cooldown === 0) {                                                    
                 this.toggleKeyboard(true);
-                this.shoppingTimer.paused = true; 
+                this.timer.paused = true; 
                 if (this.keySpace.isDown) {
                     if (touching && wasTouching) { 
                         this.player.anims.stop();
                         this.toggleKeyboard(false);
-                        this.shoppingTimer.paused = false;   
+                        this.timer.paused = false;   
                         this.shopObj.sellAllFish(this.player);
                         this.cooldown = this.FISHING_COOLDOWN_DELAY; 
                         // this.coins = this.spawnCoins();
@@ -286,7 +358,7 @@ export default class GameScene extends Scene {
                     }
                 }
             }                     
-        }
+        }                 
                                                 
         this.player.update();
         

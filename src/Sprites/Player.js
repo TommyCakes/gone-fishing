@@ -202,6 +202,18 @@ export default class Player extends Entity {
         this.info.catchesRemainingForTheDay = getRandomIntBetween(10);
     }    
     
+    sleep(scene) {
+        let readyToSleep = confirm('Do you wish to sleep?');
+
+        if (readyToSleep) {
+            console.log('You fall asleep and dream of goats wearing tophats...');
+            this.info.catchesRemainingForTheDay = 0;
+            this.info.catchesRemainingForTheDay = 5;
+        } else {
+            console.log('You have no more catch attempts maybe you should just call it a night?');
+        }
+        scene.resume();
+    }
     update() {
         // this.catchesRemainingText.setText(`Catch attempts left today: ${this.info.catchesRemainingForTheDay }`)     
         this.body.setVelocity(0, 0);
