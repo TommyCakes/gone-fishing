@@ -298,8 +298,6 @@ export default class GameScene extends Scene {
             this.canSleep = true;                 
         }
         
-        console.log(this.canSleep)
-
         this.player.body.debugBodyColor = this.player.body.touching.none ? 0x0099ff : 0xff9900;
         
         if (this.canSleep) {                                                             

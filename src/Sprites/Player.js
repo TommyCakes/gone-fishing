@@ -90,6 +90,18 @@ export default class Player extends Entity {
         
     }
     
+    fadeInfo() {
+        this.time.delayedCall(1000, () => {                             
+            this.infoText.visible = false;
+        }, [], this);
+    }
+
+    fadeText(text) {
+        this.time.delayedCall(1000, () => {                             
+            text.visible = false;
+        }, [], this);
+    }
+
     getInfo() {
         return this.info;
     }
@@ -209,10 +221,24 @@ export default class Player extends Entity {
             console.log('You fall asleep and dream of goats wearing tophats...');
             this.info.catchesRemainingForTheDay = 0;
             this.info.catchesRemainingForTheDay = 5;
-        } else {
-            console.log('You have no more catch attempts maybe you should just call it a night?');
-        }
-        scene.resume();
+            
+            this.scene.scene.setVisible(false);
+            this.scene.cameras.main.fadeOut(250, 0, 0, 0)              
+            this.scene.cameras.main.resetFX();  
+            let text = this.scene.add.text(this.x, 320,'You fall asleep and dream of goats wearing tophats...').setOrigin(0.5);
+
+            this.scene.time.delayedCall(2000, function() {    
+                this.scene.scene.setVisible(true);
+                console.log('here2')                
+            }, [], this); 
+
+            scene.resume();   
+
+                                                
+        } 
+
+        
+        
     }
     update() {
         // this.catchesRemainingText.setText(`Catch attempts left today: ${this.info.catchesRemainingForTheDay }`)     
