@@ -105,6 +105,9 @@ export default class Player extends Entity {
         } else if (rdmNum < 100) {
             fishCaught = true;
         }
+        this.bobble.destroy();
+        this.scene.cameras.main.shake(100, 0.01, 0.01),
+        this.spawnSplash();
         return fishCaught;
     }
         
@@ -121,11 +124,10 @@ export default class Player extends Entity {
             console.log(this.info)
         }
         // this.caughtFish = true;  
-        this.scene.cameras.main.shake(100, 0.01, 0.01); 
-        this.bobble.destroy();
-        this.textDelay(this.infoText);
-        this.catchesRemainingText.setText(`Catch attempts left tofay: ${this.info.catchesRemainingForTheDay }`)
-        return true;          
+        this.scene.time.delayedCall(200, () => {             
+            this.splash.destroy();
+        }, [], this);                                                                                                              
+        this.textDelay(this.infoText);        
     }
     
     spawnBobble() {
@@ -141,16 +143,29 @@ export default class Player extends Entity {
         this.bobble.anims.play('bob', true);
     }
 
-    fishing(player) {           
+    spawnSplash() {
+        this.splash = this.scene.add.sprite(this.bobble.x, this.bobble.y, 'splash');                                         
+        this.splash.visible = true; 
+        this.scene.anims.create({
+            key: 'catch',
+            frames: this.scene.anims.generateFrameNumbers('splash', { start: 1, end: 4
+            }),
+                frameRate: 20,
+                repeat: 0
+        });
+        this.splash.anims.play('catch', true);
+    }
+
+    fishing(player) {                   
         this.spawnBobble();
-        // this.decreaseCatchesRemaining();
+        // TODO: Add more random amount of time to catch fish
+        // Better rod = faster catch time && cooldown
         this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.decreaseCatchesRemaining, [], this);                                                                                                      
     }
 
     decreaseCatchesRemaining() {        
         this.info.catchesRemainingForTheDay -= 1;
         this.collectFish();
-        // catchesRemainingText.setText(`Catch attempts left: ${catchesRemainingForTheDay}`);
     }
 
     setRandomCatchAttempts() {
@@ -160,6 +175,7 @@ export default class Player extends Entity {
     }    
     
     update() {
+        this.catchesRemainingText.setText(`Catch attempts left today: ${this.info.catchesRemainingForTheDay }`)     
         this.body.setVelocity(0, 0);
 
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);

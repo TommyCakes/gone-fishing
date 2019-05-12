@@ -32,6 +32,14 @@ export default class GameScene extends Scene {
             frameWidth: 24, 
             frameHeight: 24 
         });
+        this.load.spritesheet('splash', 'assets/splash.png', { 
+            frameWidth: 32, 
+            frameHeight: 32 
+        });
+        this.load.spritesheet('chests', 'assets/chests.png', { 
+            frameWidth: 32, 
+            frameHeight: 32 
+        });
     }
 
     updateTime() {                
@@ -51,7 +59,6 @@ export default class GameScene extends Scene {
         this.keyD.enabled = bool;
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
-        this.player.anims.stop();
     }
 
     createNewZone(x, y, w, h) {
@@ -105,7 +112,9 @@ export default class GameScene extends Scene {
             230,
             "sprPlayer"
         );
-                
+        
+        // this.camera.follow(this.player);
+
         this.lake = new Lake(
             this,
             500,
@@ -130,6 +139,9 @@ export default class GameScene extends Scene {
         this.shop.body.moves = false;
         this.shopKeeper.body.moves = false;
         this.shopKeeper.body.setCircle(25);
+        
+        let chest = this.add.sprite(this.shop.x + -40, this.shop.y + 80, 'chests', 1);                                         
+        let chest2 = this.add.sprite(this.shop.x -70, this.shop.y + 80, 'chests', 2);                                         
 
         this.player.setDepth(1);
         // energyContainer.setDepth(1);
@@ -162,12 +174,6 @@ export default class GameScene extends Scene {
         this.anims.create({
             key: 'turn',
             frames: [ { key: 'sprPlayer', frame: 8} ],
-            framerate: 20
-        });
-
-        this.anims.create({
-            key: 'finish',
-            frames: [ { key: 'sprPlayer', frame: 3} ],
             framerate: 20
         });
 
@@ -220,7 +226,7 @@ export default class GameScene extends Scene {
             if (this.cooldown > 0) {                
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {
-                this.toggleKeyboard(true);
+                this.toggleKeyboard(true);                
                 this.timer.paused = true;                                 
                 if (this.keySpace.isDown) {                      
                     if (touching && wasTouching) {   
@@ -252,7 +258,6 @@ export default class GameScene extends Scene {
                                                 
         this.player.update();
         
-        this.player.body.velocity.x = 0;
         if (this.keyW.isDown) {
             this.player.moveUp();
             this.player.anims.play('up', true);               
