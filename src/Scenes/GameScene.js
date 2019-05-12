@@ -53,10 +53,6 @@ export default class GameScene extends Scene {
         // this.barMask.x -= stepWidth;        
     }
 
-    resetTimeBar() {
-        // this.barMask.x = 1000;
-    }
-    
     toggleKeyboard(bool) {
         this.keyW.enabled = bool;
         this.keyS.enabled = bool;
@@ -101,6 +97,7 @@ export default class GameScene extends Scene {
 
     create() {
         this.FISHING_COOLDOWN_DELAY = 2;
+        this.SHOPPING_COOLDOWN_DELAY = 1;
         this.cooldown = 0;
         this.second = 1000;
         
@@ -113,14 +110,22 @@ export default class GameScene extends Scene {
         // this.barMask.setScale(0.3, 0.4);
         // energyBar.mask = new Phaser.Display.Masks.BitmapMask(this, this.barMask);
 
-        this.timer = this.time.addEvent({
+        this.fishingTimer = this.time.addEvent({
             delay: this.second * this.FISHING_COOLDOWN_DELAY,                
             callback: this.updateTime,
             callbackScope: this,
             loop: true
         });      
+
+        this.shoppingTimer = this.time.addEvent({
+            delay: this.second * this.SHOPPING_COOLDOWN_DELAY,                
+            callback: this.updateTime,
+            callbackScope: this,
+            loop: true
+        });      
         
-        this.timer.paused = false;
+        this.fishingTimer.paused = false;
+        this.shoppingTimer.paused = false;
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -246,17 +251,17 @@ export default class GameScene extends Scene {
 
         if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
             if (this.cooldown > 0) {                
-                this.timer.paused = false;             
+                this.fishingTimer.paused = false;             
             } else if (this.cooldown === 0) {                
                 this.toggleKeyboard(true);                
-                this.timer.paused = true;                                 
+                this.fishingTimer.paused = true;                                 
                 if (this.keySpace.isDown) {                      
                     if (touching && wasTouching) {  
                         this.player.anims.stop(); 
                         this.toggleKeyboard(false);                                      
                         this.player.anims.play('fish', true); 
                         console.log('is fishing!')  
-                        this.timer.paused = false;                                                                 
+                        this.fishingTimer.paused = false;                                                                 
                         this.player.fishing();                                    
                         this.cooldown = this.FISHING_COOLDOWN_DELAY;                     
                     }                                                                                              
@@ -264,15 +269,15 @@ export default class GameScene extends Scene {
             }
         } else if (this.canShop) {
             if (this.cooldown > 0) {
-                this.timer.paused = false;             
+                this.shoppingTimer.paused = false;             
             } else if (this.cooldown === 0) {                                                    
                 this.toggleKeyboard(true);
-                this.timer.paused = true; 
+                this.shoppingTimer.paused = true; 
                 if (this.keySpace.isDown) {
                     if (touching && wasTouching) { 
                         this.player.anims.stop();
                         this.toggleKeyboard(false);
-                        this.timer.paused = false;   
+                        this.shoppingTimer.paused = false;   
                         this.shopObj.sellAllFish(this.player);
                         this.cooldown = this.FISHING_COOLDOWN_DELAY; 
                         // this.coins = this.spawnCoins();
