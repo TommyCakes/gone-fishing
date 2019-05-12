@@ -195,53 +195,7 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.player, lakeZone);            
         this.physics.add.collider(this.player, this.shop);            
         this.physics.add.overlap(this.player, shopZone, () => { this.shopping = true; this.canFish = false});          
-        this.physics.add.collider(this.player, this.shopKeeper);            
-        
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 11
-        }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'up',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 0, end: 2
-        }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'turn',
-            frames: [ { key: 'sprPlayer', frame: 8} ],
-            framerate: 20
-        });
-
-        this.anims.create({
-            key: 'fish',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 13, end: 15
-        }),
-            frameRate: 10,
-            repeat: -1
-        });
-            
-        this.anims.create({
-            key: 'down',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 6, end: 8
-        }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 3, end: 5
-        }),
-            frameRate: 10,
-            repeat: -1
-        });
+        this.physics.add.collider(this.player, this.shopKeeper);                           
     }
     
     spawnCoins() {

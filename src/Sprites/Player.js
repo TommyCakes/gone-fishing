@@ -39,10 +39,54 @@ export default class Player extends Entity {
             }
         }
 
-        let style = { font: '20px Arial', fill: '#fff' } 
-        // let catchesRemaining = this.info.catchesRemainingForTheDay       
-        // this.catchesRemainingText = this.scene.add.text(200, 20, `Catch attempts left: ${catchesRemaining}`, style);
+        let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
+
+        this.scene.anims.create({
+            key: 'left',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 11
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'up',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 0, end: 2
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'turn',
+            frames: [ { key: 'sprPlayer', frame: 8} ],
+            framerate: 20
+        });
+
+        this.scene.anims.create({
+            key: 'fish',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 13, end: 15
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+            
+        this.scene.anims.create({
+            key: 'down',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 6, end: 8
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'right',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 3, end: 5
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
         
     }
     
@@ -53,7 +97,7 @@ export default class Player extends Entity {
     getInventory() {
         return this.info.inventory;
     }
-    
+
     moveUp() {
         this.body.velocity.y = -this.getData("speed");
     }
