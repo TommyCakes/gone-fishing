@@ -82,17 +82,19 @@ export default class GameScene extends Scene {
     }
 
     createInteractivePanel() {
-        let style = { font: '20px Arial', fill: '#fff', align: 'center' } 
+        let style = { font: '13px Arial', fill: '#fff', align: 'center' }   
         this.uiPanel = this.add.group();
         this.uiBackground = this.add.image(this.player.x / 2 + 160, this.player.y + 160, 'panel').setScrollFactor(0);  
         this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 60, 'brownPanel').setScrollFactor(0);  
-        this.sleepText = this.add.text(this.player.x / 2 + 84, this.player.y + 84, `Ready to sleep?`, style).setScrollFactor(0);                                        
-        this.buttonYes = this.add.image(this.player.x / 2 + 120, this.sleepText.y + 100, 'greyButton').setScrollFactor(0).setInteractive();  
+        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, 'Will you settle down for the night, and save your progress?', style).setScrollFactor(0)
+        // this.add.text(this.player.x / 2 + 84, this.player.y + 84, 'Will you settle down for the night, and save your progress?', style).setScrollFactor(0);                                        
+        this.text.setOrigin(0.5, 0.5);   
+        this.buttonYes = this.add.image(this.player.x / 2 + 120, this.text.y + 100, 'greyButton').setScrollFactor(0).setInteractive();  
         this.buttonYes.name = 'yesBtn';
-        this.check = this.add.image(this.player.x / 2 + 120, this.sleepText.y + 100, 'checkBlue').setScrollFactor(0)
-        this.buttonNo = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.sleepText.y + 100, 'greyButton').setScrollFactor(0).setInteractive();          
+        this.check = this.add.image(this.player.x / 2 + 120, this.text.y + 100, 'checkBlue').setScrollFactor(0)
+        this.buttonNo = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.text.y + 100, 'greyButton').setScrollFactor(0).setInteractive();          
         this.buttonNo.name = 'noBtn';
-        this.cross = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.sleepText.y + 100, 'crossBrown').setScrollFactor(0)
+        this.cross = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.text.y + 100, 'crossBrown').setScrollFactor(0)
         this.uiBackground.setScale(1);
         this.buttonYes.setScale(1.5);
         this.buttonNo.setScale(1.5);
@@ -101,7 +103,7 @@ export default class GameScene extends Scene {
         this.uiBackground.displayHeight = 200;        
         this.uiPanel.add(this.uiBackground);
         this.uiPanel.add(this.brownPanel);
-        this.uiPanel.add(this.sleepText);
+        this.uiPanel.add(this.text);
         this.uiPanel.add(this.buttonYes);
         this.uiPanel.add(this.check);
         this.uiPanel.add(this.cross);
