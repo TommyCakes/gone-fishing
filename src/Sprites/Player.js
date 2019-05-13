@@ -1,5 +1,7 @@
 import Entity from './Entity';
+import Bobble from './Bobble';
 import Game from '../Scenes/GameScene'
+// import Text from './Text'
 
 export default class Player extends Entity {
     constructor(scene, x, y, key) {        
@@ -8,16 +10,15 @@ export default class Player extends Entity {
         this.setData("speed", 200);
         this.setData("isFishing", false);
         this.setData("timerFishingDelay", 5000);
-        // this.body.setCircle(30);
-        this.body.moves = true;        
-        
+        this.body.moves = true;  
         // this.play("sprPlayer");
 
         /* The player object */
         this.info = {
             name: "TommyCakes",
             level: 1,    
-            catchesRemainingForTheDay: 3,
+            // for testing...
+            catchesRemainingForTheDay: 5,
             cash: 10,
             inventory: {
                 fish: [
@@ -37,9 +38,92 @@ export default class Player extends Entity {
                 ]
             }
         }
+
+        let style = { font: '20px Arial', fill: '#fff' }         
+        this.infoText = this.scene.add.text(100, 360, "", style); 
+
+        this.scene.anims.create({
+            key: 'left',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 11
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'up',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 0, end: 2
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'turn',
+            frames: [ { key: 'sprPlayer', frame: 8} ],
+            framerate: 20
+        });
+
+        this.scene.anims.create({
+            key: 'fish',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 13, end: 15
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+            
+        this.scene.anims.create({
+            key: 'down',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 6, end: 8
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'right',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 3, end: 5
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
         
     }
     
+    fadeInfo() {
+        this.time.delayedCall(1000, () => {                             
+            this.infoText.visible = false;
+        }, [], this);
+    }
+
+    fadeText(text = null) {
+        let style = { font: '14px Arial', fill: '#fff', align: 'center' }         
+        this.uiPanel = this.scene.add.group();
+        this.uiBackground = this.scene.add.image(this.x / 2 + 160, this.y + 260, 'panel').setScrollFactor(0);  
+        this.brownPanel = this.scene.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 10, 'brownPanel').setScrollFactor(0);  
+        this.text = this.scene.add.text(this.x / 2 - 16, this.brownPanel.y - 16, 'You fall asleep and dream of tiny goats wearing tophats...', style).setScrollFactor(0);  
+        this.uiBackground.setScale(1);        
+        this.uiBackground.displayWidth = 400;        
+        this.brownPanel.displayWidth = 375;        
+        this.uiBackground.displayHeight = 100;        
+        this.uiPanel.add(this.uiBackground);
+        this.uiPanel.add(this.brownPanel);
+        this.uiPanel.add(this.text);        
+        this.uiPanel.setDepth(2)  
+                   
+        this.scene.time.delayedCall(4000, () => {                             
+            this.uiPanel.clear(true);
+        }, [], this);
+    }
+
+    getInfo() {
+        return this.info;
+    }
+
+    getInventory() {
+        return this.info.inventory;
+    }
+
     moveUp() {
         this.body.velocity.y = -this.getData("speed");
     }
@@ -75,34 +159,67 @@ export default class Player extends Entity {
         } else if (rdmNum < 100) {
             fishCaught = true;
         }
+        this.bobble.destroy();
+        this.scene.cameras.main.shake(100, 0.01, 0.01),
+        this.spawnSplash();
         return fishCaught;
     }
         
-    collectFish() {    
-        this.scene.cameras.main.shake(100, 0.01, 0.01); 
+    collectFish() {            
         if (this.checkForFish()) {            
             this.info.inventory.fish.push('fish');
+        
             console.log('you caught a fish');
-            console.log(this.info)
-            // increaseScore();        
+            console.log(this.info)    
+            this.infoText.setText('you caught a fish');
         } else {
             console.log('unlucky you fished up nothing...');
+            this.infoText.setText('unlucky you fished up nothing...');
             console.log(this.info)
         }
-        // this.caughtFish = true;   
-        return true;          
+        // this.caughtFish = true;  
+        this.scene.time.delayedCall(200, () => {             
+            this.splash.destroy();
+        }, [], this);                                                                                                              
+        this.scene.fadeInfo();       
     }
     
-    fishing(player) {      
-        console.log('fishing');  
-        // this.decreaseCatchesRemaining();
+    spawnBobble() {
+        this.bobble = this.scene.add.sprite(500, 200, 'fishingBobble');                                         
+        this.bobble.visible = true; 
+        this.scene.anims.create({
+            key: 'bob',
+            frames: this.scene.anims.generateFrameNumbers('fishingBobble', { start: 1, end: 4
+            }),
+                frameRate: 4,
+                repeat: -1
+        });
+        this.bobble.anims.play('bob', true);
+    }
+
+    spawnSplash() {
+        this.splash = this.scene.add.sprite(this.bobble.x, this.bobble.y, 'splash');                                         
+        this.splash.visible = true; 
+        this.scene.anims.create({
+            key: 'catch',
+            frames: this.scene.anims.generateFrameNumbers('splash', { start: 1, end: 4
+            }),
+                frameRate: 20,
+                repeat: 0
+        });
+        this.splash.anims.play('catch', true);
+    }
+
+    fishing(player) {                   
+        this.spawnBobble();
+        // TODO: Add more random amount of time to catch fish
+        // Better rod = faster catch time && cooldown
         this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.decreaseCatchesRemaining, [], this);                                                                                                      
     }
 
     decreaseCatchesRemaining() {        
         this.info.catchesRemainingForTheDay -= 1;
         this.collectFish();
-        // catchesRemainingText.setText(`Catch attempts left: ${catchesRemainingForTheDay}`);
     }
 
     setRandomCatchAttempts() {
@@ -111,6 +228,22 @@ export default class Player extends Entity {
         this.info.catchesRemainingForTheDay = getRandomIntBetween(10);
     }    
     
+    sleep(bool) {
+        if (bool) {
+            console.log('You fall asleep and dream of goats wearing tophats...');
+            this.info.catchesRemainingForTheDay = 0;
+            this.info.catchesRemainingForTheDay = 5;
+            
+            this.scene.cameras.main.fadeOut(250, 0, 0, 0)                                      
+
+            this.scene.time.delayedCall(1000, function() {    
+                this.scene.cameras.main.resetFX();  
+                console.log('here2')                
+            }, [], this);                                                                      
+        } 
+        this.fadeText();
+    }
+
     update() {
         this.body.setVelocity(0, 0);
 
