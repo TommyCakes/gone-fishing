@@ -86,16 +86,7 @@ export default class Player extends Entity {
         }),
             frameRate: 10,
             repeat: -1
-        });    
-        
-        // this.ui = new UI(
-        //     this.scene,
-        //     this.x,
-        //     this.y,
-        //     "panel",
-        //     'You fall asleep and dream of tiny goats wearing tophats...'
-        // );
-        
+        });          
     }
     
     fadeInfo() {
@@ -172,14 +163,11 @@ export default class Player extends Entity {
         
     collectFish() {               
         if (this.checkForFish()) {            
-            this.info.inventory.fish.push('fish');
-        
-            console.log('you caught a fish');
+            this.info.inventory.fish.push('fish');        
+            this.createAndfadeOutUI('you caught a fish!');
             console.log(this.info)    
-            this.infoText.setText('you caught a fish');
         } else {
-            console.log('unlucky you fished up nothing...');
-            this.infoText.setText('unlucky you fished up nothing...');
+            this.createAndfadeOutUI('unlucky you fished up nothing...');
             console.log(this.info)
         }
         // this.caughtFish = true;  
