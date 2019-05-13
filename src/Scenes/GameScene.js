@@ -46,7 +46,7 @@ export default class GameScene extends Scene {
     }
 
     create() {
-        this.FISHING_COOLDOWN_DELAY = 3;
+        this.FISHING_COOLDOWN_DELAY = 2;
         this.cooldown = 0;
         this.second = 1000;
 
@@ -76,8 +76,8 @@ export default class GameScene extends Scene {
 
         this.player = new Player(
             this,
-            160,
-            200,
+            230,
+            230,
             "sprPlayer"
         );
         
@@ -89,6 +89,8 @@ export default class GameScene extends Scene {
         );
         
         this.shopObj = new Shop();
+        this.canFish = true;
+        this.canShop = true;
 
         let lakeZone = this.createNewZone(400, 100, 200, 200);
         let shopZone = this.createNewZone(0, 90, 180, 100);
@@ -98,6 +100,7 @@ export default class GameScene extends Scene {
         this.shopKeeper.setScale(0.3, 0.3);
         this.shop.body.moves = false;
         this.shopKeeper.body.moves = false;
+        this.shopKeeper.body.setCircle(25);
 
         this.player.setDepth(1);
         this.player.body.setCircle(25);
@@ -177,8 +180,21 @@ export default class GameScene extends Scene {
                         this.cooldown = this.FISHING_COOLDOWN_DELAY;                     
                     }                                                                                              
                 } 
-            }               
-        } 
+            }
+        } else if (this.canShop) {
+            if (this.cooldown > 0) {
+                this.timer.paused = false;             
+            } else if (this.cooldown === 0) {
+                this.timer.paused = true; 
+                if (this.keySpace.isDown) {
+                    if (touching && wasTouching) { 
+                        this.timer.paused = false;   
+                        this.shopObj.sellAllFish(this.player);
+                        this.cooldown = this.FISHING_COOLDOWN_DELAY; 
+                    }
+                }
+            }                     
+        }
                                                 
         this.player.update();
         
