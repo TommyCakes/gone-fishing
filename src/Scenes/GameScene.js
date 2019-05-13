@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import Player from "../Sprites/Player";
 import Lake from '../Sprites/Lake';
 import Shop from '../Classes/Shop';
+// import UI from '../Classes/UI';
 
 export default class GameScene extends Scene {
     constructor() {
