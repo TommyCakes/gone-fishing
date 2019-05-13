@@ -185,7 +185,7 @@ export default class Player extends Entity {
     }
     
     spawnBobble() {
-        this.bobble = this.scene.add.sprite(this.x + 100, this.y, 'fishingBobble');                                         
+        this.bobble = this.scene.add.sprite(500, 200, 'fishingBobble');                                         
         this.bobble.visible = true; 
         this.scene.anims.create({
             key: 'bob',
