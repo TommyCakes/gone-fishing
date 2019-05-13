@@ -16,6 +16,11 @@ export default class GameScene extends Scene {
         this.load.image('shop', 'assets/shop.png');
         this.load.image('home', 'assets/house.png');
         this.load.image('bg', 'assets/grass.png');
+        this.load.image('greyButton', 'assets/greyButton.png');
+        this.load.image('panel', 'assets/panel.png');
+        this.load.image('brownPanel', 'assets/longBrown.png');
+        this.load.image('crossBrown', 'assets/crossBrown.png');
+        this.load.image('checkBlue', 'assets/checkBlue.png');
         // this.load.image('energyBar', 'assets/energybar.png');
         // this.load.image("energyContainer", "assets/energycontainer.png");
         this.load.spritesheet('sprPlayer', 'assets/yan.png', { 
@@ -75,6 +80,36 @@ export default class GameScene extends Scene {
         return this.zone;
     }
 
+    createInteractivePanel() {
+        let style = { font: '20px Arial', fill: '#fff', align: 'center' } 
+        this.uiPanel = this.add.group();
+        this.uiBackground = this.add.image(this.player.x / 2 + 160, this.player.y + 160, 'panel').setScrollFactor(0);  
+        this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 60, 'brownPanel').setScrollFactor(0);  
+        this.sleepText = this.add.text(this.player.x / 2 + 84, this.player.y + 84, `Ready to sleep?`, style).setScrollFactor(0);                                        
+        this.buttonYes = this.add.image(this.player.x / 2 + 120, this.sleepText.y + 100, 'greyButton').setScrollFactor(0).setInteractive();  
+        this.buttonYes.name = 'yesBtn';
+        this.check = this.add.image(this.player.x / 2 + 120, this.sleepText.y + 100, 'checkBlue').setScrollFactor(0)
+        this.buttonNo = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.sleepText.y + 100, 'greyButton').setScrollFactor(0).setInteractive();          
+        this.buttonNo.name = 'noBtn';
+        this.cross = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.sleepText.y + 100, 'crossBrown').setScrollFactor(0)
+        this.uiBackground.setScale(1);
+        this.buttonYes.setScale(1.5);
+        this.buttonNo.setScale(1.5);
+        this.uiBackground.displayWidth = 400;        
+        this.brownPanel.displayWidth = 375;        
+        this.uiBackground.displayHeight = 200;        
+        this.uiPanel.add(this.uiBackground);
+        this.uiPanel.add(this.brownPanel);
+        this.uiPanel.add(this.sleepText);
+        this.uiPanel.add(this.buttonYes);
+        this.uiPanel.add(this.check);
+        this.uiPanel.add(this.cross);
+        this.uiPanel.add(this.buttonNo);
+        this.uiPanel.setDepth(2)  
+        this.buttonYes.on('pointerdown', ()=> { this.player.sleep(true)}); 
+        return this.uiPanel;               
+    }
+
     createUI(catches, cash, fishAmount, style) {
         this.ui = this.add.group();
         this.uiBg = this.add.rectangle(0, 20, 700, 80, '0x000000', 0.5).setScrollFactor(0);  
@@ -100,7 +135,7 @@ export default class GameScene extends Scene {
         return this.ui;
     }
 
-    create() {
+    create() {        
         this.FISHING_COOLDOWN_DELAY = 2;
         this.cooldown = 0;
         this.second = 1000;
@@ -173,7 +208,7 @@ export default class GameScene extends Scene {
         
         this.ui = this.createUI(catchesRemaining, cash, totalFish, style);
         this.ui.setDepth(1)
-        
+
         // Zones
         let lakeZone = this.createNewZone(400, 100, 200, 200);
         let shopZone = this.createNewZone(0, 90, 180, 100);
@@ -254,7 +289,7 @@ export default class GameScene extends Scene {
         }),
             frameRate: 10,
             repeat: -1
-        });
+        });    
     }
     
     spawnCoins() {
@@ -302,13 +337,19 @@ export default class GameScene extends Scene {
         
         if (this.canSleep) {                                                             
             this.toggleKeyboard(true);
-            this.timer.paused = true; 
             if (this.keySpace.isDown) {
                 if (touching && wasTouching) { 
                     this.player.anims.stop();
-                    this.toggleKeyboard(false);
-                    this.scene.pause();
-                    this.player.sleep(this.scene)
+                    this.toggleKeyboard(false);                    
+                    let ui = this.createInteractivePanel();   
+                    this.input.on('pointerdown', () => {                           
+                        ui.children.iterate(child => {
+                            if (child.name === 'noBtn') {
+                                child.destroy(child, true);
+                            }
+                        });
+                        ui.clear(true);
+                    })                                                                          
                 }
             }
         }    

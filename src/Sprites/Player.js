@@ -96,9 +96,23 @@ export default class Player extends Entity {
         }, [], this);
     }
 
-    fadeText(text) {
-        this.time.delayedCall(1000, () => {                             
-            text.visible = false;
+    fadeText(text = null) {
+        let style = { font: '14px Arial', fill: '#fff', align: 'center' }         
+        this.uiPanel = this.scene.add.group();
+        this.uiBackground = this.scene.add.image(this.x / 2 + 160, this.y + 260, 'panel').setScrollFactor(0);  
+        this.brownPanel = this.scene.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 10, 'brownPanel').setScrollFactor(0);  
+        this.text = this.scene.add.text(this.x / 2 - 16, this.brownPanel.y - 16, 'You fall asleep and dream of tiny goats wearing tophats...', style).setScrollFactor(0);  
+        this.uiBackground.setScale(1);        
+        this.uiBackground.displayWidth = 400;        
+        this.brownPanel.displayWidth = 375;        
+        this.uiBackground.displayHeight = 100;        
+        this.uiPanel.add(this.uiBackground);
+        this.uiPanel.add(this.brownPanel);
+        this.uiPanel.add(this.text);        
+        this.uiPanel.setDepth(2)  
+                   
+        this.scene.time.delayedCall(4000, () => {                             
+            this.uiPanel.clear(true);
         }, [], this);
     }
 
@@ -214,34 +228,23 @@ export default class Player extends Entity {
         this.info.catchesRemainingForTheDay = getRandomIntBetween(10);
     }    
     
-    sleep(scene) {
-        let readyToSleep = confirm('Do you wish to sleep?');
-
-        if (readyToSleep) {
+    sleep(bool) {
+        if (bool) {
             console.log('You fall asleep and dream of goats wearing tophats...');
             this.info.catchesRemainingForTheDay = 0;
             this.info.catchesRemainingForTheDay = 5;
             
-            this.scene.scene.setVisible(false);
-            this.scene.cameras.main.fadeOut(250, 0, 0, 0)              
-            this.scene.cameras.main.resetFX();  
-            let text = this.scene.add.text(this.x, 320,'You fall asleep and dream of goats wearing tophats...').setOrigin(0.5);
+            this.scene.cameras.main.fadeOut(250, 0, 0, 0)                                      
 
-            this.scene.time.delayedCall(2000, function() {    
-                this.scene.scene.setVisible(true);
+            this.scene.time.delayedCall(1000, function() {    
+                this.scene.cameras.main.resetFX();  
                 console.log('here2')                
-            }, [], this); 
-
-            scene.resume();   
-
-                                                
+            }, [], this);                                                                      
         } 
-
-        
-        
+        this.fadeText();
     }
+
     update() {
-        // this.catchesRemainingText.setText(`Catch attempts left today: ${this.info.catchesRemainingForTheDay }`)     
         this.body.setVelocity(0, 0);
 
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);
