@@ -1,7 +1,7 @@
 import Entity from './Entity';
 import Bobble from './Bobble';
 import Game from '../Scenes/GameScene'
-// import Text from './Text'
+import UI from '../Classes/UI';
 
 export default class Player extends Entity {
     constructor(scene, x, y, key) {        
@@ -86,8 +86,7 @@ export default class Player extends Entity {
         }),
             frameRate: 10,
             repeat: -1
-        });
-        
+        });          
     }
     
     fadeInfo() {
@@ -96,23 +95,20 @@ export default class Player extends Entity {
         }, [], this);
     }
 
-    fadeText(text = null) {
-        let style = { font: '14px Arial', fill: '#fff', align: 'center' }         
-        this.uiPanel = this.scene.add.group();
-        this.uiBackground = this.scene.add.image(this.x / 2 + 160, this.y + 260, 'panel').setScrollFactor(0);  
-        this.brownPanel = this.scene.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 10, 'brownPanel').setScrollFactor(0);  
-        this.text = this.scene.add.text(this.x / 2 - 16, this.brownPanel.y - 16, 'You fall asleep and dream of tiny goats wearing tophats...', style).setScrollFactor(0);  
-        this.uiBackground.setScale(1);        
-        this.uiBackground.displayWidth = 400;        
-        this.brownPanel.displayWidth = 375;        
-        this.uiBackground.displayHeight = 100;        
-        this.uiPanel.add(this.uiBackground);
-        this.uiPanel.add(this.brownPanel);
-        this.uiPanel.add(this.text);        
-        this.uiPanel.setDepth(2)  
-                   
-        this.scene.time.delayedCall(4000, () => {                             
-            this.uiPanel.clear(true);
+    createNewUI(text) {
+        return new UI(
+            this.scene,
+            this.x,
+            this.y,
+            text,
+        );
+    }
+
+    createAndfadeOutUI(text) {                
+        let ui = this.createNewUI(text);
+        ui.removeUI();
+        this.scene.time.delayedCall(2000, () => {                             
+            ui.removeUI();
         }, [], this);
     }
 
@@ -165,16 +161,13 @@ export default class Player extends Entity {
         return fishCaught;
     }
         
-    collectFish() {            
+    collectFish() {               
         if (this.checkForFish()) {            
-            this.info.inventory.fish.push('fish');
-        
-            console.log('you caught a fish');
+            this.info.inventory.fish.push('fish');        
+            this.createAndfadeOutUI('you caught a fish!');
             console.log(this.info)    
-            this.infoText.setText('you caught a fish');
         } else {
-            console.log('unlucky you fished up nothing...');
-            this.infoText.setText('unlucky you fished up nothing...');
+            this.createAndfadeOutUI('unlucky you fished up nothing...');
             console.log(this.info)
         }
         // this.caughtFish = true;  
@@ -230,7 +223,6 @@ export default class Player extends Entity {
     
     sleep(bool) {
         if (bool) {
-            console.log('You fall asleep and dream of goats wearing tophats...');
             this.info.catchesRemainingForTheDay = 0;
             this.info.catchesRemainingForTheDay = 5;
             
@@ -241,7 +233,7 @@ export default class Player extends Entity {
                 console.log('here2')                
             }, [], this);                                                                      
         } 
-        this.fadeText();
+        this.createAndfadeOutUI("You fall asleep and dream of tiny goats wearing tophats...");
     }
 
     update() {
