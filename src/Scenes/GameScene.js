@@ -246,53 +246,7 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.player, this.shopKeeper);  
         
         this.physics.add.collider(this.player, this.home);            
-        this.physics.add.overlap(this.player, homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false;});          
-        
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 11
-        }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'up',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 0, end: 2
-        }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'turn',
-            frames: [ { key: 'sprPlayer', frame: 8} ],
-            framerate: 20
-        });
-
-        this.anims.create({
-            key: 'fish',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 13, end: 15
-        }),
-            frameRate: 10,
-            repeat: -1
-        });
-            
-        this.anims.create({
-            key: 'down',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 6, end: 8
-        }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('sprPlayer', { start: 3, end: 5
-        }),
-            frameRate: 10,
-            repeat: -1
-        });    
+        this.physics.add.overlap(this.player, homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false;});                  
     }
     
     spawnCoins() {
@@ -363,7 +317,7 @@ export default class GameScene extends Scene {
             this.fadeInfo();
         }
 
-        if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
+        if (this.player.info.catchesRemainingForTheDay >= 0 && this.canFish) {             
             if (this.cooldown > 0) {                
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {                
@@ -372,7 +326,14 @@ export default class GameScene extends Scene {
                 if (this.keySpace.isDown) {                      
                     if (touching && wasTouching) {  
                         this.player.anims.stop(); 
-                        this.toggleKeyboard(false);                                      
+                        this.toggleKeyboard(false);  
+                        console.log(this.player.body);   
+                        if (this.player.x - this.lake.x > 0) {
+                            console.log('facing left');
+                            this.player.flipX = true;
+                        } else if (this.player.x - this.lake.x < 0) {
+                            this.player.flipX = false;
+                        }                                             
                         this.player.anims.play('fish', true); 
                         console.log('is fishing!')  
                         this.timer.paused = false;                                                                 
@@ -412,6 +373,7 @@ export default class GameScene extends Scene {
             this.player.anims.play('down', true);
         } else if (this.keyA.isDown) {
             this.player.moveLeft();
+            this.player.flipX = false;
             this.player.anims.play('left', true);
         } else if (this.keyD.isDown) {
             this.player.moveRight();
