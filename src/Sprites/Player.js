@@ -2,6 +2,7 @@ import Entity from './Entity';
 import Bobble from './Bobble';
 import Game from '../Scenes/GameScene'
 import UI from '../Classes/UI';
+import Helper from '../Classes/Helper';
 
 export default class Player extends Entity {
     
@@ -44,6 +45,8 @@ export default class Player extends Entity {
         
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
+
+        this.helper = new Helper(this.scene);
 
         this.scene.anims.create({
             key: 'left',
@@ -98,17 +101,8 @@ export default class Player extends Entity {
         }, [], this);
     }
 
-    createNewUI(text) {
-        return new UI(
-            this.scene,
-            this.x,
-            this.y,
-            text,
-        );
-    }
-
     createAndfadeOutUI(text) {                
-        let ui = this.createNewUI(text);
+        let ui = this.helper.createNewUI(text);
         ui.removeUI();
         this.scene.time.delayedCall(2000, () => {                             
             ui.removeUI();
@@ -166,12 +160,11 @@ export default class Player extends Entity {
         
     collectFish() {               
         if (this.checkForFish()) {   
-            this.on('tryForFish', () => 'press space to catch the fish!');         
             this.info.inventory.fish.push('fish');        
-            this.createAndfadeOutUI('you caught a fish!');
+            this.createAndfadeOutUI('You caught yourself a "INSERT_FISH!"');
             console.log(this.info)    
         } else {
-            this.createAndfadeOutUI('unlucky you fished up nothing...');
+            this.createAndfadeOutUI('Unlucky your line came up empty...');
             console.log(this.info)
         }
         // this.caughtFish = true;  

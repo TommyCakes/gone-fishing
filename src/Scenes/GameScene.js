@@ -2,7 +2,7 @@ import { Scene } from 'phaser';
 import Player from "../Sprites/Player";
 import Lake from '../Sprites/Lake';
 import Shop from '../Classes/Shop';
-import UI from '../Classes/UI';
+import Helper from '../Classes/Helper';
 
 export default class GameScene extends Scene {
     constructor() {
@@ -209,6 +209,8 @@ export default class GameScene extends Scene {
         let style = { font: '20px Arial', fill: '#fff' } 
         this.infoText = this.add.text(100, 360, "", style);  
         
+        this.helper = new Helper(this.scene);
+        
         this.ui = this.createUI(catchesRemaining, cash, totalFish, style);
         this.ui.setDepth(1)
 
@@ -217,8 +219,8 @@ export default class GameScene extends Scene {
         let shopZone = this.createNewZone(0, 90, 180, 100);
         let homeZone = this.createNewZone(900, 90, 180, 100);
 
-        let fisherman = this.physics.add.sprite(500, 60, 'fisherman');
-        fisherman.setScale(0.3, 0.3);
+        this.fisherman = this.physics.add.sprite(500, 60, 'fisherman');
+        this.fisherman.setScale(0.3, 0.3);
                 
         this.shop = this.physics.add.sprite(90, 70, 'shop');
         this.shopKeeper = this.physics.add.sprite(100, 150, 'shopKeeper', 8);        
@@ -247,6 +249,16 @@ export default class GameScene extends Scene {
         
         this.physics.add.collider(this.player, this.home);            
         this.physics.add.overlap(this.player, homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false;});                  
+
+        var tween = this.tweens.add({
+            targets: this.shopKeeper,
+            x: this.shopKeeper.x + 1,               // '+=100'
+            y: this.shopKeeper.y + 0.5,               // '+=100'
+            ease: 'Linear',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
+            duration: 1500,
+            repeat: -1,            // -1: infinity
+            yoyo: true
+        });
     }
     
     spawnCoins() {
@@ -268,7 +280,7 @@ export default class GameScene extends Scene {
     }
 
     update() {    
-        
+                
         let catchesLeft = this.playerInfo.catchesRemainingForTheDay 
         let cash = this.playerInfo.cash  
         let totalFish = this.playerInventory.fish.length
