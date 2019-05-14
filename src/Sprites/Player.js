@@ -4,6 +4,7 @@ import Game from '../Scenes/GameScene'
 import UI from '../Classes/UI';
 
 export default class Player extends Entity {
+    
     constructor(scene, x, y, key) {        
         super(scene, x, y, key, "Player");
         
@@ -13,7 +14,7 @@ export default class Player extends Entity {
         this.body.moves = true;  
         // this.play("sprPlayer");
 
-        /* The player object */
+        /* The player object */        
         this.info = {
             name: "TommyCakes",
             level: 1,    
@@ -38,7 +39,9 @@ export default class Player extends Entity {
                 ]
             }
         }
-
+        console.log(this.loadGame());
+        let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
+        
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
 
@@ -162,7 +165,8 @@ export default class Player extends Entity {
     }
         
     collectFish() {               
-        if (this.checkForFish()) {            
+        if (this.checkForFish()) {   
+            this.on('tryForFish', () => 'press space to catch the fish!');         
             this.info.inventory.fish.push('fish');        
             this.createAndfadeOutUI('you caught a fish!');
             console.log(this.info)    
@@ -206,7 +210,7 @@ export default class Player extends Entity {
     fishing(player) {                   
         this.spawnBobble();
         // TODO: Add more random amount of time to catch fish
-        // Better rod = faster catch time && cooldown
+        // Better rod = faster catch time && cooldown                
         this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.decreaseCatchesRemaining, [], this);                                                                                                      
     }
 
@@ -221,6 +225,14 @@ export default class Player extends Entity {
         this.info.catchesRemainingForTheDay = getRandomIntBetween(10);
     }    
     
+    saveGame() {
+        localStorage.setItem('save', JSON.stringify(this.info))
+    }
+
+    loadGame() {
+        return JSON.parse(localStorage.getItem('save'));
+    }
+
     sleep(bool) {
         if (bool) {
             this.info.catchesRemainingForTheDay = 0;
@@ -228,7 +240,8 @@ export default class Player extends Entity {
             
             this.scene.cameras.main.fadeOut(250, 0, 0, 0)                                      
 
-            this.scene.time.delayedCall(1000, function() {    
+            this.scene.time.delayedCall(1000, function() {   
+                this.saveGame();
                 this.scene.cameras.main.resetFX();  
                 console.log('here2')                
             }, [], this);                                                                      

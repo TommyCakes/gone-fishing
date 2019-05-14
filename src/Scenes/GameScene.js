@@ -178,7 +178,7 @@ export default class GameScene extends Scene {
         this.player = new Player(
             this,
             // 230,
-            1200,
+            1000,
             230,
             "sprPlayer"
         );
