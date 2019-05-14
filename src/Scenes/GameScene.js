@@ -164,10 +164,10 @@ export default class GameScene extends Scene {
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.cursors = this.input.keyboard.createCursorKeys();            
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-        this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        this.canFish = true;
+        this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         let world = this.physics.add.group({
             key: 'bg',
@@ -317,7 +317,7 @@ export default class GameScene extends Scene {
             this.fadeInfo();
         }
 
-        if (this.player.info.catchesRemainingForTheDay >= 0 && this.canFish) {             
+        if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
             if (this.cooldown > 0) {                
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {                
@@ -365,17 +365,17 @@ export default class GameScene extends Scene {
                                                 
         this.player.update();
         
-        if (this.keyW.isDown) {
+        if (this.keyW.isDown || this.cursors.up.isDown ) {
             this.player.moveUp();
             this.player.anims.play('up', true);               
-        } else if (this.keyS.isDown) {
+        } else if (this.keyS.isDown || this.cursors.down.isDown) {
             this.player.moveDown();
             this.player.anims.play('down', true);
-        } else if (this.keyA.isDown) {
+        } else if (this.keyA.isDown || this.cursors.left.isDown) {
             this.player.moveLeft();
             this.player.flipX = false;
             this.player.anims.play('left', true);
-        } else if (this.keyD.isDown) {
+        } else if (this.keyD.isDown || this.cursors.right.isDown) {
             this.player.moveRight();
             this.player.anims.play('right', true);
         } else {     
