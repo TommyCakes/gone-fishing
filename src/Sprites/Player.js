@@ -210,8 +210,13 @@ export default class Player extends Entity {
         this.splash.anims.play('catch', true);
     }
 
+    decreaseCatchesRemaining() {      
+        this.info.catchesRemainingForTheDay -= 1;                   
+    }
+
     fishing(player) {                   
         this.spawnBobble();
+        this.decreaseCatchesRemaining();
         // TODO: Add more random amount of time to catch fish
         // Better rod = faster catch time && cooldown                
         this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.collectFish, [], this);                                                                                                      

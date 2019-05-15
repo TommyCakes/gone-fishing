@@ -102,6 +102,14 @@ export default class GameScene extends Scene {
         this.player.body.velocity.y = 0;
     }
 
+    createNewZone(x, y, w, h) {
+        this.zone = this.add.zone(x, y).setSize(w, h);
+        // this.zone.body.setCircle(45)
+        this.physics.world.enable(this.zone, 0);
+        this.zone.body.moves = false;
+        return this.zone;
+    }
+
     create() {    
 
         // Setup timer
@@ -160,46 +168,78 @@ export default class GameScene extends Scene {
         worldLayer.setCollisionByProperty({ collides: true });
         // worldLayer.setCollisionByProperty({ collides: true });
         
+        
+        
+        this.lakeZone = this.createNewZone(0, 0, 70, 900);
+        let lakes = this.add.group(this.lakeZone1);
+        this.physics.add.overlap(this.player, this.lakeZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
+        
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(0, -100);
-        // this.cameras.main.zoom = 4;
+        this.cameras.main.zoom = 3;
         this.physics.add.collider(this.player, worldLayer);
-        this.physics.add.collider(this.player, waterLayer);   
-        this.events.emit('updateUI', this.playerInfo);                        
+        this.physics.add.collider(this.player, waterLayer);           
+        this.events.emit('updateUI', this.playerInfo);       
+        
+        this.catchesRemaining = this.playerInfo.catchesRemainingForTheDay 
+        this.cash = this.playerInfo.cash 
+        this.totalFish = this.playerInventory.fish.length
+
+        this.shopObj = new Shop();
+        this.canFish = true;
+        this.canShop = true;
+        this.canSleep = true;
     }  
         
     update() {    
                    
         this.player.body.setVelocity(0)                                        
         this.player.update();
-                
-        // if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
-            if (this.cooldown > 0) {                
+        
+        if (this.player.body.embedded) this.player.body.touching.none = false;
+        let touching = !this.player.body.touching.none;
+        let wasTouching = !this.player.body.wasTouching.none;
+
+        if (touching && !wasTouching) {
+        } else if (!touching && wasTouching) { 
+            this.isShopping = false; 
+            this.canShop = true; 
+            this.isFishing = false;
+            this.canFish = true;                 
+            this.isSleeping = false;
+            this.canSleep = true;                 
+        }
+         
+        if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
+            if (this.cooldown > 0) {                            
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {                
                 this.toggleKeyboard(true);                
                 this.timer.paused = true;                                 
-                if (this.keySpace.isDown) {                                     
-                    // if (touching && wasTouching) {  
-                    //     this.player.anims.stop(); 
+                if (this.keySpace.isDown) {                                                           
+                    if (touching && wasTouching) {  
+                        this.events.emit('updateUI', this.playerInfo);  
+                        this.player.anims.stop(); 
                         this.toggleKeyboard(false);  
                         console.log(this.player.body);   
-                        // if (this.player.x - this.lake.x > 0) {
-                        //     console.log('facing left');
-                        //     this.player.flipX = true;
-                        // } else if (this.player.x - this.lake.x < 0) {
-                        //     this.player.flipX = false;
-                        // }                                             
+                        if (this.player.x - this.lakeZone.x > 0) {
+                            console.log('facing left');
+                            this.player.flipX = true;
+                        } else if (this.player.x - this.lake.x < 0) {
+                            this.player.flipX = false;
+                        }                                             
                         this.player.anims.play('fish', true); 
                         console.log('is fishing!')  
                         this.timer.paused = false;                                                                 
-                        this.player.fishing();                                    
-                        this.cooldown = this.FISHING_COOLDOWN_DELAY;                     
+                        this.player.fishing();                                                                                    
+                        this.events.emit('updateUI', this.playerInfo);   
+                        this.cooldown = this.FISHING_COOLDOWN_DELAY; 
+                    }                    
                 }                                                                                              
             } 
-        //     }
-        // } 
+        }
+        
 
         if (this.keyW.isDown || this.cursors.up.isDown ) {
             this.player.moveUp();
@@ -208,11 +248,12 @@ export default class GameScene extends Scene {
             this.player.moveDown();
             this.player.anims.play('down', true);
         } else if (this.keyA.isDown || this.cursors.left.isDown) {
-            this.player.moveLeft();
-            this.player.flipX = false;
+            this.player.moveLeft();           
+            this.player.resetFlip(); 
             this.player.anims.play('left', true);
         } else if (this.keyD.isDown || this.cursors.right.isDown) {
             this.player.moveRight();
+            this.player.resetFlip();
             this.player.anims.play('right', true);
         } else {     
             this.player.anims.stop();
