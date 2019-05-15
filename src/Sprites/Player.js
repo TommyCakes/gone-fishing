@@ -112,7 +112,6 @@ export default class Player extends Entity {
 
     createAndfadeOutUI(text) {                
         let ui = this.helper.createNewUI(text);
-        ui.removeUI();
         this.scene.time.delayedCall(2000, () => {                             
             ui.removeUI();
         }, [], this);

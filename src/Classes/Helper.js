@@ -12,6 +12,5 @@ export default class Helper {
             this.y,
             text,
         );
-    }
-
+    }    
 }
