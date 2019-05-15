@@ -57,6 +57,30 @@ export default class GameScene extends Scene {
         this.load.tilemapTiledJSON("map", "../assets/fishing-map.json");
     }
 
+    createUI(catches, cash, fishAmount, style) {
+        this.ui = this.add.group();
+        this.uiBg = this.add.rectangle(0, 20, 700, 80, '0x000000', 0.5).setScrollFactor(0);  
+
+        this.money = this.add.text(32, 20, cash, style).setScrollFactor(0);
+        this.moneyIcon = this.add.sprite(this.money.x - 16, this.money.y + 16, 'goldCoin', 2).setScrollFactor(0);                     
+
+        this.catchesRemainingText = this.add.text(200, 20, `Left: ${catches}`, style).setScrollFactor(0);                                               
+        this.catchesIcon = this.add.image(this.catchesRemainingText.x - 22, this.catchesRemainingText.y + 8, 'rod').setScrollFactor(0);     
+        this.catchesIcon.setScale(0.7);
+
+        this.amountOfFish = this.add.text(123, 20, `${fishAmount}`, style).setScrollFactor(0);                                               
+        this.fishIcon = this.add.image(this.amountOfFish.x - 16, this.amountOfFish.y + 8, 'fish').setScrollFactor(0);     
+        this.fishIcon.setScale(0.4);
+
+        this.ui.add(this.uiBg);
+        this.ui.add(this.money);
+        this.ui.add(this.moneyIcon);
+        this.ui.add(this.catchesRemainingText);
+        this.ui.add(this.catchesIcon);
+        this.ui.add(this.amountOfFish);
+        this.ui.add(this.fishIcon);
+        return this.ui;
+    }
 
     create() {                            
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -109,7 +133,11 @@ export default class GameScene extends Scene {
         this.player.setScale(0.5);     
         this.player.body.setCircle(16, 16);
         this.player.body.setOffset(16, 16);
-    
+        
+        this.cameras.main.startFollow(this.player);
+        this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
+        this.cameras.main.setFollowOffset(0, -100);
+        this.cameras.main.zoom = 4;
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.player, waterLayer);
     }  
