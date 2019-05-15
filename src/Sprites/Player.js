@@ -38,9 +38,9 @@ export default class Player extends Entity {
                 outfits: [
                     
                 ]
-            }
+            }            
         }
-        console.log(this.loadGame());
+        // console.log(this.loadGame());
         let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
         
         let style = { font: '20px Arial', fill: '#fff' }         
@@ -93,14 +93,22 @@ export default class Player extends Entity {
         }),
             frameRate: 10,
             repeat: -1
-        });          
+        });     
+        
+        this.displayOriginX = 0; 
+        this.displayOriginY = 0; 
+        this.displayWidth = 16;
+        this.displayheight = 16;
+        this.setScale(0.5);     
+        this.body.setCircle(16, 16);
+        this.body.setOffset(16, 16);
     }
     
-    fadeInfo() {
-        this.time.delayedCall(1000, () => {                             
-            this.infoText.visible = false;
-        }, [], this);
-    }
+    // fadeInfo() {
+    //     this.time.delayedCall(1000, () => {                             
+    //         this.infoText.visible = false;
+    //     }, [], this);
+    // }
 
     createAndfadeOutUI(text) {                
         let ui = this.helper.createNewUI(text);
@@ -154,7 +162,7 @@ export default class Player extends Entity {
             fishCaught = true;
         }
         this.bobble.destroy();
-        this.scene.cameras.main.shake(100, 0.01, 0.01),
+        // this.scene.cameras.main.shake(100, 0.01, 0.01),
         this.spawnSplash();
         return fishCaught;
     }
@@ -169,14 +177,15 @@ export default class Player extends Entity {
             console.log(this.info)
         }
         // this.caughtFish = true;  
+        this.splash.destroy();
         this.scene.time.delayedCall(200, () => {             
-            this.splash.destroy();
+            // this.splash.destroy();
         }, [], this);                                                                                                              
-        this.scene.fadeInfo();       
+        // this.scene.fadeInfo();       
     }
     
     spawnBobble() {
-        this.bobble = this.scene.add.sprite(500, 200, 'fishingBobble');                                         
+        this.bobble = this.scene.add.sprite(this.x - 50, this.y, 'fishingBobble');                                         
         this.bobble.visible = true; 
         this.scene.anims.create({
             key: 'bob',
@@ -205,12 +214,7 @@ export default class Player extends Entity {
         this.spawnBobble();
         // TODO: Add more random amount of time to catch fish
         // Better rod = faster catch time && cooldown                
-        this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.decreaseCatchesRemaining, [], this);                                                                                                      
-    }
-
-    decreaseCatchesRemaining() {        
-        this.info.catchesRemainingForTheDay -= 1;
-        this.collectFish();
+        this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.collectFish, [], this);                                                                                                      
     }
 
     setRandomCatchAttempts() {

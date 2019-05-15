@@ -56,7 +56,7 @@
          "name":"BP",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":50,
          "x":0,
          "y":0
@@ -68,13 +68,88 @@
          "name":"W",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":50,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":22,
+         "name":"Overlap",
+         "objects":[
+                {
+                 "height":0,
+                 "id":9,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":-16.0320641282565,
+                         "y":0
+                        }, 
+                        {
+                         "x":-16.0320641282565,
+                         "y":-47.0941883767535
+                        }, 
+                        {
+                         "x":30.060120240481,
+                         "y":-47.5951903807616
+                        }, 
+                        {
+                         "x":29.0581162324649,
+                         "y":0.501002004008001
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":241.482965931864,
+                 "y":287.575150300601
+                }, 
+                {
+                 "height":0,
+                 "id":11,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":16.5330661322645,
+                         "y":1.002004008016
+                        }, 
+                        {
+                         "x":15.5310621242485,
+                         "y":80.6613226452906
+                        }, 
+                        {
+                         "x":-17.5350701402806,
+                         "y":80.6613226452906
+                        }, 
+                        {
+                         "x":-16.0320641282565,
+                         "y":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":48.5971943887776,
+                 "y":287.575150300601
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":false,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":22,
- "nextobjectid":1,
+ "nextlayerid":23,
+ "nextobjectid":13,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.2.3",

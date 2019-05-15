@@ -3,15 +3,20 @@ import Player from "../Sprites/Player";
 import Lake from '../Sprites/Lake';
 import Shop from '../Classes/Shop';
 import Helper from '../Classes/Helper';
+import MainUI from '../Scenes/MainUIScene';
 
 export default class GameScene extends Scene {
+
+    init() {              
+    }
+
     constructor() {
-        super('Game');
+        super('Game');        
     }
 
     preload() {
-        this.load.image('fish', 'assets/fish.png');
-        this.load.image('rod', 'assets/fishing_rod.png');
+        // this.load.image('fish', 'assets/fish.png');
+        // this.load.image('rod', 'assets/fishing_rod.png');
         this.load.image('fisherman', 'assets/fisherman.png');
         this.load.image('water', 'assets/water.png');
         this.load.image('shop', 'assets/shop.png');
@@ -48,13 +53,19 @@ export default class GameScene extends Scene {
             frameWidth: 32, 
             frameHeight: 32 
         });
-        this.load.spritesheet('goldCoin', 'assets/coin_gold.png', { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
+        // this.load.spritesheet('goldCoin', 'assets/coin_gold.png', { 
+        //     frameWidth: 32, 
+        //     frameHeight: 32 
+        // });
 
         this.load.image("tiles", "../assets/overworld.png");
         this.load.tilemapTiledJSON("map", "../assets/fishing-map.json");
+    }
+
+    updateTime() {                
+        this.cooldown -= 1;  
+        // let stepWidth = this.barMask.displayWidth / this.FISHING_COOLDOWN_DELAY;
+        // this.barMask.x -= stepWidth;        
     }
 
     createUI(catches, cash, fishAmount, style) {
@@ -82,64 +93,80 @@ export default class GameScene extends Scene {
         return this.ui;
     }
 
-    create() {                            
+    toggleKeyboard(bool) {
+        this.keyW.enabled = bool;
+        this.keyS.enabled = bool;
+        this.keyA.enabled = bool;
+        this.keyD.enabled = bool;
+        this.player.body.velocity.x = 0;
+        this.player.body.velocity.y = 0;
+    }
+
+    create() {    
+
+        // Setup timer
+        this.FISHING_COOLDOWN_DELAY = 2;
+        this.cooldown = 0;
+        this.second = 1000;
+        
+        this.timer = this.time.addEvent({
+            delay: this.second * this.FISHING_COOLDOWN_DELAY,                
+            callback: this.updateTime,
+            callbackScope: this,
+            loop: true
+        });      
+        
+        this.timer.paused = false;
+
+        // Setup input keys                                
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.cursors = this.input.keyboard.createCursorKeys();            
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
+        
+        this.player = new Player(
+            this,
+            120,
+            // 1000,
+            230,
+            "sprPlayer"
+        );
+        
+        this.playerInfo = this.player.getInfo();
+        this.playerInventory = this.player.getInventory();               
+        this.player.setDepth(1)
+        
+        // Load map
         const map = this.make.tilemap({ key: "map" });
         const tileset = map.addTilesetImage("overworld", "tiles");
 
         console.log(this.cache.tilemap.get('map').data);
 
-        const waterLayer = map.createStaticLayer("Water", tileset, 0, 0);
+        const waterLayer = map.createStaticLayer("Water", tileset, 0, 0);        
+        // console.log(overlapObjects);
+        // this.waterGroup = this.physics.add.staticGroup(overlapObjects);
+
         const belowLayer = map.createStaticLayer("BP", tileset, 0, 0);        
         const worldLayer = map.createStaticLayer("W", tileset, 0, 0);
+        const waterOverlap = map.createFromObjects("Overlap", 'fish');
+
+
         // const aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
 
         waterLayer.setCollisionByProperty({ collides: true });
         worldLayer.setCollisionByProperty({ collides: true });
         // worldLayer.setCollisionByProperty({ collides: true });
-
-        // const debugGraphics = this.add.graphics().setAlpha(0.75);
-        // worldLayer.renderDebug(debugGraphics, {
-        // tileColor: null, // Color of non-colliding tiles
-        // collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-        // faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-        // });
-
-        // waterLayer.renderDebug(debugGraphics, {
-        // tileColor: null, // Color of non-colliding tiles
-        // collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-        // faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-        // });
-
-        this.player = new Player(
-            this,
-            230,
-            // 1000,
-            230,
-            "sprPlayer"
-        );
-        this.player.displayOriginX = 0; 
-        this.player.displayOriginY = 0; 
-        this.player.displayWidth = 16;
-        this.player.displayheight = 16;
-        this.player.setScale(0.5);     
-        this.player.body.setCircle(16, 16);
-        this.player.body.setOffset(16, 16);
         
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(0, -100);
-        this.cameras.main.zoom = 4;
+        // this.cameras.main.zoom = 4;
         this.physics.add.collider(this.player, worldLayer);
-        this.physics.add.collider(this.player, waterLayer);
+        this.physics.add.collider(this.player, waterLayer);   
+        this.events.emit('updateUI', this.playerInfo);                        
     }  
         
     update() {    
@@ -147,6 +174,33 @@ export default class GameScene extends Scene {
         this.player.body.setVelocity(0)                                        
         this.player.update();
                 
+        // if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
+            if (this.cooldown > 0) {                
+                this.timer.paused = false;             
+            } else if (this.cooldown === 0) {                
+                this.toggleKeyboard(true);                
+                this.timer.paused = true;                                 
+                if (this.keySpace.isDown) {                                     
+                    // if (touching && wasTouching) {  
+                    //     this.player.anims.stop(); 
+                        this.toggleKeyboard(false);  
+                        console.log(this.player.body);   
+                        // if (this.player.x - this.lake.x > 0) {
+                        //     console.log('facing left');
+                        //     this.player.flipX = true;
+                        // } else if (this.player.x - this.lake.x < 0) {
+                        //     this.player.flipX = false;
+                        // }                                             
+                        this.player.anims.play('fish', true); 
+                        console.log('is fishing!')  
+                        this.timer.paused = false;                                                                 
+                        this.player.fishing();                                    
+                        this.cooldown = this.FISHING_COOLDOWN_DELAY;                     
+                }                                                                                              
+            } 
+        //     }
+        // } 
+
         if (this.keyW.isDown || this.cursors.up.isDown ) {
             this.player.moveUp();
             this.player.anims.play('up', true);               
