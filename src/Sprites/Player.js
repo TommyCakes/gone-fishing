@@ -9,7 +9,7 @@ export default class Player extends Entity {
     constructor(scene, x, y, key) {        
         super(scene, x, y, key, "Player");
         
-        this.setData("speed", 200);
+        this.setData("speed", 100);
         this.setData("isFishing", false);
         this.setData("timerFishingDelay", 5000);
         this.body.moves = true;  
@@ -48,6 +48,7 @@ export default class Player extends Entity {
 
         this.helper = new Helper(this.scene);
 
+        // this.setScale(0.5);        
         this.scene.anims.create({
             key: 'left',
             frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 11
