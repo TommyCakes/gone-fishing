@@ -5,7 +5,7 @@ export default class UI extends Phaser.GameObjects.Image {
         this.scene.add.existing(this);
 
         let style = { font: '13px Arial', fill: '#fff', align: 'center' }                 
-        this.container = this.scene.add.container(330, 160);
+        this.container = this.scene.add.container(this.x, 160);
         this.uiBackground = this.scene.add.image(this.container.x, this.container.y, 'panel').setScrollFactor(0);  
         this.uiBackground.setOrigin(0.5, 0.5)
         this.brownPanel = this.scene.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 10, 'brownPanel').setScrollFactor(0);  
@@ -15,6 +15,7 @@ export default class UI extends Phaser.GameObjects.Image {
         this.brownPanel.displayWidth = 375;           
         this.uiBackground.displayHeight = 80;
         this.text.setOrigin(0.5, 0.5);   
+        this.container.setDepth(1);
         this.container.add([ this.uiBackground, this.brownPanel, this.text]);            
     }
 

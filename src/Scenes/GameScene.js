@@ -180,11 +180,13 @@ export default class GameScene extends Scene {
         
         
         this.lakeZone = this.createNewZone(0, 0, 70, 900);
-        this.shopZone = this.createNewZone(120, 60, 60, 50);        
+        this.homeZone = this.createNewZone(120, 60, 60, 50);        
+        this.shopZone = this.createNewZone(380, 420, 120, 80);        
         // let lakes = this.add.group(this.lakeZone);
 
         this.physics.add.overlap(this.player, this.lakeZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
-        this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canShop = false; this.canFish = false;});            
+        this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false;});            
+        this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false;});            
         
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
@@ -269,7 +271,9 @@ export default class GameScene extends Scene {
                     }                    
                 }                                                                                              
             } 
-        } else if (this.canShop) {
+        } 
+        
+        if (this.canShop) {
             if (this.cooldown > 0) {
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {                                                    
@@ -281,10 +285,11 @@ export default class GameScene extends Scene {
                         this.toggleKeyboard(false);
                         this.timer.paused = false;   
                         this.shopObj.sellAllFish(this.player);
+                        this.events.emit('updateUI', this.playerInfo); 
                         this.cooldown = this.FISHING_COOLDOWN_DELAY; 
                         // this.coins = this.spawnCoins();
-                        this.infoText.setText(`You sold a total of ${this.player.info.inventory.fish.length} fish!`); 
-                        this.fadeInfo();
+                        // this.infoText.setText(`You sold a total of ${this.player.info.inventory.fish.length} fish!`); 
+                        // this.fadeInfo();
                     }
                 }
             }                     

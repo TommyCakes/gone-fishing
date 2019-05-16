@@ -102,6 +102,8 @@ export default class Player extends Entity {
         this.setScale(0.5);     
         this.body.setCircle(16, 16);
         this.body.setOffset(16, 16);
+
+        this.createAndfadeOutUI('You caught yourself a "INSERT_FISH!"');
     }
     
     // fadeInfo() {
@@ -111,7 +113,7 @@ export default class Player extends Entity {
     // }
 
     createAndfadeOutUI(text) {                
-        let ui = this.helper.createNewUI(text);
+        let ui = this.helper.createNewUI(text, this.scene.cameras.main.centerOn(0, 0), this.y);        
         this.scene.time.delayedCall(2000, () => {                             
             ui.removeUI();
         }, [], this);
