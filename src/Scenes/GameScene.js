@@ -3,7 +3,6 @@ import Player from "../Sprites/Player";
 import Lake from '../Sprites/Lake';
 import Shop from '../Classes/Shop';
 import Helper from '../Classes/Helper';
-import MainUI from '../Scenes/MainUIScene';
 
 export default class GameScene extends Scene {
 
@@ -111,14 +110,12 @@ export default class GameScene extends Scene {
 
     createNewZone(x, y, w, h) {
         this.zone = this.add.zone(x, y).setSize(w, h);
-        // this.zone.body.setCircle(45)
         this.physics.world.enable(this.zone, 0);
         this.zone.body.moves = false;
         return this.zone;
     }
 
     create() {    
-
         this.helper = new Helper(this.scene);
 
         // Setup timer
@@ -162,7 +159,6 @@ export default class GameScene extends Scene {
 
         const waterLayer = map.createStaticLayer("Water", tileset, 0, 0);        
 
-
         const belowLayer = map.createStaticLayer("BP", tileset, 0, 0);        
         const worldLayer = map.createStaticLayer("W", tileset, 0, 0);
         const waterOverlap = map.createFromObjects("Overlap", 'fish');
@@ -190,10 +186,10 @@ export default class GameScene extends Scene {
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(0, -100);
-        // this.cameras.main.zoom = 3;
+        this.cameras.main.zoom = 3;
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.player, waterLayer);           
-        this.events.emit('updateUI', this.playerInfo);       
+        this.events.emit('updateUI', this.playerInfo, this.cameras.main);               
         
         this.catchesRemaining = this.playerInfo.catchesRemainingForTheDay 
         this.cash = this.playerInfo.cash 
@@ -205,8 +201,7 @@ export default class GameScene extends Scene {
         this.canSleep = true;
     }  
         
-    update() {    
-                   
+    update() {                       
         this.player.body.setVelocity(0)                                        
         this.player.update();
         
@@ -248,10 +243,11 @@ export default class GameScene extends Scene {
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {                
                 this.toggleKeyboard(true);                
-                this.timer.paused = true;                                 
+                this.timer.paused = true;                               
                 if (this.keySpace.isDown) {                                                           
                     if (touching && wasTouching) {  
                         this.events.emit('updateUI', this.playerInfo);  
+                        this.events.emit('showUIPopup', "You cast your rod out into the sea...");                          
                         this.player.anims.stop(); 
                         this.toggleKeyboard(false);  
                         if (this.player.x - this.lakeZone.x > 0) {
@@ -259,8 +255,7 @@ export default class GameScene extends Scene {
                         } else if (this.player.x - this.lake.x < 0) {
                             this.player.flipX = false;
                         }                                             
-                        this.player.anims.play('fish', true); 
-                        console.log('is fishing!')  
+                        this.player.anims.play('fish', true);  
                         this.timer.paused = false;                                                                 
                         this.player.fishing();                                                                                    
                         this.events.emit('updateUI', this.playerInfo);   
@@ -270,18 +265,22 @@ export default class GameScene extends Scene {
             } 
         } 
         
-        if (this.canShop) {
+        if (this.canShop) {         
             if (this.cooldown > 0) {
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {                                                    
                 this.toggleKeyboard(true);
-                this.timer.paused = true; 
+                this.timer.paused = true;                 
                 if (this.keySpace.isDown) {
-                    if (touching && wasTouching) { 
+                    if (touching && wasTouching) {                         
                         this.player.anims.stop();
                         this.toggleKeyboard(false);
                         this.timer.paused = false;   
+                        if (this.player.info.inventory.fish === 0) {
+                            this.events.emit('showUIPopup', `You have no fish to sell, go and catch some!`); 
+                        }
                         this.shopObj.sellAllFish(this.player);
+                        this.events.emit('showUIPopup', `You sold a total of ${this.player.info.inventory.fish.length} fish!`); 
                         this.events.emit('updateUI', this.playerInfo); 
                         this.cooldown = this.FISHING_COOLDOWN_DELAY; 
                         // this.coins = this.spawnCoins();

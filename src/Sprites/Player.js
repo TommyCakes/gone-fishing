@@ -170,13 +170,15 @@ export default class Player extends Entity {
     collectFish() {               
         if (this.checkForFish()) {   
             this.info.inventory.fish.push('fish');        
-            this.createAndfadeOutUI('You caught yourself a "INSERT_FISH!"');            
+            this.createAndfadeOutUI('You caught yourself a "INSERT_FISH!"'); 
+            this.scene.events.emit('showUIPopup', "You caught yourself a 'INSERT_FISH!'");           
         } else {
-            this.createAndfadeOutUI('Unlucky your line came up empty...');            
+            this.createAndfadeOutUI('Unlucky your line came up empty...');   
+            this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }
         // this.caughtFish = true;  
         this.splash.destroy();
-        console.log(this.info)
+        console.log(this.info)        
         this.scene.time.delayedCall(200, () => {             
             // this.splash.destroy();
         }, [], this);                                                                                                              
