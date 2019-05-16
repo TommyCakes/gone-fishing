@@ -161,8 +161,7 @@ export default class GameScene extends Scene {
         const tileset = map.addTilesetImage("overworld", "tiles");
 
         const waterLayer = map.createStaticLayer("Water", tileset, 0, 0);        
-        // console.log(overlapObjects);
-        // this.waterGroup = this.physics.add.staticGroup(overlapObjects);
+
 
         const belowLayer = map.createStaticLayer("BP", tileset, 0, 0);        
         const worldLayer = map.createStaticLayer("W", tileset, 0, 0);
@@ -172,7 +171,6 @@ export default class GameScene extends Scene {
 
         waterLayer.setCollisionByProperty({ collides: true });
         worldLayer.setCollisionByProperty({ collides: true });
-        // worldLayer.setCollisionByProperty({ collides: true });
                         
         this.lakeZone = this.createNewZone(0, 0, 70, 900);
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
@@ -256,9 +254,7 @@ export default class GameScene extends Scene {
                         this.events.emit('updateUI', this.playerInfo);  
                         this.player.anims.stop(); 
                         this.toggleKeyboard(false);  
-                        console.log(this.player.body);   
                         if (this.player.x - this.lakeZone.x > 0) {
-                            console.log('facing left');
                             this.player.flipX = true;
                         } else if (this.player.x - this.lake.x < 0) {
                             this.player.flipX = false;

@@ -25,7 +25,6 @@ export default class MainUIScene extends Scene {
 
     
     updateUI (data) {
-        console.log(data);
         let fishAmount = data.inventory.fish.length;
         let cash = data.cash;
         let catches = data.catchesRemainingForTheDay;

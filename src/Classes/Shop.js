@@ -4,12 +4,11 @@ export default class Shop {
     }
 
     sellAllFish(player) {
-        console.log(player.info.inventory.fish);
         let fishToSell = player.info.inventory.fish;
         for (let i = 0; i < fishToSell.length; i += 1) {
             this.sellFish(player);        
         }
-        console.log(player.info);
+    
         player.info.inventory.fish.length = 0;
 
         

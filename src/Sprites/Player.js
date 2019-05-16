@@ -40,7 +40,6 @@ export default class Player extends Entity {
                 ]
             }            
         }
-        // console.log(this.loadGame());
         let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
         
         let style = { font: '20px Arial', fill: '#fff' }         
@@ -171,14 +170,13 @@ export default class Player extends Entity {
     collectFish() {               
         if (this.checkForFish()) {   
             this.info.inventory.fish.push('fish');        
-            this.createAndfadeOutUI('You caught yourself a "INSERT_FISH!"');
-            console.log(this.info)    
+            this.createAndfadeOutUI('You caught yourself a "INSERT_FISH!"');            
         } else {
-            this.createAndfadeOutUI('Unlucky your line came up empty...');
-            console.log(this.info)
+            this.createAndfadeOutUI('Unlucky your line came up empty...');            
         }
         // this.caughtFish = true;  
         this.splash.destroy();
+        console.log(this.info)
         this.scene.time.delayedCall(200, () => {             
             // this.splash.destroy();
         }, [], this);                                                                                                              
@@ -246,8 +244,7 @@ export default class Player extends Entity {
 
             this.scene.time.delayedCall(1000, function() {   
                 this.saveGame();
-                this.scene.cameras.main.resetFX();  
-                console.log('here2')                
+                this.scene.cameras.main.resetFX();        
             }, [], this);                                                                      
         } 
         this.createAndfadeOutUI("You fall asleep and dream of tiny goats wearing tophats...");
