@@ -175,18 +175,21 @@ export default class Player extends Entity {
         } else {
             this.createAndfadeOutUI('Unlucky your line came up empty...');   
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
-        }
-        // this.caughtFish = true;  
-        this.splash.destroy();
+        }        
         console.log(this.info)        
         this.scene.time.delayedCall(200, () => {             
-            // this.splash.destroy();
-        }, [], this);                                                                                                              
-        // this.scene.fadeInfo();       
+            this.splash.destroy();
+        }, [], this);                                                                                                                   
     }
     
-    spawnBobble() {
-        this.bobble = this.scene.add.sprite(this.x - 50, this.y, 'fishingBobble');                                         
+    spawnBobble(direction) {
+        if (direction === 'right') {
+            this.xPos = this.x + 50;
+        } else {
+            this.xPos = this.x - 50;aaa
+        }
+
+        this.bobble = this.scene.add.sprite(this.xPos, this.y, 'fishingBobble');                                         
         this.bobble.visible = true; 
         this.scene.anims.create({
             key: 'bob',
@@ -215,8 +218,8 @@ export default class Player extends Entity {
         this.info.catchesRemainingForTheDay -= 1;                   
     }
 
-    fishing(player) {                   
-        this.spawnBobble();
+    fishing(direction) {                   
+        this.spawnBobble(direction);
         this.decreaseCatchesRemaining();
         // TODO: Add more random amount of time to catch fish
         // Better rod = faster catch time && cooldown                

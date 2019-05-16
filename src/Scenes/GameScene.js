@@ -167,19 +167,23 @@ export default class GameScene extends Scene {
 
         waterLayer.setCollisionByProperty({ collides: true });
         worldLayer.setCollisionByProperty({ collides: true });
-                        
-        this.lakeZone = this.createNewZone(0, 0, 70, 900);
+        
+        this.waterAreas = this.physics.add.group();
+        this.waterZone = this.createNewZone(0, 0, 70, 900);
+        this.waterZone2 = this.createNewZone(230, 200, 130, 160);
+
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
-        // let lakes = this.add.group(this.lakeZone);
-
+        this.waterAreas.addMultiple([this.waterZone, this.waterZone2]) ;
+        
         this.shopKeeper = this.physics.add.sprite(this.shopZone.x + this.shopZone.width / 2, this.shopZone.y + 20, 'shopKeeper', 8); 
         this.shopKeeper.body.moves = false;
         this.shopKeeper.body.setCircle(25);        
         this.shopKeeper.setScale(0.5); 
         this.physics.add.collider(this.player, this.shopKeeper);  
 
-        this.physics.add.overlap(this.player, this.lakeZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
+        this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
+        this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
         this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false;});            
         this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false;});            
         
@@ -242,22 +246,24 @@ export default class GameScene extends Scene {
             if (this.cooldown > 0) {                            
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {                
-                this.toggleKeyboard(true);                
-                this.timer.paused = true;                               
+                this.toggleKeyboard(true)                                
                 if (this.keySpace.isDown) {                                                           
                     if (touching && wasTouching) {  
                         this.events.emit('updateUI', this.playerInfo);  
-                        this.events.emit('showUIPopup', "You cast your rod out into the sea...");                          
+                        this.events.emit('showUIPopup', "You cast your rod out into the water...");                          
                         this.player.anims.stop(); 
                         this.toggleKeyboard(false);  
-                        if (this.player.x - this.lakeZone.x > 0) {
-                            this.player.flipX = true;
-                        } else if (this.player.x - this.lake.x < 0) {
+                        let playerDirection;
+                        if (this.player.x - this.waterZone.x > 0 || this.player.x - this.waterZone2.x > 0) {
                             this.player.flipX = false;
+                            playerDirection = 'right';
+                        } else if (this.player.x - this.waterZone.x < 0 || this.player.x - this.waterZone2.x < 0) {
+                            this.player.flipX = true;
+                            playerDirection = 'left';
                         }                                             
                         this.player.anims.play('fish', true);  
                         this.timer.paused = false;                                                                 
-                        this.player.fishing();                                                                                    
+                        this.player.fishing(playerDirection);                                                                                    
                         this.events.emit('updateUI', this.playerInfo);   
                         this.cooldown = this.FISHING_COOLDOWN_DELAY; 
                     }                    
