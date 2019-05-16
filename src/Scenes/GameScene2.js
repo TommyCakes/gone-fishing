@@ -113,31 +113,6 @@ export default class GameScene extends Scene {
         return this.uiPanel;               
     }
 
-    createUI(catches, cash, fishAmount, style) {
-        this.ui = this.add.group();
-        this.uiBg = this.add.rectangle(0, 20, 700, 80, '0x000000', 0.5).setScrollFactor(0);  
-
-        this.money = this.add.text(32, 20, cash, style).setScrollFactor(0);
-        this.moneyIcon = this.add.sprite(this.money.x - 16, this.money.y + 16, 'goldCoin', 2).setScrollFactor(0);                     
-
-        this.catchesRemainingText = this.add.text(200, 20, `Left: ${catches}`, style).setScrollFactor(0);                                               
-        this.catchesIcon = this.add.image(this.catchesRemainingText.x - 22, this.catchesRemainingText.y + 8, 'rod').setScrollFactor(0);     
-        this.catchesIcon.setScale(0.7);
-
-        this.amountOfFish = this.add.text(123, 20, `${fishAmount}`, style).setScrollFactor(0);                                               
-        this.fishIcon = this.add.image(this.amountOfFish.x - 16, this.amountOfFish.y + 8, 'fish').setScrollFactor(0);     
-        this.fishIcon.setScale(0.4);
-
-        this.ui.add(this.uiBg);
-        this.ui.add(this.money);
-        this.ui.add(this.moneyIcon);
-        this.ui.add(this.catchesRemainingText);
-        this.ui.add(this.catchesIcon);
-        this.ui.add(this.amountOfFish);
-        this.ui.add(this.fishIcon);
-        return this.ui;
-    }
-
     create() {        
         this.FISHING_COOLDOWN_DELAY = 2;
         this.cooldown = 0;
@@ -159,96 +134,18 @@ export default class GameScene extends Scene {
             loop: true
         });      
         
-        this.timer.paused = false;
-        this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-        this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        this.cursors = this.input.keyboard.createCursorKeys();            
-        this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-
-        this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
-        let world = this.physics.add.group({
-            key: 'bg',
-            repeat: 4,
-            setXY: { x: 300, y: 300, stepX: 650 }
-        });
-
-        this.player = new Player(
-            this,
-            // 230,
-            1000,
-            230,
-            "sprPlayer"
-        );
+        this.timer.paused = false;          
         
-        this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         
-        this.lake = new Lake(
-            this,
-            500,
-            200,
-            "water"
-        );                
-        
-        this.shopObj = new Shop();
-        this.canFish = true;
-        this.canShop = true;
-        this.canSleep = true;
-        
-        this.playerInfo = this.player.getInfo();
-        this.playerInventory = this.player.getInventory();
-
-        let catchesRemaining = this.playerInfo.catchesRemainingForTheDay 
-        let cash = this.playerInfo.cash 
-        let totalFish = this.playerInventory.fish.length
-
-        // basic text feedback
-        let style = { font: '20px Arial', fill: '#fff' } 
-        this.infoText = this.add.text(100, 360, "", style);  
-        
-        this.helper = new Helper(this.scene);
-        
-        this.ui = this.createUI(catchesRemaining, cash, totalFish, style);
-        this.ui.setDepth(1)
-
-        // Zones
-        let lakeZone = this.createNewZone(400, 100, 200, 200);
-        let shopZone = this.createNewZone(0, 90, 180, 100);
-        let homeZone = this.createNewZone(900, 90, 180, 100);
 
         this.fisherman = this.physics.add.sprite(500, 60, 'fisherman');
         this.fisherman.setScale(0.3, 0.3);
                 
-        this.shop = this.physics.add.sprite(90, 70, 'shop');
-        this.shopKeeper = this.physics.add.sprite(100, 150, 'shopKeeper', 8);        
-        this.shop.body.moves = false;
-        this.shopKeeper.body.moves = false;
-        this.shopKeeper.body.setCircle(25);
-        
-        this.home = this.physics.add.sprite(1000, 70, 'home');
-        this.home.body.moves = false;
-
+    
         let chest = this.add.sprite(this.shop.x + -40, this.shop.y + 80, 'chests', 1);                                         
         let chest2 = this.add.sprite(this.shop.x -70, this.shop.y + 80, 'chests', 2);                                         
 
-        this.player.setDepth(1);
-        // energyContainer.setDepth(1);
-        // energyBar.setDepth(1);
-        this.player.body.setCircle(25);
-        let lakes = this.add.group(this.lake);
-        
-        this.physics.add.overlap(this.player, this.lake, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
-        this.physics.add.collider(this.player, lakeZone);    
-
-        this.physics.add.collider(this.player, this.shop);            
-        this.physics.add.overlap(this.player, shopZone, () => { this.isShopping = true; this.canFish = false; this.canSleep = false;});          
-        this.physics.add.collider(this.player, this.shopKeeper);  
-        
-        this.physics.add.collider(this.player, this.home);            
-        this.physics.add.overlap(this.player, homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false;});                  
+       
 
         var tween = this.tweens.add({
             targets: this.shopKeeper,
@@ -280,118 +177,12 @@ export default class GameScene extends Scene {
     }
 
     update() {    
-                
-        let catchesLeft = this.playerInfo.catchesRemainingForTheDay 
-        let cash = this.playerInfo.cash  
-        let totalFish = this.playerInventory.fish.length
-        this.catchesRemainingText.setText(`Attempts left: ${catchesLeft}`) ;    
-        this.money.setText(cash);     
-        this.amountOfFish.setText(totalFish);     
-
-        if (this.player.body.embedded) this.player.body.touching.none = false;
-        let touching = !this.player.body.touching.none;
-        let wasTouching = !this.player.body.wasTouching.none;
-
-        if (touching && !wasTouching) {
-        } else if (!touching && wasTouching) { 
-            this.isShopping = false; 
-            this.canShop = true; 
-            this.isFishing = false;
-            this.canFish = true;                 
-            this.isSleeping = false;
-            this.canSleep = true;                 
-        }
-        
-        this.player.body.debugBodyColor = this.player.body.touching.none ? 0x0099ff : 0xff9900;
-        
-        if (this.canSleep) {                                                             
-            this.toggleKeyboard(true);
-            if (this.keySpace.isDown) {
-                if (touching && wasTouching) { 
-                    this.player.anims.stop();
-                    this.toggleKeyboard(false);                    
-                    let ui = this.createInteractivePanel();   
-                    this.input.on('pointerdown', () => {                           
-                        ui.children.iterate(child => {
-                            if (child.name === 'noBtn') {
-                                child.destroy(child, true);
-                            }
-                        });
-                        ui.clear(true);
-                    })                                                                          
-                }
-            }
-        }    
+       
 
         if (this.player.info.catchesRemainingForTheDay === 0) {
             this.infoText.setText(`You have run out of attempts... 
                 Time to go home`);
             this.fadeInfo();
         }
-
-        if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
-            if (this.cooldown > 0) {                
-                this.timer.paused = false;             
-            } else if (this.cooldown === 0) {                
-                this.toggleKeyboard(true);                
-                this.timer.paused = true;                                 
-                if (this.keySpace.isDown) {                      
-                    if (touching && wasTouching) {  
-                        this.player.anims.stop(); 
-                        this.toggleKeyboard(false);  
-                        console.log(this.player.body);   
-                        if (this.player.x - this.lake.x > 0) {
-                            console.log('facing left');
-                            this.player.flipX = true;
-                        } else if (this.player.x - this.lake.x < 0) {
-                            this.player.flipX = false;
-                        }                                             
-                        this.player.anims.play('fish', true); 
-                        console.log('is fishing!')  
-                        this.timer.paused = false;                                                                 
-                        this.player.fishing();                                    
-                        this.cooldown = this.FISHING_COOLDOWN_DELAY;                     
-                    }                                                                                              
-                } 
-            }
-        } else if (this.canShop) {
-            if (this.cooldown > 0) {
-                this.timer.paused = false;             
-            } else if (this.cooldown === 0) {                                                    
-                this.toggleKeyboard(true);
-                this.timer.paused = true; 
-                if (this.keySpace.isDown) {
-                    if (touching && wasTouching) { 
-                        this.player.anims.stop();
-                        this.toggleKeyboard(false);
-                        this.timer.paused = false;   
-                        this.shopObj.sellAllFish(this.player);
-                        this.cooldown = this.FISHING_COOLDOWN_DELAY; 
-                        // this.coins = this.spawnCoins();
-                        this.infoText.setText(`You sold a total of ${this.player.info.inventory.fish.length} fish!`); 
-                        this.fadeInfo();
-                    }
-                }
-            }                     
-        }                 
-                                                
-        this.player.update();
         
-        if (this.keyW.isDown || this.cursors.up.isDown ) {
-            this.player.moveUp();
-            this.player.anims.play('up', true);               
-        } else if (this.keyS.isDown || this.cursors.down.isDown) {
-            this.player.moveDown();
-            this.player.anims.play('down', true);
-        } else if (this.keyA.isDown || this.cursors.left.isDown) {
-            this.player.moveLeft();
-            this.player.flipX = false;
-            this.player.anims.play('left', true);
-        } else if (this.keyD.isDown || this.cursors.right.isDown) {
-            this.player.moveRight();
-            this.player.anims.play('right', true);
-        } else {     
-            this.player.anims.stop();
-        }        
-    }
 }

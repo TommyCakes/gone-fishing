@@ -160,8 +160,6 @@ export default class GameScene extends Scene {
         const map = this.make.tilemap({ key: "map" });
         const tileset = map.addTilesetImage("overworld", "tiles");
 
-        console.log(this.cache.tilemap.get('map').data);
-
         const waterLayer = map.createStaticLayer("Water", tileset, 0, 0);        
         // console.log(overlapObjects);
         // this.waterGroup = this.physics.add.staticGroup(overlapObjects);
@@ -170,19 +168,22 @@ export default class GameScene extends Scene {
         const worldLayer = map.createStaticLayer("W", tileset, 0, 0);
         const waterOverlap = map.createFromObjects("Overlap", 'fish');
 
-
         // const aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
 
         waterLayer.setCollisionByProperty({ collides: true });
         worldLayer.setCollisionByProperty({ collides: true });
         // worldLayer.setCollisionByProperty({ collides: true });
-        
-        
-        
+                        
         this.lakeZone = this.createNewZone(0, 0, 70, 900);
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
         // let lakes = this.add.group(this.lakeZone);
+
+        this.shopKeeper = this.physics.add.sprite(this.shopZone.x + this.shopZone.width / 2, this.shopZone.y + 20, 'shopKeeper', 8); 
+        this.shopKeeper.body.moves = false;
+        this.shopKeeper.body.setCircle(25);        
+        this.shopKeeper.setScale(0.5); 
+        this.physics.add.collider(this.player, this.shopKeeper);  
 
         this.physics.add.overlap(this.player, this.lakeZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
         this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false;});            
