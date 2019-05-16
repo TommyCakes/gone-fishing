@@ -183,10 +183,10 @@ export default class Player extends Entity {
     }
     
     spawnBobble(direction) {
-        if (direction === 'right') {
-            this.xPos = this.x + 50;
+        if (direction === 'left') {
+            this.xPos = this.x - 20;
         } else {
-            this.xPos = this.x - 50;aaa
+            this.xPos = this.x + 20;
         }
 
         this.bobble = this.scene.add.sprite(this.xPos, this.y, 'fishingBobble');                                         

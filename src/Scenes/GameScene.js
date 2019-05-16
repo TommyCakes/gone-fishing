@@ -168,13 +168,13 @@ export default class GameScene extends Scene {
         waterLayer.setCollisionByProperty({ collides: true });
         worldLayer.setCollisionByProperty({ collides: true });
         
-        this.waterAreas = this.physics.add.group();
+        // this.waterAreas = this.physics.add.group();
         this.waterZone = this.createNewZone(0, 0, 70, 900);
-        this.waterZone2 = this.createNewZone(230, 200, 130, 160);
+        // this.waterZone2 = this.createNewZone(230, 200, 130, 160);
 
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
-        this.waterAreas.addMultiple([this.waterZone, this.waterZone2]) ;
+        // this.waterAreas.addMultiple([this.waterZone, this.waterZone2]) ;
         
         this.shopKeeper = this.physics.add.sprite(this.shopZone.x + this.shopZone.width / 2, this.shopZone.y + 20, 'shopKeeper', 8); 
         this.shopKeeper.body.moves = false;
@@ -183,7 +183,7 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.player, this.shopKeeper);  
 
         this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
-        this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
+        // this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
         this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false;});            
         this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false;});            
         
@@ -205,13 +205,18 @@ export default class GameScene extends Scene {
         this.canSleep = true;
     }  
         
-    update() {                       
+    update() {           
+        // console.log(this.canShop)
+        // console.log(this.canSleep)
+       
         this.player.body.setVelocity(0)                                        
         this.player.update();
         
         if (this.player.body.embedded) this.player.body.touching.none = false;
         let touching = !this.player.body.touching.none;
         let wasTouching = !this.player.body.wasTouching.none;
+
+        console.log(touching && wasTouching)
 
         if (touching && !wasTouching) {
         } else if (!touching && wasTouching) { 
@@ -240,9 +245,7 @@ export default class GameScene extends Scene {
                     })                                                                          
                 }
             }
-        } 
-        
-        if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
+        } else if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
             if (this.cooldown > 0) {                            
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {                
@@ -254,12 +257,12 @@ export default class GameScene extends Scene {
                         this.player.anims.stop(); 
                         this.toggleKeyboard(false);  
                         let playerDirection;
-                        if (this.player.x - this.waterZone.x > 0 || this.player.x - this.waterZone2.x > 0) {
-                            this.player.flipX = false;
-                            playerDirection = 'right';
-                        } else if (this.player.x - this.waterZone.x < 0 || this.player.x - this.waterZone2.x < 0) {
+                        if (this.player.x - this.waterZone.x > 0) {
                             this.player.flipX = true;
                             playerDirection = 'left';
+                        } else if (this.player.x - this.waterZone.x < 0) {
+                            this.player.flipX = false;
+                            playerDirection = 'right';
                         }                                             
                         this.player.anims.play('fish', true);  
                         this.timer.paused = false;                                                                 
