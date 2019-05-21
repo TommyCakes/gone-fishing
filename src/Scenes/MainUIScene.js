@@ -26,6 +26,7 @@ export default class MainUIScene extends Scene {
     
     updateUI (data) {
         let fishAmount = data.inventory.fish.length;
+        console.log(fishAmount)
         let cash = data.cash;
         let catches = data.catchesRemainingForTheDay;
         // this.mainCamera = data.camera
@@ -74,6 +75,37 @@ export default class MainUIScene extends Scene {
         // this.container.setPosition(this.scene.cameras.main.centerX, this.scene.cameras.main.centerY)
     }
 
+    createInteractiveSleepPanel(player) {
+        let style = { font: '13px Arial', fill: '#fff', align: 'center' }                 
+        let container = this.add.container(this.cameras.main.centerX / 2, this.cameras.main.centerY / 2);
+        this.uiBackground = this.add.image(container.x, container.y, 'panel').setScrollFactor(0);  
+        this.uiBackground.setOrigin(0.5, 0.5)
+        this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 40, 'brownPanel').setScrollFactor(0);          
+        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, 'Will you settle down for the night, and save your progress?', style).setScrollFactor(0)
+        this.buttonYes = this.add.image(this.uiBackground.x - 40 , this.brownPanel.y + 60 , 'greyButton').setScrollFactor(0).setInteractive();  
+        this.buttonYes.name = 'yesBtn';
+        this.check = this.add.image(this.uiBackground.x - 40, this.brownPanel.y + 70, 'checkBlue').setScrollFactor(0)
+        this.buttonNo = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.buttonYes.y, 'greyButton').setScrollFactor(0).setInteractive();          
+        this.buttonNo.name = 'noBtn';
+        this.cross = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.brownPanel.y + 70, 'crossBrown').setScrollFactor(0)
+
+        this.uiBackground.setScale(1);        
+        this.uiBackground.displayWidth = 400;        
+        this.brownPanel.displayWidth = 375;               
+        this.uiBackground.displayHeight = 200;    
+
+        this.buttonYes.setScale(1.5);
+        this.buttonNo.setScale(1.5);
+            
+        this.text.setOrigin(0.5, 0.5);   
+        container.setDepth(1);
+        container.add([ this.uiBackground, this.brownPanel, this.text, this.buttonYes, this.buttonNo, this.check, this.cross]); 
+
+        this.buttonYes.on('pointerdown', () => { player.sleep(true);  }); 
+        this.buttonNo.on('pointerdown', () => { player.sleep(false);  });  
+        return container;                                                                                          
+    }
+
     removeUI(ui) {
         this.time.delayedCall(2000, () => {                             
             ui.removeAll(true);
@@ -86,9 +118,12 @@ export default class MainUIScene extends Scene {
         })); 
         
         this.gameScene.events.on('showUIPopup', ((data) => {
-            console.log(data);
             this.showUIPopup(data);         
         }));  
+
+        this.gameScene.events.on('createInteractiveSleepPanel', ((data) => {
+            this.createInteractiveSleepPanel(data);         
+        })); 
         
         
     }

@@ -102,22 +102,9 @@ export default class Player extends Entity {
         this.body.setCircle(16, 16);
         this.body.setOffset(16, 16);
 
-        this.createAndfadeOutUI('You caught yourself a "INSERT_FISH!"');
+        console.log(this.info.inventory);
     }
     
-    // fadeInfo() {
-    //     this.time.delayedCall(1000, () => {                             
-    //         this.infoText.visible = false;
-    //     }, [], this);
-    // }
-
-    createAndfadeOutUI(text) {                
-        let ui = this.helper.createNewUI(text, this.scene.cameras.main.centerOn(0, 0), this.y);        
-        this.scene.time.delayedCall(2000, () => {                             
-            ui.removeUI();
-        }, [], this);
-    }
-
     getInfo() {
         return this.info;
     }
@@ -169,13 +156,12 @@ export default class Player extends Entity {
         
     collectFish() {               
         if (this.checkForFish()) {   
-            this.info.inventory.fish.push('fish');        
-            this.createAndfadeOutUI('You caught yourself a "INSERT_FISH!"'); 
+            this.info.inventory.fish.push('fish');                    
             this.scene.events.emit('showUIPopup', "You caught yourself a 'INSERT_FISH!'");           
         } else {
-            this.createAndfadeOutUI('Unlucky your line came up empty...');   
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }        
+        this.scene.events.emit('updateUI', this.info);    
         console.log(this.info)        
         this.scene.time.delayedCall(200, () => {             
             this.splash.destroy();
@@ -233,7 +219,7 @@ export default class Player extends Entity {
     }    
     
     saveGame() {
-        localStorage.setItem('save', JSON.stringify(this.info))
+        localStorage.setItem('save', JSON.stringify(this.info));
     }
 
     loadGame() {
@@ -252,10 +238,11 @@ export default class Player extends Entity {
                 this.scene.cameras.main.resetFX();        
             }, [], this);                                                                      
         } 
-        this.createAndfadeOutUI("You fall asleep and dream of tiny goats wearing tophats...");
+        this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
     }
 
     update() {
+        
         this.body.setVelocity(0, 0);
 
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);

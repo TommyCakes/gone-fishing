@@ -67,37 +67,44 @@ export default class GameScene extends Scene {
         // this.barMask.x -= stepWidth;        
     }
 
-    createInteractivePanel(text, f) {
-        let style = { font: '13px Arial', fill: '#fff', align: 'center' }   
-        this.uiPanel = this.add.group();
-        this.uiBackground = this.add.image(this.player.x / 2 + 160, this.player.y + 160, 'panel').setScrollFactor(0);  
-        this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 60, 'brownPanel').setScrollFactor(0);  
-        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, text, style).setScrollFactor(0)
-        // this.add.text(this.player.x / 2 + 84, this.player.y + 84, , style).setScrollFactor(0);                                        
-        this.text.setOrigin(0.5, 0.5);   
-        this.buttonYes = this.add.image(this.player.x / 2 + 120, this.text.y + 100, 'greyButton').setScrollFactor(0).setInteractive();  
+    createInteractiveSleepPanel(f) {
+        let style = { font: '13px Arial', fill: '#fff', align: 'center' }                 
+        let container = this.add.container(this.cameras.main.centerX / 2, this.cameras.main.centerY / 2);
+        this.uiBackground = this.add.image(container.x, container.y, 'panel').setScrollFactor(0);  
+        this.uiBackground.setOrigin(0.5, 0.5)
+        this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 40, 'brownPanel').setScrollFactor(0);          
+        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, 'Will you settle down for the night, and save your progress?', style).setScrollFactor(0)
+        this.buttonYes = this.add.image(this.uiBackground.x - 40 , this.brownPanel.y + 60 , 'greyButton').setScrollFactor(0).setInteractive();  
         this.buttonYes.name = 'yesBtn';
-        this.check = this.add.image(this.player.x / 2 + 120, this.text.y + 100, 'checkBlue').setScrollFactor(0)
-        this.buttonNo = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.text.y + 100, 'greyButton').setScrollFactor(0).setInteractive();          
+        this.check = this.add.image(this.uiBackground.x - 40, this.brownPanel.y + 70, 'checkBlue').setScrollFactor(0)
+        this.buttonNo = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.buttonYes.y, 'greyButton').setScrollFactor(0).setInteractive();          
         this.buttonNo.name = 'noBtn';
         this.cross = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.text.y + 100, 'crossBrown').setScrollFactor(0)
-        this.uiBackground.setScale(1);
+
+        this.uiBackground.setScale(1);        
+        this.uiBackground.displayWidth = 400;        
+        this.brownPanel.displayWidth = 375;               
+        this.uiBackground.displayHeight = 200;    
+
         this.buttonYes.setScale(1.5);
         this.buttonNo.setScale(1.5);
-        this.uiBackground.displayWidth = 400;        
-        this.brownPanel.displayWidth = 375;        
-        this.uiBackground.displayHeight = 200;        
-        this.uiPanel.add(this.uiBackground);
-        this.uiPanel.add(this.brownPanel);
-        this.uiPanel.add(this.text);
-        this.uiPanel.add(this.buttonYes);
-        this.uiPanel.add(this.check);
-        this.uiPanel.add(this.cross);
-        this.uiPanel.add(this.buttonNo);
-        this.uiPanel.setDepth(2)  
+            
+        this.text.setOrigin(0.5, 0.5);   
+        container.setDepth(1);
+        container.add([ this.uiBackground, this.brownPanel, this.text, this.buttonYes, this.buttonNo, this.check, this.cross]); 
+                                    
         this.buttonYes.on('pointerdown', f); 
-        return this.uiPanel;               
-    }
+
+        this.input.on('pointerdown', () => {                           
+            this.uiPanel.children.iterate(child => {
+                if (child.name === 'noBtn') {
+                    child.destroy(child, true);
+                }
+            });
+            this.uiPanel.clear(true);
+        })  
+                                                            
+    }              
 
     toggleKeyboard(bool) {
         this.keyW.enabled = bool;
@@ -190,7 +197,7 @@ export default class GameScene extends Scene {
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(0, -100);
-        this.cameras.main.zoom = 3;
+        this.cameras.main.zoom = 2.5;
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.player, waterLayer);           
         this.events.emit('updateUI', this.playerInfo, this.cameras.main);               
@@ -202,13 +209,11 @@ export default class GameScene extends Scene {
         this.shopObj = new Shop();
         this.canFish = true;
         this.canShop = true;
-        this.canSleep = true;
+        this.canSleep = true;                
     }  
         
-    update() {           
-        // console.log(this.canShop)
-        // console.log(this.canSleep)
-       
+    update() {  
+
         this.player.body.setVelocity(0)                                        
         this.player.update();
         
@@ -216,9 +221,8 @@ export default class GameScene extends Scene {
         let touching = !this.player.body.touching.none;
         let wasTouching = !this.player.body.wasTouching.none;
 
-        console.log(touching && wasTouching)
-
-        if (touching && !wasTouching) {
+        if (touching && !wasTouching) { 
+            
         } else if (!touching && wasTouching) { 
             this.isShopping = false; 
             this.canShop = true; 
@@ -232,24 +236,22 @@ export default class GameScene extends Scene {
             this.toggleKeyboard(true);
             if (this.keySpace.isDown) {
                 if (touching && wasTouching) { 
-                    this.player.anims.stop();
-                    this.toggleKeyboard(false);                    
-                    let ui = this.createInteractivePanel('Will you settle down for the night, and save your progress?', () => this.player.sleep(true));   
-                    this.input.on('pointerdown', () => {                           
-                        ui.children.iterate(child => {
-                            if (child.name === 'noBtn') {
-                                child.destroy(child, true);
-                            }
-                        });
-                        ui.clear(true);
-                    })                                                                          
+                    console.log('ready to sleep?')
+                    // this.player.anims.stop();                                       
+                    // this.events.emit('createInteractiveSleepPanel', this.player);  
+                    // this.toggleKeyboard(false);                                    
+                    this.player.sleep(true);    
+                    this.events.emit('updateUI', this.playerInfo);                                      
                 }
             }
-        } else if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
+        } 
+        
+        if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
             if (this.cooldown > 0) {                            
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {                
-                this.toggleKeyboard(true)                                
+                this.toggleKeyboard(true);
+                this.timer.paused = true;                                  
                 if (this.keySpace.isDown) {                                                           
                     if (touching && wasTouching) {  
                         this.events.emit('updateUI', this.playerInfo);  
@@ -274,30 +276,30 @@ export default class GameScene extends Scene {
             } 
         } 
         
-        if (this.canShop) {         
-            if (this.cooldown > 0) {
-                this.timer.paused = false;             
-            } else if (this.cooldown === 0) {                                                    
-                this.toggleKeyboard(true);
-                this.timer.paused = true;                 
-                if (this.keySpace.isDown) {
-                    if (touching && wasTouching) {                         
-                        this.player.anims.stop();
-                        this.toggleKeyboard(false);
-                        this.timer.paused = false;   
-                        if (this.player.info.inventory.fish === 0) {
+        if (this.canShop) {                    
+            // if (this.cooldown > 0) {
+            //     this.timer.paused = false;             
+            // } else if (this.cooldown === 0) {                                                    
+            //     this.toggleKeyboard(true);
+            //     this.timer.paused = true;                 
+                if (this.keySpace.isDown) {                    
+                    if (touching && wasTouching) {   
+                        this.events.emit('updateUI', this.playerInfo);                         
+                        this.player.anims.stop();                                                
+                        // this.toggleKeyboard(false);
+                        // this.timer.paused = false;   
+                        if (this.playerInventory.fish === 0) {
                             this.events.emit('showUIPopup', `You have no fish to sell, go and catch some!`); 
-                        }
-                        this.shopObj.sellAllFish(this.player);
-                        this.events.emit('showUIPopup', `You sold a total of ${this.player.info.inventory.fish.length} fish!`); 
-                        this.events.emit('updateUI', this.playerInfo); 
-                        this.cooldown = this.FISHING_COOLDOWN_DELAY; 
-                        // this.coins = this.spawnCoins();
-                        // this.infoText.setText(`You sold a total of ${this.player.info.inventory.fish.length} fish!`); 
-                        // this.fadeInfo();
+                        }                                                
+                        this.shopObj.sellAllFish(this.player);                            
+                        this.events.emit('showUIPopup', `You sold all your fish!`);   
+                        this.playerInventory.fish.length = 0;      
+                        this.events.emit('updateUI', this.playerInfo);               
+                        // this.cooldown = this.FISHING_COOLDOWN_DELAY; 
+                        // this.coins = this.spawnCoins();                        
                     }
                 }
-            }                     
+            // }                     
         }  
         
 
