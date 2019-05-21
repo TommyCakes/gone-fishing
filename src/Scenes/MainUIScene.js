@@ -58,8 +58,10 @@ export default class MainUIScene extends Scene {
 
     // showUIPopup(camera, text) {
     showUIPopup(text) {
+        console.log(this.cameras.main.centerX / 2);
+        console.log(this)
         let style = { font: '13px Arial', fill: '#fff', align: 'center' }                 
-        this.container = this.add.container(this.cameras.main.centerX / 2, this.cameras.main.centerY / 2);
+        this.container = this.add.container(this.cameras.main.centerX / 3, this.cameras.main.centerY / 3);
         this.uiBackground = this.add.image(this.container.x, this.container.y, 'panel').setScrollFactor(0);  
         this.uiBackground.setOrigin(0.5, 0.5)
         this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 10, 'brownPanel').setScrollFactor(0);  

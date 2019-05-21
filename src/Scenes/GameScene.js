@@ -196,8 +196,8 @@ export default class GameScene extends Scene {
         
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
-        this.cameras.main.setFollowOffset(0, -100);
-        this.cameras.main.zoom = 2.5;
+        this.cameras.main.setFollowOffset(-160, -160);
+        this.cameras.main.zoom = 3;
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.player, waterLayer);           
         this.events.emit('updateUI', this.playerInfo, this.cameras.main);               
