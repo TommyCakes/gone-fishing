@@ -18,8 +18,6 @@ export default class PreloadScene extends Scene {
     }
 
     preload() {
-        console.log(this.readyCount);
-        console.log('Preloader preloaded');
         this.add.image(400, 200, 'bg');
         this.add.image(200, 200, 'rabbit');
         

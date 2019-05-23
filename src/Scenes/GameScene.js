@@ -7,16 +7,11 @@ import Pet from '../Sprites/Pet';
 
 export default class GameScene extends Scene {
 
-    init() {              
-    }
-
     constructor() {
         super('Game');        
     }
 
-    preload() {
-        // this.load.image('fish', 'assets/fish.png');
-        // this.load.image('rod', 'assets/fishing_rod.png');
+    preload() {        
         this.load.image('fisherman', 'assets/fisherman.png');
         this.load.image('water', 'assets/water.png');
         this.load.image('shop', 'assets/shop.png');
@@ -76,9 +71,7 @@ export default class GameScene extends Scene {
     }
 
     updateTime() {                
-        this.cooldown -= 1;  
-        // let stepWidth = this.barMask.displayWidth / this.FISHING_COOLDOWN_DELAY;
-        // this.barMask.x -= stepWidth;        
+        this.cooldown -= 1;          
     }
 
     createInteractiveSleepPanel(f) {
@@ -170,7 +163,6 @@ export default class GameScene extends Scene {
         this.player = new Player(
             this,
             120,
-            // 1000,
             270,
             "sprPlayer"
         );
@@ -201,8 +193,6 @@ export default class GameScene extends Scene {
         const belowLayer = map.createStaticLayer("BP", tileset, 0, 0);        
         const worldLayer = map.createStaticLayer("W", tileset, 0, 0);
         const waterOverlap = map.createFromObjects("Overlap", 'fish');
-
-        // const aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
 
         waterLayer.setCollisionByProperty({ collides: true });
         worldLayer.setCollisionByProperty({ collides: true });
@@ -297,7 +287,6 @@ export default class GameScene extends Scene {
             this.toggleKeyboard(true);
             if (this.keySpace.isDown) {
                 if (touching && wasTouching) { 
-                    console.log('ready to sleep?')
                     // this.player.anims.stop();                                       
                     // this.events.emit('createInteractiveSleepPanel', this.player);  
                     // this.toggleKeyboard(false);                                    

@@ -10,6 +10,5 @@ export default class TitleScene extends Scene {
     }
 
     create() {
-        console.log('HELLLLOO!');
     }
 }

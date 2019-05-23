@@ -93,8 +93,6 @@ export default class Player extends Entity {
         this.setScale(0.4);     
         this.body.setCircle(16, 16);
         this.body.setOffset(16, 16);
-
-        console.log(this.info.inventory);
     }
     
     getInfo() {

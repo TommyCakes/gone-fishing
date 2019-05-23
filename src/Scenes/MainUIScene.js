@@ -26,12 +26,10 @@ export default class MainUIScene extends Scene {
     
     updateUI (data) {
         let fishAmount = data.inventory.fish.length;
-        console.log(fishAmount)
         let cash = data.cash;
         let catches = data.catchesRemainingForTheDay;
-        // this.mainCamera = data.camera
-        console.log(this.cameras);
         let style = { font: '13px Arial', fill: '#fff', align: 'center' }      
+        
         this.ui = this.add.group();
         this.uiBg = this.add.rectangle(0, 20, 700, 80, '0x000000', 0.5).setScrollFactor(0);  
 
