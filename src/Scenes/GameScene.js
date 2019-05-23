@@ -3,6 +3,7 @@ import Player from "../Sprites/Player";
 import Lake from '../Sprites/Lake';
 import Shop from '../Classes/Shop';
 import Helper from '../Classes/Helper';
+import Fishing from '../Classes/Fishing';
 import Pet from '../Sprites/Pet';
 
 export default class GameScene extends Scene {
@@ -12,6 +13,8 @@ export default class GameScene extends Scene {
     }
 
     preload() {        
+        this.load.json('fishList', 'assets/fishList.json');
+        
         this.load.image('fisherman', 'assets/fisherman.png');
         this.load.image('water', 'assets/water.png');
         this.load.image('shop', 'assets/shop.png');
@@ -130,7 +133,10 @@ export default class GameScene extends Scene {
     }
 
     create() {    
+        let fishList = this.cache.json.get('fishList').fish.type;
         this.helper = new Helper(this.scene);
+        this.fishingObj = new Fishing(fishList);
+        console.log(this.fishingObj.getRandomFish());
 
         // Setup timer
         this.FISHING_COOLDOWN_DELAY = 2;
@@ -313,10 +319,11 @@ export default class GameScene extends Scene {
                         }                                             
                         this.player.anims.play('fish', true);                                                  
                         this.timer.paused = false;                                                                 
-                        this.player.fishing(playerDirection);  
-                        this.events.on('fishBit', () => this.createEmote('exclamation', this.player));                                                                                  
+                        this.player.fishing(playerDirection, this.fishingObj.getRandomFish());  
+                        this.events.on('fishBit', () => this.createEmote('exclamation', this.player));          
                         this.events.emit('updateUI', this.playerInfo);                                                   
-                        this.cooldown = this.FISHING_COOLDOWN_DELAY; 
+                        this.cooldown = this.FISHING_COOLDOWN_DELAY;
+                         
                     }                    
                 }                                                                                              
             } 

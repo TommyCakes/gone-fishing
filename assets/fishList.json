@@ -1,0 +1,41 @@
+{
+    "fish": {
+      "type": [
+        {
+          "name": "Shark",
+          "description": "Actually a really friendly guy, unless you happen to be a seal",
+          "weight": "10",
+          "value": "53",
+          "rarity": "rare"
+        },
+        {
+          "name": "Seabass",
+          "description": "Just your standard sea-dweller, like to be called Baz for short",
+          "weight": "3",
+          "value": "18",
+          "rarity": "uncommon"
+        },
+        {
+          "name": "Prawn",
+          "description": "Became famous after numerous references in the film 'District 9'",
+          "weight": "1",
+          "value": "2",
+          "rarity": "common"
+        },
+        {
+          "name": "Sand Eel",
+          "description": "Loves to build sand castles on the weekend",
+          "weight": "2",
+          "value": "5",
+          "rarity": "common"
+        },
+        {
+          "name": "Sardine",
+          "description": "Good on toast!",
+          "weight": "1",
+          "value": "3",
+          "rarity": "common"
+        }
+      ]
+    }
+  }

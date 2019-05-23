@@ -38,7 +38,7 @@ export default class Player extends Entity {
                 ]
             }            
         }
-        // let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
+        let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
         
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
@@ -127,27 +127,28 @@ export default class Player extends Entity {
         let rdmNum = this.getRandomIntBetween(101);
         let fishCaught = false;
     
-        if (rdmNum <= 20) {
-            fishCaught = true;
-        } else if (rdmNum <= 40) { 
-            fishCaught = false;
-        } else if (rdmNum <= 60) {
-            fishCaught = false;
-        } else if (rdmNum <= 80) {
-            fishCaught = false;
-        } else if (rdmNum < 100) {
+        if (rdmNum <= 100) {
             fishCaught = true;
         }
+        // } else if (rdmNum <= 40) { 
+        //     fishCaught = false;
+        // } else if (rdmNum <= 60) {
+        //     fishCaught = false;
+        // } else if (rdmNum <= 80) {
+        //     fishCaught = false;
+        // } else if (rdmNum < 100) {
+        //     fishCaught = true;
+        // }
         this.bobble.destroy();
         // this.scene.cameras.main.shake(100, 0.01, 0.01),
         this.spawnSplash();
         return fishCaught;
     }
         
-    collectFish() {                       
-        if (this.checkForFish()) {   
-            this.info.inventory.fish.push('fish');                    
-            this.scene.events.emit('showUIPopup', "You caught yourself a 'INSERT_FISH!'");           
+    collectFish(fish) {                       
+        if (this.checkForFish()) {     
+            console.log(fish);                           
+            this.scene.events.emit('showUIPopup', `You caught yourself a ${fish.name}!`);     
         } else {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }        
@@ -195,12 +196,12 @@ export default class Player extends Entity {
         this.info.catchesRemainingForTheDay -= 1;                   
     }
 
-    fishing(direction) {                   
+    fishing(direction ,fish) {                   
         this.spawnBobble(direction);
-        this.decreaseCatchesRemaining();
+        this.decreaseCatchesRemaining();        
         // TODO: Add more random amount of time to catch fish
         // Better rod = faster catch time && cooldown                
-        this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.collectFish, [], this);                                                                                                                                                                                                                  
+        this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.collectFish, [fish], this);                                                                                                                                                                                                                  
     }
 
     setRandomCatchAttempts() {
