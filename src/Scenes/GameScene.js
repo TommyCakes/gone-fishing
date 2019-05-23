@@ -21,6 +21,7 @@ export default class GameScene extends Scene {
         this.load.image('water', 'assets/water.png');
         this.load.image('shop', 'assets/shop.png');
         this.load.image('home', 'assets/house.png');
+        this.load.image('fishSign', 'assets/fish_sign.png');
         this.load.image('heart', 'assets/emote_heart.png');
         this.load.image('anger', 'assets/emote_anger.png');
         this.load.image('exclamation', 'assets/emote_exclamation.png');
@@ -215,10 +216,15 @@ export default class GameScene extends Scene {
         this.dogZone = this.createNewZone(this.doggo.x, this.doggo.y, 60, 60);        
         // this.waterAreas.addMultiple([this.waterZone, this.waterZone2]) ;
                 
-        this.shopKeeper = this.physics.add.sprite(this.shopZone.x + this.shopZone.width / 2, this.shopZone.y + 20, 'shopKeeper', 8); 
+        this.shopKeeper = this.physics.add.sprite(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 8); 
+        this.sign = this.add.sprite(this.shopKeeper.x + 30, this.shopZone.y + 40, 'fishSign');
+        this.sign.displayHeight = 24;
+        this.sign.displayWidth = 24;
+
         this.shopKeeper.body.moves = false;
         this.shopKeeper.body.setCircle(25);        
         this.shopKeeper.setScale(0.5); 
+        this.shopKeeper.setDepth(2); 
         this.physics.add.collider(this.player, this.shopKeeper);  
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
 
