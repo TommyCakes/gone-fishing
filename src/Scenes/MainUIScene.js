@@ -56,10 +56,7 @@ export default class MainUIScene extends Scene {
         return this.ui;
     }
 
-    // showUIPopup(camera, text) {
-    showUIPopup(text) {
-        console.log(this.cameras.main.centerX / 2);
-        console.log(this)
+    showUIPopup(text) {        
         let style = { font: '13px Arial', fill: '#fff', align: 'center' }                 
         this.container = this.add.container(this.cameras.main.centerX / 3, this.cameras.main.centerY / 3);
         this.uiBackground = this.add.image(this.container.x, this.container.y, 'panel').setScrollFactor(0);  
@@ -74,7 +71,6 @@ export default class MainUIScene extends Scene {
         this.container.setDepth(1);
         this.container.add([ this.uiBackground, this.brownPanel, this.text]); 
         this.removeUI(this.container);
-        // this.container.setPosition(this.scene.cameras.main.centerX, this.scene.cameras.main.centerY)
     }
 
     createInteractiveSleepPanel(player) {

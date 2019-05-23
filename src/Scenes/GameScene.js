@@ -3,6 +3,7 @@ import Player from "../Sprites/Player";
 import Lake from '../Sprites/Lake';
 import Shop from '../Classes/Shop';
 import Helper from '../Classes/Helper';
+import Pet from '../Sprites/Pet';
 
 export default class GameScene extends Scene {
 
@@ -49,6 +50,10 @@ export default class GameScene extends Scene {
             frameHeight: 32 
         });
         this.load.spritesheet('chests', 'assets/chests.png', { 
+            frameWidth: 32, 
+            frameHeight: 32 
+        });
+        this.load.spritesheet('doggo', 'assets/doggo.png', { 
             frameWidth: 32, 
             frameHeight: 32 
         });
@@ -122,6 +127,11 @@ export default class GameScene extends Scene {
         return this.zone;
     }
 
+    flipPositionAndVelocity(sprite, bool, pos) {
+        sprite.flipX = bool;
+        pos === 'left' ? sprite.body.velocity.x -= 30 : sprite.body.velocity.x += 30;
+    }
+
     create() {    
         this.helper = new Helper(this.scene);
 
@@ -147,7 +157,7 @@ export default class GameScene extends Scene {
         this.cursors = this.input.keyboard.createCursorKeys();            
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        
+                
         this.player = new Player(
             this,
             120,
@@ -158,8 +168,19 @@ export default class GameScene extends Scene {
         
         this.playerInfo = this.player.getInfo();
         this.playerInventory = this.player.getInventory();               
-        this.player.setDepth(1)
+        this.player.setDepth(1);
         
+        this.doggo = new Pet(
+            this,
+            100,
+            200,
+            "doggo"            
+        );
+                            
+        this.doggo.setDepth(1)
+        this.doggo.anims.play('walk-right', true);
+        this.doggo.moveRight();
+
         // Load map
         const map = this.make.tilemap({ key: "map" });
         const tileset = map.addTilesetImage("overworld", "tiles");
@@ -182,12 +203,13 @@ export default class GameScene extends Scene {
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
         // this.waterAreas.addMultiple([this.waterZone, this.waterZone2]) ;
-        
+                
         this.shopKeeper = this.physics.add.sprite(this.shopZone.x + this.shopZone.width / 2, this.shopZone.y + 20, 'shopKeeper', 8); 
         this.shopKeeper.body.moves = false;
         this.shopKeeper.body.setCircle(25);        
         this.shopKeeper.setScale(0.5); 
         this.physics.add.collider(this.player, this.shopKeeper);  
+        this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
 
         this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
         // this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
@@ -199,7 +221,9 @@ export default class GameScene extends Scene {
         this.cameras.main.setFollowOffset(-160, -160);
         this.cameras.main.zoom = 3;
         this.physics.add.collider(this.player, worldLayer);
-        this.physics.add.collider(this.player, waterLayer);           
+        this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);
+        this.physics.add.collider(this.player, waterLayer, () => this.doggo.bumpCount += 1);           
+        this.physics.add.collider(this.doggo, waterLayer);           
         this.events.emit('updateUI', this.playerInfo, this.cameras.main);               
         
         this.catchesRemaining = this.playerInfo.catchesRemainingForTheDay 
@@ -209,14 +233,16 @@ export default class GameScene extends Scene {
         this.shopObj = new Shop();
         this.canFish = true;
         this.canShop = true;
-        this.canSleep = true;                
+        this.canSleep = true;                             
     }  
-        
+            
     update() {  
-
-        this.player.body.setVelocity(0)                                        
-        this.player.update();
+        this.player.body.setVelocity(0)   
         
+        this.player.update();      
+        this.doggo.update();
+        
+            
         if (this.player.body.embedded) this.player.body.touching.none = false;
         let touching = !this.player.body.touching.none;
         let wasTouching = !this.player.body.wasTouching.none;
@@ -322,5 +348,6 @@ export default class GameScene extends Scene {
         } 
         
         this.player.body.velocity.normalize().scale(this.player.getData("speed"));
+        this.doggo.body.velocity.normalize().scale(this.doggo.getData("speed"));
     }
 }

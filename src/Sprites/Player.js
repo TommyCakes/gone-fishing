@@ -1,8 +1,6 @@
 import Entity from './Entity';
 import Bobble from './Bobble';
 import Game from '../Scenes/GameScene'
-import UI from '../Classes/UI';
-import Helper from '../Classes/Helper';
 
 export default class Player extends Entity {
     
@@ -44,8 +42,6 @@ export default class Player extends Entity {
         
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
-
-        this.helper = new Helper(this.scene);
 
         // this.setScale(0.5);        
         this.scene.anims.create({
