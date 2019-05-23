@@ -18,7 +18,7 @@ export default class Player extends Entity {
             name: "TommyCakes",
             level: 1,    
             // for testing...
-            catchesRemainingForTheDay: 5,
+            catchesRemainingForTheDay: 1,
             cash: 10,
             inventory: {
                 fish: [
@@ -38,7 +38,7 @@ export default class Player extends Entity {
                 ]
             }            
         }
-        let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
+        // let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
         
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
@@ -161,9 +161,9 @@ export default class Player extends Entity {
     spawnBobble(direction) {
         this.scene.time.delayedCall(this.getData("timerFishingDelay") - 1500, () => this.scene.events.emit('fishBit'));  
         if (direction === 'left') {
-            this.xPos = this.x - 20;
+            this.xPos = this.x - 36;
         } else {
-            this.xPos = this.x + 20;
+            this.xPos = this.x + 36;
         }
 
         this.bobble = this.scene.add.sprite(this.xPos, this.y, 'fishingBobble');                                         

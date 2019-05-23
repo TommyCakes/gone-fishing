@@ -129,11 +129,6 @@ export default class GameScene extends Scene {
         return this.zone;
     }
 
-    flipPositionAndVelocity(sprite, bool, pos) {
-        sprite.flipX = bool;
-        pos === 'left' ? sprite.body.velocity.x -= 30 : sprite.body.velocity.x += 30;
-    }
-
     create() {    
         this.helper = new Helper(this.scene);
 
@@ -199,7 +194,7 @@ export default class GameScene extends Scene {
         
         // this.waterAreas = this.physics.add.group();
         this.waterZone = this.createNewZone(0, 0, 70, 900);
-        // this.waterZone2 = this.createNewZone(230, 200, 130, 160);
+        this.waterZone2 = this.createNewZone(230, 180, 100, 180);
 
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
@@ -219,7 +214,7 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
 
         this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
-        // this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
+        this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
         this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false;});            
         this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false;});            
         this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false});            
@@ -295,8 +290,8 @@ export default class GameScene extends Scene {
                 }
             }
         } 
-        
-        if (this.player.info.catchesRemainingForTheDay >= 1 && this.canFish) {             
+                
+        if (this.player.info.catchesRemainingForTheDay > 0 && this.canFish) {             
             if (this.cooldown > 0) {                            
                 this.timer.paused = false;             
             } else if (this.cooldown === 0) {                
@@ -326,7 +321,7 @@ export default class GameScene extends Scene {
                 }                                                                                              
             } 
         } 
-        
+                
         if (this.canShop) {                    
             // if (this.cooldown > 0) {
             //     this.timer.paused = false;             
@@ -339,7 +334,7 @@ export default class GameScene extends Scene {
                         this.player.anims.stop();                                                
                         // this.toggleKeyboard(false);
                         // this.timer.paused = false;   
-                        if (this.playerInventory.fish === 0) {
+                        if (this.playerInventory.fish.length === 0) {
                             this.events.emit('showUIPopup', `You have no fish to sell, go and catch some!`); 
                         }                                                
                         this.shopObj.sellAllFish(this.player);                            
