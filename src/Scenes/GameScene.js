@@ -168,7 +168,7 @@ export default class GameScene extends Scene {
         
         this.doggo = new Pet(
             this,
-            100,
+            210,
             200,
             "doggo"            
         );
@@ -194,11 +194,11 @@ export default class GameScene extends Scene {
         
         // this.waterAreas = this.physics.add.group();
         this.waterZone = this.createNewZone(0, 0, 70, 900);
-        this.waterZone2 = this.createNewZone(230, 180, 100, 180);
+        // this.waterZone2 = this.createNewZone(230, 180, 100, 180);
 
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
-        this.dogZone = this.createNewZone(this.doggo.x, this.doggo.y, 60, 60);        
+        this.dogZone = this.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
         // this.waterAreas.addMultiple([this.waterZone, this.waterZone2]) ;
                 
         this.shopKeeper = this.physics.add.sprite(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 8); 
@@ -214,7 +214,7 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
 
         this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
-        this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
+        // this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
         this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false;});            
         this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false;});            
         this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false});            
