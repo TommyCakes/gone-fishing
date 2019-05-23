@@ -89,12 +89,8 @@ export default class Player extends Entity {
             frameRate: 10,
             repeat: -1
         });     
-        
-        this.displayOriginX = 0; 
-        this.displayOriginY = 0; 
-        this.displayWidth = 16;
-        this.displayheight = 16;
-        this.setScale(0.5);     
+                
+        this.setScale(0.4);     
         this.body.setCircle(16, 16);
         this.body.setOffset(16, 16);
 
@@ -150,7 +146,7 @@ export default class Player extends Entity {
         return fishCaught;
     }
         
-    collectFish() {               
+    collectFish() {                       
         if (this.checkForFish()) {   
             this.info.inventory.fish.push('fish');                    
             this.scene.events.emit('showUIPopup', "You caught yourself a 'INSERT_FISH!'");           
@@ -158,13 +154,14 @@ export default class Player extends Entity {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }        
         this.scene.events.emit('updateUI', this.info);    
-        console.log(this.info)        
+        console.log(this.info);                
         this.scene.time.delayedCall(200, () => {             
             this.splash.destroy();
         }, [], this);                                                                                                                   
     }
     
     spawnBobble(direction) {
+        this.scene.time.delayedCall(this.getData("timerFishingDelay") - 1500, () => this.scene.events.emit('fishBit'));  
         if (direction === 'left') {
             this.xPos = this.x - 20;
         } else {
@@ -205,7 +202,7 @@ export default class Player extends Entity {
         this.decreaseCatchesRemaining();
         // TODO: Add more random amount of time to catch fish
         // Better rod = faster catch time && cooldown                
-        this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.collectFish, [], this);                                                                                                      
+        this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.collectFish, [], this);                                                                                                                                                                                                                  
     }
 
     setRandomCatchAttempts() {

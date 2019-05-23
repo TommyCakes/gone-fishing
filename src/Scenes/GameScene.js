@@ -22,6 +22,13 @@ export default class GameScene extends Scene {
         this.load.image('shop', 'assets/shop.png');
         this.load.image('home', 'assets/house.png');
         this.load.image('heart', 'assets/emote_heart.png');
+        this.load.image('anger', 'assets/emote_anger.png');
+        this.load.image('exclamation', 'assets/emote_exclamation.png');
+        this.load.image('sleep', 'assets/emote_sleeps.png');
+        this.load.image('star', 'assets/emote_star.png');
+        this.load.image('cash', 'assets/emote_cash.png');
+        this.load.image('happyFace', 'assets/emote_faceHappy.png');
+        this.load.image('question', 'assets/emote_question.png');
         this.load.image('bg', 'assets/grass.png');
         this.load.image('greyButton', 'assets/greyButton.png');
         this.load.image('panel', 'assets/panel.png');
@@ -215,11 +222,11 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.player, this.shopKeeper);  
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
 
-        this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteracted = false;});            
+        this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
         // this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false;});            
-        this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteracted = false;});            
-        this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteracted = false;});            
-        this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteracted = true; this.canSleep = false; this.canShop = false; this.canFish = false});            
+        this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false;});            
+        this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false;});            
+        this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false});            
         
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
@@ -239,18 +246,15 @@ export default class GameScene extends Scene {
         this.canFish = true;
         this.canShop = true;
         this.canSleep = true;                             
-        this.hasInteracted = false;                             
+        this.hasInteractedWithDog = false;                             
     }  
     
-    createEmote(emoteName) {
-        let emote = this.physics.add.sprite(this.doggo.x, this.doggo.y - 20, emoteName);   
-        emote.alpha = 0;                    
+    createEmote(emoteName, character) {
+        let emote = this.physics.add.sprite(character.x, character.y - 20, emoteName);                    
         emote.setDepth(1);     
-        emote.alpha = 1;   
-        this.doggo.anims.play('idle-happy', true); 
-        this.time.delayedCall(100, () => {
-            emote.alpha = 0;
-            this.hasInteracted = false;
+        this.time.delayedCall(500, () => {
+            emote.destroy();
+            this.hasInteractedWithDog = false;
         });                        
     }
 
@@ -276,8 +280,9 @@ export default class GameScene extends Scene {
             this.hasInteracted = false;                 
         }
 
-        if (this.hasInteracted) {  
-            this.createEmote('heart');
+        if (this.hasInteractedWithDog) {  
+            this.createEmote('heart', this.doggo);
+            this.doggo.anims.play('idle-happy', true); 
         } else {
             this.doggo.anims.play('idle', true); 
         }
@@ -316,10 +321,11 @@ export default class GameScene extends Scene {
                             this.player.flipX = false;
                             playerDirection = 'right';
                         }                                             
-                        this.player.anims.play('fish', true);  
+                        this.player.anims.play('fish', true);                                                  
                         this.timer.paused = false;                                                                 
-                        this.player.fishing(playerDirection);                                                                                    
-                        this.events.emit('updateUI', this.playerInfo);   
+                        this.player.fishing(playerDirection);  
+                        this.events.on('fishBit', () => this.createEmote('exclamation', this.player));                                                                                  
+                        this.events.emit('updateUI', this.playerInfo);                                                   
                         this.cooldown = this.FISHING_COOLDOWN_DELAY; 
                     }                    
                 }                                                                                              
