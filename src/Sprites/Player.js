@@ -1,15 +1,13 @@
 import Entity from './Entity';
 import Bobble from './Bobble';
 import Game from '../Scenes/GameScene'
-import UI from '../Classes/UI';
-import Helper from '../Classes/Helper';
 
 export default class Player extends Entity {
     
     constructor(scene, x, y, key) {        
         super(scene, x, y, key, "Player");
         
-        this.setData("speed", 200);
+        this.setData("speed", 100);
         this.setData("isFishing", false);
         this.setData("timerFishingDelay", 5000);
         this.body.moves = true;  
@@ -38,16 +36,14 @@ export default class Player extends Entity {
                 outfits: [
                     
                 ]
-            }
+            }            
         }
-        console.log(this.loadGame());
         let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
         
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
 
-        this.helper = new Helper(this.scene);
-
+        // this.setScale(0.5);        
         this.scene.anims.create({
             key: 'left',
             frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 11
@@ -92,23 +88,19 @@ export default class Player extends Entity {
         }),
             frameRate: 10,
             repeat: -1
-        });          
+        });     
+        
+        this.displayOriginX = 0; 
+        this.displayOriginY = 0; 
+        this.displayWidth = 16;
+        this.displayheight = 16;
+        this.setScale(0.5);     
+        this.body.setCircle(16, 16);
+        this.body.setOffset(16, 16);
+
+        console.log(this.info.inventory);
     }
     
-    fadeInfo() {
-        this.time.delayedCall(1000, () => {                             
-            this.infoText.visible = false;
-        }, [], this);
-    }
-
-    createAndfadeOutUI(text) {                
-        let ui = this.helper.createNewUI(text);
-        ui.removeUI();
-        this.scene.time.delayedCall(2000, () => {                             
-            ui.removeUI();
-        }, [], this);
-    }
-
     getInfo() {
         return this.info;
     }
@@ -153,29 +145,33 @@ export default class Player extends Entity {
             fishCaught = true;
         }
         this.bobble.destroy();
-        this.scene.cameras.main.shake(100, 0.01, 0.01),
+        // this.scene.cameras.main.shake(100, 0.01, 0.01),
         this.spawnSplash();
         return fishCaught;
     }
         
     collectFish() {               
         if (this.checkForFish()) {   
-            this.info.inventory.fish.push('fish');        
-            this.createAndfadeOutUI('You caught yourself a "INSERT_FISH!"');
-            console.log(this.info)    
+            this.info.inventory.fish.push('fish');                    
+            this.scene.events.emit('showUIPopup', "You caught yourself a 'INSERT_FISH!'");           
         } else {
-            this.createAndfadeOutUI('Unlucky your line came up empty...');
-            console.log(this.info)
-        }
-        // this.caughtFish = true;  
+            this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
+        }        
+        this.scene.events.emit('updateUI', this.info);    
+        console.log(this.info)        
         this.scene.time.delayedCall(200, () => {             
             this.splash.destroy();
-        }, [], this);                                                                                                              
-        this.scene.fadeInfo();       
+        }, [], this);                                                                                                                   
     }
     
-    spawnBobble() {
-        this.bobble = this.scene.add.sprite(500, 200, 'fishingBobble');                                         
+    spawnBobble(direction) {
+        if (direction === 'left') {
+            this.xPos = this.x - 20;
+        } else {
+            this.xPos = this.x + 20;
+        }
+
+        this.bobble = this.scene.add.sprite(this.xPos, this.y, 'fishingBobble');                                         
         this.bobble.visible = true; 
         this.scene.anims.create({
             key: 'bob',
@@ -200,16 +196,16 @@ export default class Player extends Entity {
         this.splash.anims.play('catch', true);
     }
 
-    fishing(player) {                   
-        this.spawnBobble();
-        // TODO: Add more random amount of time to catch fish
-        // Better rod = faster catch time && cooldown                
-        this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.decreaseCatchesRemaining, [], this);                                                                                                      
+    decreaseCatchesRemaining() {      
+        this.info.catchesRemainingForTheDay -= 1;                   
     }
 
-    decreaseCatchesRemaining() {        
-        this.info.catchesRemainingForTheDay -= 1;
-        this.collectFish();
+    fishing(direction) {                   
+        this.spawnBobble(direction);
+        this.decreaseCatchesRemaining();
+        // TODO: Add more random amount of time to catch fish
+        // Better rod = faster catch time && cooldown                
+        this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.collectFish, [], this);                                                                                                      
     }
 
     setRandomCatchAttempts() {
@@ -219,7 +215,7 @@ export default class Player extends Entity {
     }    
     
     saveGame() {
-        localStorage.setItem('save', JSON.stringify(this.info))
+        localStorage.setItem('save', JSON.stringify(this.info));
     }
 
     loadGame() {
@@ -235,14 +231,14 @@ export default class Player extends Entity {
 
             this.scene.time.delayedCall(1000, function() {   
                 this.saveGame();
-                this.scene.cameras.main.resetFX();  
-                console.log('here2')                
+                this.scene.cameras.main.resetFX();        
             }, [], this);                                                                      
         } 
-        this.createAndfadeOutUI("You fall asleep and dream of tiny goats wearing tophats...");
+        this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
     }
 
     update() {
+        
         this.body.setVelocity(0, 0);
 
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);

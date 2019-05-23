@@ -5,13 +5,12 @@ export default class Helper {
         this.scene = scene
     }
     
-    createNewUI(text) {
+    createNewUI(text, x, y) {
         return new UI(
             this.scene,
-            this.x,
-            this.y,
+            x,
+            y,
             text,
         );
-    }
-
+    }    
 }
