@@ -8,13 +8,22 @@ export default class Pet extends Entity {
         
         this.setData("speed", 30);
         this.body.moves = true;  
+        this.body.immovable = true;
         
         this.scene.anims.create({
             key: 'idle',
             frames: this.scene.anims.generateFrameNumbers('doggo', { start: 18, end: 19
         }),
             frameRate: 3,
-            repeat: 2
+            repeat: -1
+        });
+
+        this.scene.anims.create({
+            key: 'idle-happy',
+            frames: this.scene.anims.generateFrameNumbers('doggo', { start: 0, end: 3
+        }),
+            frameRate: 4,
+            repeat: -1
         });
 
         this.scene.anims.create({
@@ -33,7 +42,16 @@ export default class Pet extends Entity {
             repeat: -1
         });
         
+        this.cooldown = 3;
+        this.second = 1000;
         
+        this.timer = this.scene.time.addEvent({
+            delay: this.second * this.cooldown,                
+            callback: this.updateTime,
+            callbackScope: this,
+            loop: true
+        }); 
+
         // when dog bumpCount == 5, dog ready to be idle and sleep
        //  this.on('animationcomplete', function (anim, frame) {
        //      console.log('animation donezo!');
@@ -53,16 +71,18 @@ export default class Pet extends Entity {
         this.displayheight = 16;
         this.setScale(0.7);     
         this.body.setCircle(12, 0);
-        this.body.setOffset(4, 8);    
-
+        this.body.setOffset(4, 8);            
         // this.doggo.dogAnims = [ "idle", "sleep", "idle"];                    
         this.dogAnims = ["sleep"];  
         this.dogIsIdle = true 
     }
     
-    playDogIdleAnimations() {   
+    updateTime() {                
+        this.cooldown -= 1;             
+    }
 
-        this.resumeDogMovingAnimations(); 
+    playDogIdleAnimations() {   
+        
             // this.dogIsIdle = false;                                     
             // console.log(this.dogAnims);
             // let next = this.dogAnims.shift();
@@ -93,47 +113,26 @@ export default class Pet extends Entity {
     }
 
     update() {
-        
-        if (this.body.velocity.x === -this.getData("speed")) {
+               
+        if (this.body.velocity.x <= -this.getData("speed")) {
             this.flipX = true;            
-        } else if (this.body.velocity.x === this.getData("speed")) {
+        } else if (this.body.velocity.x >= this.getData("speed")) {
             this.resetFlip();            
-        }
-                
-        if (this.bumpCount === 2) {  
-            console.log(this.bumpCount);
-            this.body.velocity.x = 0;                        
-            let next = this.dogAnims.shift();
-            if (next) {
-                this.anims.play(next);
-            }
-            this.on('animationcomplete', () => { 
-                this.bumpCount = 0;   
-                this.moveRight()
-            });
-        }           
-         
-        // if (this.bumpCount === 1) {   
-        //     this.anims.play('idle', true);
-        //     this.body.setVelocity(0, 0);
-        //     this.bumpCount = 0;   
-
-        //     this.on('animationcomplete', function () {                 
-        //         console.log(this.dogIdleAnims);
-        //         let next = this.dogIdleAnims.shift();
-
-        //         if (next) {
-        //             this.anims.play(next);
-        //         } else {
-        //             this.off("animationcomplete", () => {
-        //                 this.body.velocity.x += 30;
-        //                 this.anims.play('walk-right', true);
-        //             });                    
-        //         }
+        }        
         
-        //     }, this);       
-        // }
-                
+        // if (this.bumpCount === 2) {  
+        //     console.log(this.bumpCount);
+        //     this.body.velocity.x = 0;                        
+        //     let next = this.dogAnims.shift();
+        //     if (next) {
+        //         this.anims.play(next);
+        //     }
+        //     this.on('animationcomplete', () => { 
+        //         this.bumpCount = 0;   
+        //         this.moveRight()
+        //     });
+        // }           
+                        
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);
         this.y = Phaser.Math.Clamp(this.y, 0, this.scene.game.config.height);        
     }
