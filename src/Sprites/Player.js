@@ -12,19 +12,17 @@ export default class Player extends Entity {
         this.setData("isFishing", false);
         this.setData("timerFishingDelay", 5000);
         this.body.moves = true;  
-        // this.play("sprPlayer");
-        this.level = new Level();
-
+        // this.play("sprPlayer");        
         /* The player object */        
         this.info = {
             name: "TommyCakes",
             level: 1,    
             // for testing...
-            catchesRemainingForTheDay: 1,
+            catchesRemainingForTheDay: 100,
             cash: 10,
             rarestFishCaught: "",
-            level: this.level.getCurrentLevel(),
-            xpPool: this.level.getExperiencePool(),
+            level: 0,
+            xpPool: 0,
             inventory: {
                 fish: [
 
@@ -43,6 +41,9 @@ export default class Player extends Entity {
                 ]
             }            
         }
+
+        this.level = new Level(this.scene, this);
+
         let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
         
         let style = { font: '20px Arial', fill: '#fff' }         
@@ -202,7 +203,11 @@ export default class Player extends Entity {
         this.info.catchesRemainingForTheDay -= 1;                   
     }
 
-    fishing(direction ,fish) {                   
+    fishing(direction ,fish) {                        
+        this.info.xpPool += this.level.addExperiencePoints(10);    
+        this.level.showExperienceText(10);  
+        this.level.checkForLevelUp();     
+        console.log(this.info.xpPool);
         this.spawnBobble(direction);
         this.decreaseCatchesRemaining();        
         // TODO: Add more random amount of time to catch fish
@@ -242,7 +247,7 @@ export default class Player extends Entity {
     update() {
         
         this.body.setVelocity(0, 0);
-
+        
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);
         this.y = Phaser.Math.Clamp(this.y, 0, this.scene.game.config.height);        
     }

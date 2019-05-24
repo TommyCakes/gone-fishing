@@ -1,9 +1,17 @@
 export default class Level {
-    constructor() {   
+    constructor(scene, player) {    
+        this.scene = scene;       
+        this.player = player;       
         this.maxLevel = 10;
-        this.experiencePool = 0;
-        this.levelTree = this.buildLevelTree();        
+        this.levelTree = this.buildLevelTree(); 
+        console.log(this.player.info.xpPool);
+        
+        if (localStorage.getItem('save')) {            
+            this.experiencePool = this.player.info.xpPool;
+        }
+        
     }
+    
 
     // takes character and adds a way to power them up
     // each level will require more XP than the previous one 
@@ -20,24 +28,34 @@ export default class Level {
         let baseNumber = 50;
         let levels = {}
         
-        for (let i = 0; i < this.maxLevel; i += 1) {
-            let currentLevel = `level_${i}`;                
-            levels[currentLevel] = baseNumber
+        for (let i = 0; i < this.maxLevel; i += 1) {             
+            levels[i] = baseNumber
             baseNumber = Math.floor(baseNumber * 1.5 + (baseNumber / 3));                                         
         }
         return levels            
     }
     
-    addExperiencePoints(xpAmount) {
-        this.experiencePool += xpAmount;
+    addExperiencePoints(xpAmount) {               
+        this.experiencePool += xpAmount;        
+        return this.experiencePool;
+    }
+
+    showExperienceText(amount) {
+        this.scene.events.emit('experienceEarned', amount);
     }
 
     checkForLevelUp(xpRecieved) {
-        
+        let currentLevel = this.player.info.level;
+        let xpNeeded = this.levelTree[currentLevel];
+        if (this.player.info.xpPool >= xpNeeded) {
+            this.levelUp();
+        }
     }
 
     levelUp() {
-
+        console.log('level up!');
+        this.player.info.level += 1;
+        this.scene.events.emit('levelUp');
     }
 
     getCurrentLevel(player) {
@@ -45,7 +63,7 @@ export default class Level {
     }
 
     getExperiencePool() {
-
+        return this.experiencePool;
     }
 
     chooseNewSkill() {

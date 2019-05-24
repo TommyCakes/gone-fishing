@@ -9,7 +9,10 @@ import Pet from '../Sprites/Pet';
 export default class GameScene extends Scene {
 
     constructor() {
-        super('Game');               
+        super('Game');   
+        this.style = { font: '13px Arial', fill: '#fff', align: 'center' }      
+        this.smallStyle = { font: '10px Arial', fill: '#7729DE', align: 'right' }                             
+        this.smallStyleGold = { font: '10px Arial', fill: '#C0D825', align: 'right' }                             
     }
 
     updateTime() {                
@@ -17,12 +20,12 @@ export default class GameScene extends Scene {
     }
 
     createInteractiveSleepPanel(f) {
-        let style = { font: '13px Arial', fill: '#fff', align: 'center' }                 
+        
         let container = this.add.container(this.cameras.main.centerX / 2, this.cameras.main.centerY / 2);
         this.uiBackground = this.add.image(container.x, container.y, 'panel').setScrollFactor(0);  
         this.uiBackground.setOrigin(0.5, 0.5)
         this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 40, 'brownPanel').setScrollFactor(0);          
-        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, 'Will you settle down for the night, and save your progress?', style).setScrollFactor(0)
+        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, 'Will you settle down for the night, and save your progress?', this.style).setScrollFactor(0)
         this.buttonYes = this.add.image(this.uiBackground.x - 40 , this.brownPanel.y + 60 , 'greyButton').setScrollFactor(0).setInteractive();  
         this.buttonYes.name = 'yesBtn';
         this.check = this.add.image(this.uiBackground.x - 40, this.brownPanel.y + 70, 'checkBlue').setScrollFactor(0)
@@ -112,6 +115,11 @@ export default class GameScene extends Scene {
         this.playerInventory = this.player.getInventory();               
         this.player.setDepth(1);
         
+        this.playerText = this.add.text(this.player.x , this.player.y - 30, '0', this.style)
+        // .setScrollFactor(0);
+        this.playerText.setOrigin(0.5);
+        this.playerText.setDepth(1);
+
         this.doggo = new Pet(
             this,
             210,
@@ -224,6 +232,10 @@ export default class GameScene extends Scene {
     }
 
     update() {  
+
+        this.playerText.x = this.player.x;
+        this.playerText.y = this.player.y - 30;
+        
         this.player.body.setVelocity(0)   
         
         this.player.update();      
@@ -301,8 +313,23 @@ export default class GameScene extends Scene {
                             playerDirection = 'right';
                         }                                             
                         this.player.anims.play('fish', true);                                                  
-                        this.timer.paused = false;                                                                 
-                        this.player.fishing(playerDirection, this.fishingObj.getRandomFish());  
+                        this.timer.paused = false;             
+                                                                            
+                        this.player.fishing(playerDirection, this.fishingObj.getRandomFish()); 
+                        this.events.on('levelUp', () => {
+                            this.playerText.setText(this.playerInfo.level);
+                            let text = this.add.text(this.player.x , this.player.y - 20, "LEVEL UP!", this.smallStyleGold);
+                            this.time.delayedCall(500, () => {
+                                text.destroy();
+                            });                             
+                        });
+                        
+                        this.events.on('experienceEarned', ((data) => {
+                            let text = this.add.text(this.player.x + 10 , this.player.y - 10, `${data} XP`, this.smallStyle);
+                            this.time.delayedCall(1500, () => {
+                                text.destroy();
+                            }); 
+                        })); 
                         this.events.on('fishBit', () => this.createEmote('exclamation', this.player));          
                         this.events.emit('updateUI', this.playerInfo);                                                   
                         this.cooldown = this.FISHING_COOLDOWN_DELAY;
