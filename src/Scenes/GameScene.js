@@ -332,13 +332,15 @@ export default class GameScene extends Scene {
             }
         } 
         
-        if (this.canBuyBait && this.playerInfo.cash !== 0) { 
-            if (this.keySpace.isDown) {                                                           
-                if (touching && wasTouching) {                     
-                    this.events.emit('showUIPopup', "You bought some more bait!");                          
-                    this.playerInfo.catchesRemainingForTheDay += 1;
-                    this.playerInfo.cash -= 10;
-                    this.events.emit('updateUI', this.playerInfo);  
+        if (this.canBuyBait && this.playerInfo.cash !== 0) {   
+            if (touching && wasTouching) {
+                this.createEmote('cash', this.baitShopKeeper);
+                this.events.emit('showUIPopup', "Hello sir! Bait is 10 gold for 1 bait, would you like to buy some?");  
+                if (this.keySpace.isDown) {                                                                                   
+                        this.events.emit('showUIPopup', "You bought some more bait!");                          
+                        this.playerInfo.catchesRemainingForTheDay += 1;
+                        this.playerInfo.cash -= 10;
+                        this.events.emit('updateUI', this.playerInfo);  
                 }
             }
         }
