@@ -13,7 +13,7 @@ export default class PreloadScene extends Scene {
     ready() {
         this.readyCount += 1;
         if (this.readyCount === 2 ) {
-            this.scene.start('Game');            
+            this.scene.start('Game');                        
         }
     }
 

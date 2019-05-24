@@ -9,8 +9,7 @@ import Pet from '../Sprites/Pet';
 export default class GameScene extends Scene {
 
     constructor() {
-        super('Game');  
-        this.start('UIScene');      
+        super('Game');               
     }
 
     updateTime() {                

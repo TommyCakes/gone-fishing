@@ -22,7 +22,7 @@ class Game extends Phaser.Game {
         this.scene.start('Boot');
         // this.scene.start('Preload');      
         // this.scene.start('Game');      
-        // this.scene.start('UIScene');      
+        this.scene.start('UIScene');      
     }
 }
 
