@@ -3,15 +3,17 @@ export default class Shop {
 
     }
 
-    sellAllFish(player) {
-        let fishToSell = player.info.inventory.fish.length;
-        for (let i = 0; i < fishToSell; i += 1) {
-            this.sellFish(player);        
-        }                    
+    getTotalOfSale() {
+        return this.totalValue;
     }
 
-    sellFish(player) {
-        // Need to make a fish class or load data from JSON file
-        player.info.cash += 1 * 3;
+    sellAllFish(player) {
+        let fishToSell = player.info.inventory.fish;                        
+        for (let i = 0; i < fishToSell.length; i += 1) {
+            this.totalValue = [];              
+            this.totalValue.push(1 * fishToSell[i].value);      
+            player.info.cash += 1 * fishToSell[i].value;
+        }                                 
     }
+
 }

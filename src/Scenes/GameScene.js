@@ -134,6 +134,7 @@ export default class GameScene extends Scene {
 
     create() {    
         let fishList = this.cache.json.get('fishList').fish.type;
+        console.log(fishList);
         this.helper = new Helper(this.scene);
         this.fishingObj = new Fishing(fishList);
         console.log(this.fishingObj.getRandomFish());
@@ -329,30 +330,23 @@ export default class GameScene extends Scene {
             } 
         } 
                 
-        if (this.canShop) {                    
-            // if (this.cooldown > 0) {
-            //     this.timer.paused = false;             
-            // } else if (this.cooldown === 0) {                                                    
-            //     this.toggleKeyboard(true);
-            //     this.timer.paused = true;                 
-                if (this.keySpace.isDown) {                    
-                    if (touching && wasTouching) {   
+        if (this.canShop && this.playerInventory.fish.length > 0) {                                              
+            if (this.keySpace.isDown) {                    
+                if (touching && wasTouching) { 
+                    if (this.playerInventory.fish.length !== 0) {
+                        
                         this.events.emit('updateUI', this.playerInfo);                         
-                        this.player.anims.stop();                                                
-                        // this.toggleKeyboard(false);
-                        // this.timer.paused = false;   
-                        if (this.playerInventory.fish.length === 0) {
-                            this.events.emit('showUIPopup', `You have no fish to sell, go and catch some!`); 
-                        }                                                
+                        this.player.anims.stop();                                                                                                                                               
                         this.shopObj.sellAllFish(this.player);                            
-                        this.events.emit('showUIPopup', `You sold all your fish!`);   
+                        this.events.emit('showUIPopup', `You sold all your fish! And made a total of $${this.shopObj.getTotalOfSale()}`);   
                         this.playerInventory.fish.length = 0;      
                         this.events.emit('updateUI', this.playerInfo);               
-                        // this.cooldown = this.FISHING_COOLDOWN_DELAY; 
-                        // this.coins = this.spawnCoins();                        
-                    }
+                        // this.coins = this.spawnCoins();                                
+                    } else {
+                        this.events.emit('showUIPopup', `You have no fish to sell, go and catch some!`); 
+                    }                
                 }
-            // }                     
+            }                   
         }  
         
 

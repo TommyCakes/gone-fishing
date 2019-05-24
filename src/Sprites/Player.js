@@ -20,9 +20,12 @@ export default class Player extends Entity {
             // for testing...
             catchesRemainingForTheDay: 1,
             cash: 10,
+            rarestFishCaught: "",
             inventory: {
                 fish: [
-                    'fish', 'fish'
+                    {
+                        name: "Sand Eel", description: "Loves to build sand castles on the weekend", size: "2", value: "5"
+                    }
                 ],
                 rods: [
                 
@@ -93,6 +96,7 @@ export default class Player extends Entity {
         this.setScale(0.4);     
         this.body.setCircle(16, 16);
         this.body.setOffset(16, 16);
+        console.log(this.getInfo());
     }
     
     getInfo() {
@@ -146,8 +150,8 @@ export default class Player extends Entity {
     }
         
     collectFish(fish) {                       
-        if (this.checkForFish()) {     
-            console.log(fish);                           
+        if (this.checkForFish()) {                 
+            this.info.inventory.fish.push(fish);                   
             this.scene.events.emit('showUIPopup', `You caught yourself a ${fish.name}!`);     
         } else {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           

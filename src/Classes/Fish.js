@@ -1,9 +1,10 @@
 export default class Fish {
-    constructor(name, description, size, price) {
+    constructor(name, description, weight, value, rarity) {
         this.name = name;
         this.description = description;
-        this.size = size;
-        this.price = price;        
+        this.weight = weight;
+        this.value = value;        
+        this.rarity = rarity;        
     }
 
     // TODO: add image for inventory later on
