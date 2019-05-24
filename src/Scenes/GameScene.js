@@ -9,72 +9,8 @@ import Pet from '../Sprites/Pet';
 export default class GameScene extends Scene {
 
     constructor() {
-        super('Game');        
-    }
-
-    preload() {        
-        this.load.json('fishList', 'assets/fishList.json');
-        
-        this.load.image('fisherman', 'assets/fisherman.png');
-        this.load.image('water', 'assets/water.png');
-        this.load.image('shop', 'assets/shop.png');
-        this.load.image('home', 'assets/house.png');
-        this.load.image('fishSign', 'assets/fish_sign.png');
-        this.load.image('heart', 'assets/emote_heart.png');
-        this.load.image('anger', 'assets/emote_anger.png');
-        this.load.image('exclamation', 'assets/emote_exclamation.png');
-        this.load.image('sleep', 'assets/emote_sleeps.png');
-        this.load.image('star', 'assets/emote_star.png');
-        this.load.image('cash', 'assets/emote_cash.png');
-        this.load.image('happyFace', 'assets/emote_faceHappy.png');
-        this.load.image('question', 'assets/emote_question.png');
-        this.load.image('bg', 'assets/grass.png');
-        this.load.image('greyButton', 'assets/greyButton.png');
-        this.load.image('panel', 'assets/panel.png');
-        this.load.image('brownPanel', 'assets/longBrown.png');
-        this.load.image('crossBrown', 'assets/crossBrown.png');
-        this.load.image('checkBlue', 'assets/checkBlue.png');
-        // this.load.image('energyBar', 'assets/energybar.png');
-        // this.load.image("energyContainer", "assets/energycontainer.png");
-        this.load.spritesheet('sprPlayer', 'assets/yan.png', { 
-            frameWidth: 48, 
-            frameHeight: 64 
-        });        
-        this.load.spritesheet('shopKeeper', 'assets/elder.png', { 
-            frameWidth: 48, 
-            frameHeight: 64 
-        });        
-        this.load.spritesheet('baitShopKeeper', 'assets/baitShopKeeper.png', { 
-            frameWidth: 48, 
-            frameHeight: 64 
-        });        
-        this.load.spritesheet('waterMoving', 'assets/water_moving.png', { 
-            frameWidth: 48, 
-            frameHeight: 64 
-        });
-        this.load.spritesheet('fishingBobble', 'assets/fishing_bobbles.png', { 
-            frameWidth: 24, 
-            frameHeight: 24 
-        });
-        this.load.spritesheet('splash', 'assets/splash.png', { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
-        this.load.spritesheet('chests', 'assets/chests.png', { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
-        this.load.spritesheet('doggo', 'assets/doggo.png', { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
-        this.load.spritesheet('goldCoin', 'assets/coin_gold.png', { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
-
-        this.load.image("tiles", "../assets/overworld.png");
-        this.load.tilemapTiledJSON("map", "../assets/fishing-map.json");
+        super('Game');  
+        this.start('UIScene');      
     }
 
     updateTime() {                
@@ -111,7 +47,7 @@ export default class GameScene extends Scene {
 
         this.input.on('pointerdown', () => {                           
             this.uiPanel.children.iterate(child => {
-                if (child.name === 'noBtn') {
+                if (child.name === 'no Btn') {
                     child.destroy(child, true);
                 }
             });
