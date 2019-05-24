@@ -44,6 +44,10 @@ export default class GameScene extends Scene {
             frameWidth: 48, 
             frameHeight: 64 
         });        
+        this.load.spritesheet('baitShopKeeper', 'assets/baitShopKeeper.png', { 
+            frameWidth: 48, 
+            frameHeight: 64 
+        });        
         this.load.spritesheet('waterMoving', 'assets/water_moving.png', { 
             frameWidth: 48, 
             frameHeight: 64 
@@ -205,9 +209,17 @@ export default class GameScene extends Scene {
 
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
+        this.baitShopZone = this.createNewZone(180, 300, 60, 40);        
         this.dogZone = this.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
         // this.waterAreas.addMultiple([this.waterZone, this.waterZone2]) ;
-                
+        
+        this.baitShopKeeper = this.physics.add.sprite(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'baitShopKeeper', 9); 
+        this.baitShopKeeper.body.moves = false;
+        this.baitShopKeeper.body.setCircle(25);        
+        this.baitShopKeeper.setScale(0.4); 
+        this.baitShopKeeper.setDepth(2); 
+        this.physics.add.collider(this.player, this.baitShopKeeper);  
+
         this.shopKeeper = this.physics.add.sprite(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 8); 
         this.sign = this.add.sprite(this.shopKeeper.x + 30, this.shopZone.y + 40, 'fishSign');
         this.sign.displayHeight = 24;
@@ -220,11 +232,12 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.player, this.shopKeeper);  
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
 
-        this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
+        this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
         // this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
-        this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false;});            
-        this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false;});            
-        this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false});            
+        this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
+        this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
+        this.physics.add.overlap(this.player, this.baitShopZone, () => { this.isShoppingForBait = true; this.canShop = false; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false});            
+        this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false; this.canBuyBait = false});            
         
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
@@ -243,6 +256,7 @@ export default class GameScene extends Scene {
         this.shopObj = new Shop();
         this.canFish = true;
         this.canShop = true;
+        this.canBuyBait = true;
         this.canSleep = true;                             
         this.hasInteractedWithDog = false;                                     
     }  
@@ -292,7 +306,9 @@ export default class GameScene extends Scene {
             this.isFishing = false;
             this.canFish = true;                 
             this.isSleeping = false;
-            this.canSleep = true;                 
+            this.canSleep = true;       
+            this.canBuyBait = true;
+            this.isShoppingForBait = false;          
             this.hasInteracted = false;                 
         }
 
@@ -315,7 +331,18 @@ export default class GameScene extends Scene {
                 }
             }
         } 
-                
+        
+        if (this.canBuyBait && this.playerInfo.cash !== 0) { 
+            if (this.keySpace.isDown) {                                                           
+                if (touching && wasTouching) {                     
+                    this.events.emit('showUIPopup', "You bought some more bait!");                          
+                    this.playerInfo.catchesRemainingForTheDay += 1;
+                    this.playerInfo.cash -= 10;
+                    this.events.emit('updateUI', this.playerInfo);  
+                }
+            }
+        }
+
         if (this.player.info.catchesRemainingForTheDay > 0 && this.canFish) {             
             if (this.cooldown > 0) {                            
                 this.timer.paused = false;             

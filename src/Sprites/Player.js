@@ -23,16 +23,7 @@ export default class Player extends Entity {
             rarestFishCaught: "",
             inventory: {
                 fish: [
-                    {
-                        name: "Sand Eel", description: "Loves to build sand castles on the weekend", size: "2", value: "5"
-                    },
-                    {
-                        description: "Loves to build sand castles on the weekend",
-                        name: "Sand Eel",
-                        rarity: "common",
-                        value: "5",
-                        weight: "2",
-                    }
+
                 ],
                 rods: [
                 
@@ -48,7 +39,7 @@ export default class Player extends Entity {
                 ]
             }            
         }
-        // let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
+        let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
         
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
