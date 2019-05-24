@@ -64,10 +64,10 @@ export default class GameScene extends Scene {
             frameWidth: 32, 
             frameHeight: 32 
         });
-        // this.load.spritesheet('goldCoin', 'assets/coin_gold.png', { 
-        //     frameWidth: 32, 
-        //     frameHeight: 32 
-        // });
+        this.load.spritesheet('goldCoin', 'assets/coin_gold.png', { 
+            frameWidth: 32, 
+            frameHeight: 32 
+        });
 
         this.load.image("tiles", "../assets/overworld.png");
         this.load.tilemapTiledJSON("map", "../assets/fishing-map.json");
@@ -244,7 +244,7 @@ export default class GameScene extends Scene {
         this.canFish = true;
         this.canShop = true;
         this.canSleep = true;                             
-        this.hasInteractedWithDog = false;                             
+        this.hasInteractedWithDog = false;                                     
     }  
     
     createEmote(emoteName, character) {
@@ -254,6 +254,24 @@ export default class GameScene extends Scene {
             emote.destroy();
             this.hasInteractedWithDog = false;
         });                        
+    }
+
+    spawnCoin(player) {        
+        let coin = this.physics.add.sprite(player.x, player.y - 20, 'goldCoin', 2);         
+        this.anims.create({
+            key: 'spinning',
+            frames: this.anims.generateFrameNumbers('goldCoin', { start: 0, end: 7
+        }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        coin.setDepth(1); 
+        coin.setScale(0.5); 
+        coin.anims.play('spinning');   
+        this.time.delayedCall(1500, () => {
+            coin.destroy();
+        });   
     }
 
     update() {  
@@ -332,24 +350,19 @@ export default class GameScene extends Scene {
                 
         if (this.canShop && this.playerInventory.fish.length > 0) {                                              
             if (this.keySpace.isDown) {                    
-                if (touching && wasTouching) { 
-                    if (this.playerInventory.fish.length !== 0) {
-                        
+                if (touching && wasTouching) {                         
                         this.events.emit('updateUI', this.playerInfo);                         
                         this.player.anims.stop();                                                                                                                                               
-                        this.shopObj.sellAllFish(this.player);                            
+                        this.shopObj.sellAllFish(this.player);  
+                        this.spawnCoin(this.player);                          
                         this.events.emit('showUIPopup', `You sold all your fish! And made a total of $${this.shopObj.getTotalOfSale()}`);   
                         this.playerInventory.fish.length = 0;      
                         this.events.emit('updateUI', this.playerInfo);               
-                        // this.coins = this.spawnCoins();                                
-                    } else {
-                        this.events.emit('showUIPopup', `You have no fish to sell, go and catch some!`); 
-                    }                
+                        // this.coins = this.spawnCoins();                                                
                 }
             }                   
-        }  
+        } 
         
-
         if (this.keyW.isDown || this.cursors.up.isDown ) {
             this.player.moveUp();
             this.player.anims.play('up', true);               

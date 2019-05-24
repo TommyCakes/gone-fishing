@@ -1,6 +1,6 @@
 export default class Shop {
-    constructor() {
-
+    constructor(scene) {
+        this.scene = scene;
     }
 
     getTotalOfSale() {
@@ -15,5 +15,7 @@ export default class Shop {
             player.info.cash += 1 * fishToSell[i].value;
         }                                 
     }
+
+    
 
 }
