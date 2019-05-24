@@ -1,6 +1,7 @@
 import Entity from './Entity';
 import Bobble from './Bobble';
 import Game from '../Scenes/GameScene'
+import Level from '../Classes/Level';
 
 export default class Player extends Entity {
     
@@ -12,6 +13,7 @@ export default class Player extends Entity {
         this.setData("timerFishingDelay", 5000);
         this.body.moves = true;  
         // this.play("sprPlayer");
+        this.level = new Level();
 
         /* The player object */        
         this.info = {
@@ -21,6 +23,8 @@ export default class Player extends Entity {
             catchesRemainingForTheDay: 1,
             cash: 10,
             rarestFishCaught: "",
+            level: this.level.getCurrentLevel(),
+            xpPool: this.level.getExperiencePool(),
             inventory: {
                 fish: [
 
