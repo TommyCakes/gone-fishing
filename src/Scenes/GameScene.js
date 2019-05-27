@@ -182,7 +182,7 @@ export default class GameScene extends Scene {
         
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
-        this.cameras.main.setFollowOffset(-80, -120);
+        this.cameras.main.setFollowOffset(-50, -30);
         this.cameras.main.zoom = 4;
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);

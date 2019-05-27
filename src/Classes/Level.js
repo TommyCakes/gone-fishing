@@ -46,7 +46,7 @@ export default class Level {
             case 'rare':
                 xpAmount = 40
             case 'super rare':
-                xpAmout = 100;
+                xpAmount = 100;
             case 'legendary':
                 xpAmount = 250;
         }

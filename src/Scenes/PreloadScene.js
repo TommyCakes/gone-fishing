@@ -147,8 +147,11 @@ export default class PreloadScene extends Scene {
             frameHeight: 32 
         });
 
+        this.load.image("NEW_UI", "../assets/NEW_UI@2x.png");
+
         this.load.image("tiles", "../assets/overworld.png");
         this.load.tilemapTiledJSON("map", "../assets/fishing-map.json");
+        
         
     }         
 }
