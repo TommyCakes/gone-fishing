@@ -12,6 +12,7 @@ export default class MainUIScene extends Scene {
     {
         super({ key: 'UIScene', active: true });        
         this.style = { font: '24px Arial', fill: '#7729DE', align: 'center' }  
+        this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }  
 
     }
     
@@ -133,7 +134,7 @@ export default class MainUIScene extends Scene {
         let string = data[0]; // text string to add
         let object = data[1]; // object to render text above
         
-        let text = this.add.text(object.x + 100, object.y - 100, `${string}`, this.style);
+        let text = this.add.text(object.x + 150, object.y, string, this.bigStyle);
             this.time.delayedCall(1500, () => {
                 text.destroy();
             });            
