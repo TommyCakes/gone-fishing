@@ -91,8 +91,6 @@ export default class PreloadScene extends Scene {
         
         this.load.image('fisherman', 'assets/fisherman.png');
         this.load.image('water', 'assets/water.png');
-        this.load.image('shop', 'assets/shop.png');
-        this.load.image('home', 'assets/house.png');
         this.load.image('fishSign', 'assets/fish_sign.png');
         this.load.image('heart', 'assets/emote_heart.png');
         this.load.image('anger', 'assets/emote_anger.png');

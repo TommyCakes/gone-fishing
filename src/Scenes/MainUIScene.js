@@ -24,13 +24,13 @@ export default class MainUIScene extends Scene {
     }
     
     getBasicStyle(color) {
-        return { font: '20px Arial', fill: color, align: 'center', wordWrap: { width: 450, useAdvancedWrap: true } }  
+        return { font: '20px Arial', fill: color, align: 'center', wordWrap: { width: 390, useAdvancedWrap: true } }  
     }
-    
+
     updateUI (data) {        
-        if (data.timeOfDay === 22) {            
+        if (data.timeOfDay === 21) {            
             this.showUIPopup('You need to get home before the monsters come...');
-        } else if (data.timeOfDay >= 23) {
+        } else if (data.timeOfDay === 23) {
             this.showUIPopup('A new day has dawned!');
             this.gameScene.events.emit('resetDay', this.info);  
         }

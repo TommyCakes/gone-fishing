@@ -216,7 +216,9 @@ export default class GameScene extends Scene {
         this.canShop = true;
         this.canBuyBait = true;
         this.canSleep = true;                             
-        this.hasInteractedWithDog = false;                                     
+        this.hasInteractedWithDog = false;  
+        
+        this.hasFished = false;
     }  
     
     createEmote(emoteName, character) {
@@ -316,9 +318,13 @@ export default class GameScene extends Scene {
                 this.fishingtimer.paused = false;             
             } else if (this.cooldown === 0) {                
                 this.toggleKeyboard(true);
-                this.fishingtimer.paused = true;                                  
-                if (this.keySpace.isDown) {                                                           
-                    if (touching && wasTouching) {  
+                this.fishingtimer.paused = true;  
+                if (touching && wasTouching) {   
+                    if (!this.hasFished) {
+                        this.hasFished = true;
+                        this.events.emit('showUIPopup', "Press space to cast your rod");
+                    }                                                    
+                    if (this.keySpace.isDown) {                                                                               
                         this.events.emit('updateUI', this.playerInfo);  
                         this.events.emit('showUIPopup', "You cast your rod out into the water...");                          
                         this.player.anims.stop(); 
