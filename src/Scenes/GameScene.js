@@ -185,7 +185,7 @@ export default class GameScene extends Scene {
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(-160, -160);
-        this.cameras.main.zoom = 3;
+        // this.cameras.main.zoom = 3;
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);
         this.physics.add.collider(this.player, waterLayer, () => this.doggo.bumpCount += 1);           
@@ -235,7 +235,13 @@ export default class GameScene extends Scene {
 
         this.playerText.x = this.player.x;
         this.playerText.y = this.player.y - 30;
-        
+        this.events.on('levelUp', () => {
+            this.playerText.setText(this.playerInfo.level);
+            let text = this.add.text(this.player.x , this.player.y - 20, "LEVEL UP!", this.smallStyleGold);
+            this.time.delayedCall(2500, () => {
+                text.destroy();
+            });                             
+        });
         this.player.body.setVelocity(0)   
         
         this.player.update();      
@@ -315,14 +321,7 @@ export default class GameScene extends Scene {
                         this.player.anims.play('fish', true);                                                  
                         this.timer.paused = false;             
                                                                             
-                        this.player.fishing(playerDirection, this.fishingObj.getRandomFish()); 
-                        this.events.on('levelUp', () => {
-                            this.playerText.setText(this.playerInfo.level);
-                            let text = this.add.text(this.player.x , this.player.y - 20, "LEVEL UP!", this.smallStyleGold);
-                            this.time.delayedCall(500, () => {
-                                text.destroy();
-                            });                             
-                        });
+                        this.player.fishing(playerDirection, this.fishingObj.getRandomFish());                         
                         
                         this.events.on('experienceEarned', ((data) => {
                             let text = this.add.text(this.player.x + 10 , this.player.y - 10, `${data} XP`, this.smallStyle);
