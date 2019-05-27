@@ -14,9 +14,7 @@ export default class MainUIScene extends Scene {
 
     }
     
-    preload() {
-        this.load.image('fish', 'assets/fish.png');
-        this.load.image('rod', 'assets/fishing_rod.png');        
+    preload() {              
     }
 
     

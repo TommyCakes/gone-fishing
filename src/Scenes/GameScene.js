@@ -9,72 +9,10 @@ import Pet from '../Sprites/Pet';
 export default class GameScene extends Scene {
 
     constructor() {
-        super('Game');        
-    }
-
-    preload() {        
-        this.load.json('fishList', 'assets/fishList.json');
-        
-        this.load.image('fisherman', 'assets/fisherman.png');
-        this.load.image('water', 'assets/water.png');
-        this.load.image('shop', 'assets/shop.png');
-        this.load.image('home', 'assets/house.png');
-        this.load.image('fishSign', 'assets/fish_sign.png');
-        this.load.image('heart', 'assets/emote_heart.png');
-        this.load.image('anger', 'assets/emote_anger.png');
-        this.load.image('exclamation', 'assets/emote_exclamation.png');
-        this.load.image('sleep', 'assets/emote_sleeps.png');
-        this.load.image('star', 'assets/emote_star.png');
-        this.load.image('cash', 'assets/emote_cash.png');
-        this.load.image('happyFace', 'assets/emote_faceHappy.png');
-        this.load.image('question', 'assets/emote_question.png');
-        this.load.image('bg', 'assets/grass.png');
-        this.load.image('greyButton', 'assets/greyButton.png');
-        this.load.image('panel', 'assets/panel.png');
-        this.load.image('brownPanel', 'assets/longBrown.png');
-        this.load.image('crossBrown', 'assets/crossBrown.png');
-        this.load.image('checkBlue', 'assets/checkBlue.png');
-        // this.load.image('energyBar', 'assets/energybar.png');
-        // this.load.image("energyContainer", "assets/energycontainer.png");
-        this.load.spritesheet('sprPlayer', 'assets/yan.png', { 
-            frameWidth: 48, 
-            frameHeight: 64 
-        });        
-        this.load.spritesheet('shopKeeper', 'assets/elder.png', { 
-            frameWidth: 48, 
-            frameHeight: 64 
-        });        
-        this.load.spritesheet('baitShopKeeper', 'assets/baitShopKeeper.png', { 
-            frameWidth: 48, 
-            frameHeight: 64 
-        });        
-        this.load.spritesheet('waterMoving', 'assets/water_moving.png', { 
-            frameWidth: 48, 
-            frameHeight: 64 
-        });
-        this.load.spritesheet('fishingBobble', 'assets/fishing_bobbles.png', { 
-            frameWidth: 24, 
-            frameHeight: 24 
-        });
-        this.load.spritesheet('splash', 'assets/splash.png', { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
-        this.load.spritesheet('chests', 'assets/chests.png', { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
-        this.load.spritesheet('doggo', 'assets/doggo.png', { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
-        this.load.spritesheet('goldCoin', 'assets/coin_gold.png', { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
-
-        this.load.image("tiles", "../assets/overworld.png");
-        this.load.tilemapTiledJSON("map", "../assets/fishing-map.json");
+        super('Game');   
+        this.style = { font: '13px Arial', fill: '#fff', align: 'center' }      
+        this.smallStyle = { font: '10px Arial', fill: '#7729DE', align: 'right' }                             
+        this.smallStyleGold = { font: '10px Arial', fill: '#C0D825', align: 'right' }                             
     }
 
     updateTime() {                
@@ -82,12 +20,12 @@ export default class GameScene extends Scene {
     }
 
     createInteractiveSleepPanel(f) {
-        let style = { font: '13px Arial', fill: '#fff', align: 'center' }                 
+        
         let container = this.add.container(this.cameras.main.centerX / 2, this.cameras.main.centerY / 2);
         this.uiBackground = this.add.image(container.x, container.y, 'panel').setScrollFactor(0);  
         this.uiBackground.setOrigin(0.5, 0.5)
         this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 40, 'brownPanel').setScrollFactor(0);          
-        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, 'Will you settle down for the night, and save your progress?', style).setScrollFactor(0)
+        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, 'Will you settle down for the night, and save your progress?', this.style).setScrollFactor(0)
         this.buttonYes = this.add.image(this.uiBackground.x - 40 , this.brownPanel.y + 60 , 'greyButton').setScrollFactor(0).setInteractive();  
         this.buttonYes.name = 'yesBtn';
         this.check = this.add.image(this.uiBackground.x - 40, this.brownPanel.y + 70, 'checkBlue').setScrollFactor(0)
@@ -111,7 +49,7 @@ export default class GameScene extends Scene {
 
         this.input.on('pointerdown', () => {                           
             this.uiPanel.children.iterate(child => {
-                if (child.name === 'noBtn') {
+                if (child.name === 'no Btn') {
                     child.destroy(child, true);
                 }
             });
@@ -177,6 +115,11 @@ export default class GameScene extends Scene {
         this.playerInventory = this.player.getInventory();               
         this.player.setDepth(1);
         
+        this.playerText = this.add.text(this.player.x , this.player.y - 30, '0', this.style)
+        // .setScrollFactor(0);
+        this.playerText.setOrigin(0.5);
+        this.playerText.setDepth(1);
+
         this.doggo = new Pet(
             this,
             210,
@@ -289,6 +232,10 @@ export default class GameScene extends Scene {
     }
 
     update() {  
+
+        this.playerText.x = this.player.x;
+        this.playerText.y = this.player.y - 30;
+        
         this.player.body.setVelocity(0)   
         
         this.player.update();      
@@ -366,8 +313,23 @@ export default class GameScene extends Scene {
                             playerDirection = 'right';
                         }                                             
                         this.player.anims.play('fish', true);                                                  
-                        this.timer.paused = false;                                                                 
-                        this.player.fishing(playerDirection, this.fishingObj.getRandomFish());  
+                        this.timer.paused = false;             
+                                                                            
+                        this.player.fishing(playerDirection, this.fishingObj.getRandomFish()); 
+                        this.events.on('levelUp', () => {
+                            this.playerText.setText(this.playerInfo.level);
+                            let text = this.add.text(this.player.x , this.player.y - 20, "LEVEL UP!", this.smallStyleGold);
+                            this.time.delayedCall(500, () => {
+                                text.destroy();
+                            });                             
+                        });
+                        
+                        this.events.on('experienceEarned', ((data) => {
+                            let text = this.add.text(this.player.x + 10 , this.player.y - 10, `${data} XP`, this.smallStyle);
+                            this.time.delayedCall(1500, () => {
+                                text.destroy();
+                            }); 
+                        })); 
                         this.events.on('fishBit', () => this.createEmote('exclamation', this.player));          
                         this.events.emit('updateUI', this.playerInfo);                                                   
                         this.cooldown = this.FISHING_COOLDOWN_DELAY;
