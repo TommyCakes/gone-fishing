@@ -23,7 +23,9 @@ export default class Player extends Entity {
             rarestFishCaught: "",
             level: 0,
             xpPool: 0,
-            timeOfDay: 8,
+            // build day / month / time class
+            timeOfDay: 18,
+            dayOfTheWeek: 'Mon',
             inventory: {
                 fish: [
                     {name: "Seabass", description: "Just your standard sea-dweller, like to be called Baz for short", weight: "3", value: "18", rarity: "uncommon"}
@@ -161,7 +163,7 @@ export default class Player extends Entity {
         } else {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }        
-        this.scene.events.emit('updateUI', null, this.info);  
+        this.scene.events.emit('updateUI', this.info);  
                            
         if (!this.level.checkForLevelUp()) {
             this.level.showExperienceText(fish); 

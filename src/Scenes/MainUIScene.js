@@ -23,8 +23,19 @@ export default class MainUIScene extends Scene {
         return `${paddedTime} : 00`;
     }
     
-    updateUI (data) {
-        let time = this.refactorTimeDisplay(data.timeOfDay);
+    getBasicStyle(color) {
+        return { font: '20px Arial', fill: color, align: 'center', wordWrap: { width: 450, useAdvancedWrap: true } }  
+    }
+    
+    updateUI (data) {        
+        if (data.timeOfDay === 22) {            
+            this.showUIPopup('You need to get home before the monsters come...');
+        } else if (data.timeOfDay >= 23) {
+            this.showUIPopup('A new day has dawned!');
+            this.gameScene.events.emit('resetDay', this.info);  
+        }
+
+        let time = this.refactorTimeDisplay(data.timeOfDay);        
         let cash = data.cash;
         let level = data.level;
         let style = { font: '20px Arial', fill: '#fff', align: 'center' }      
@@ -40,10 +51,6 @@ export default class MainUIScene extends Scene {
         this.ui.add(this.moneyText);
         this.ui.add(this.levelText);
         return this.ui;
-    }
-
-    getBasicStyle(color) {
-        return { font: '20px Arial', fill: color, align: 'center', wordWrap: { width: 450, useAdvancedWrap: true } }  
     }
 
     createBasicUIContainer(text) { 

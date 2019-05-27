@@ -93,9 +93,12 @@ export default class GameScene extends Scene {
     }
 
     create() {    
-        // set up timer for day clock        
-        this.nextHourDelay = 26;
-        this.second = 1000;
+        // set up timer for day clock     
+        let dayLengthInMinutes = 3;
+        let dayLengthInSeconds = dayLengthInMinutes * 60;  
+        let hoursInDay = 16
+        this.nextHourDelay = dayLengthInSeconds / hoursInDay; // gives us 3 minute days
+        this.second = 1000; 
 
         this.timeOfDayTimer = this.createNewTimer(this.nextHourDelay, this.updateClock);
 
@@ -248,6 +251,8 @@ export default class GameScene extends Scene {
         // this.playerText.x = this.player.x;
         // this.playerText.y = this.player.y - 30;
         
+        this.events.on('resetDay', () => this.playerInfo.timeOfDay = 1); 
+
         this.player.body.setVelocity(0);   
         
         this.player.update();      
