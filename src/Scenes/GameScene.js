@@ -113,10 +113,10 @@ export default class GameScene extends Scene {
         this.playerInventory = this.player.getInventory();               
         this.player.setDepth(1);
         
-        this.playerText = this.add.text(this.player.x , this.player.y - 30, '0', this.style)
+        // this.playerText = this.add.text(this.player.x , this.player.y - 30, '0', this.style)
         // .setScrollFactor(0);
-        this.playerText.setOrigin(0.5);
-        this.playerText.setDepth(1);
+        // this.playerText.setOrigin(0.5);
+        // this.playerText.setDepth(1);
 
         this.doggo = new Pet(
             this,
@@ -182,8 +182,8 @@ export default class GameScene extends Scene {
         
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
-        this.cameras.main.setFollowOffset(-160, -160);
-        this.cameras.main.zoom = 3;
+        this.cameras.main.setFollowOffset(-80, -120);
+        this.cameras.main.zoom = 4;
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);
         this.physics.add.collider(this.player, waterLayer, () => this.doggo.bumpCount += 1);           
