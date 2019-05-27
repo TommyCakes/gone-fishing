@@ -264,13 +264,15 @@ export default class GameScene extends Scene {
             this.doggo.anims.play('idle', true); 
         }
 
-        if (this.canSleep) {                                                             
-            this.toggleKeyboard(true);
-            if (this.keySpace.isDown) {
-                if (touching && wasTouching) { 
+        if (this.canSleep) {  
+            if (touching && wasTouching) {        
+                this.events.emit('showUIPopup', "Do you want to turn in for the day?");                                                                      
+                if (this.keySpace.isDown) {
+                    
                     // this.player.anims.stop();                                       
                     // this.events.emit('createInteractiveSleepPanel', this.player);  
-                    // this.toggleKeyboard(false);                                    
+                    // this.toggleKeyboard(false);   
+                    this.toggleKeyboard(true);                                 
                     this.player.sleep(true);    
                     this.events.emit('updateUI', this.playerInfo);                                      
                 }
