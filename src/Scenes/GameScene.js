@@ -2,7 +2,6 @@ import { Scene } from 'phaser';
 import Player from "../Sprites/Player";
 import Lake from '../Sprites/Lake';
 import Shop from '../Classes/Shop';
-import Helper from '../Classes/Helper';
 import Fishing from '../Classes/Fishing';
 import Pet from '../Sprites/Pet';
 
@@ -12,7 +11,7 @@ export default class GameScene extends Scene {
         super('Game');   
         this.style = { font: '13px Arial', fill: '#fff', align: 'center' }      
         this.smallStyle = { font: '10px Arial', fill: '#7729DE', align: 'right' }                             
-        this.smallStyleGold = { font: '10px Arial', fill: '#C0D825', align: 'right' }                             
+        this.smallStyleGold = { font: '10px Arial', fill: '#C0D825', align: 'right' }                               
     }
 
     updateTime() {                
@@ -77,7 +76,6 @@ export default class GameScene extends Scene {
     create() {    
         let fishList = this.cache.json.get('fishList').fish.type;
         console.log(fishList);
-        this.helper = new Helper(this.scene);
         this.fishingObj = new Fishing(fishList);
         console.log(this.fishingObj.getRandomFish());
 
@@ -185,7 +183,7 @@ export default class GameScene extends Scene {
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(-160, -160);
-        // this.cameras.main.zoom = 3;
+        this.cameras.main.zoom = 4;
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);
         this.physics.add.collider(this.player, waterLayer, () => this.doggo.bumpCount += 1);           
