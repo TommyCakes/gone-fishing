@@ -9,9 +9,8 @@ export default class GameScene extends Scene {
 
     constructor() {
         super('Game');   
-        this.style = { font: '13px Arial', fill: '#fff', align: 'center' }      
-        this.smallStyle = { font: '10px Arial', fill: '#7729DE', align: 'right' }                             
-        this.smallStyleGold = { font: '10px Arial', fill: '#C0D825', align: 'right' }                               
+        this.style = { font: '13px Arial', fill: '#fff', align: 'center' }                                         
+        this.smallStyleGold = { font: '10px Arial', fill: '#C0D825', align: 'right' }                                               
     }
 
     updateTime() {                
@@ -74,6 +73,7 @@ export default class GameScene extends Scene {
     }
 
     create() {    
+        this.UIScene = this.scene.get('UIScene');  
         let fishList = this.cache.json.get('fishList').fish.type;
         console.log(fishList);
         this.fishingObj = new Fishing(fishList);
@@ -183,7 +183,7 @@ export default class GameScene extends Scene {
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(-160, -160);
-        this.cameras.main.zoom = 4;
+        this.cameras.main.zoom = 3;
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);
         this.physics.add.collider(this.player, waterLayer, () => this.doggo.bumpCount += 1);           
@@ -231,16 +231,10 @@ export default class GameScene extends Scene {
 
     update() {  
 
-        this.playerText.x = this.player.x;
-        this.playerText.y = this.player.y - 30;
-        this.events.on('levelUp', () => {
-            this.playerText.setText(this.playerInfo.level);
-            let text = this.add.text(this.player.x , this.player.y - 20, "LEVEL UP!", this.smallStyleGold);
-            this.time.delayedCall(2500, () => {
-                text.destroy();
-            });                             
-        });
-        this.player.body.setVelocity(0)   
+        // this.playerText.x = this.player.x;
+        // this.playerText.y = this.player.y - 30;
+        
+        this.player.body.setVelocity(0);   
         
         this.player.update();      
         this.doggo.update();
@@ -319,14 +313,7 @@ export default class GameScene extends Scene {
                         this.player.anims.play('fish', true);                                                  
                         this.timer.paused = false;             
                                                                             
-                        this.player.fishing(playerDirection, this.fishingObj.getRandomFish());                         
-                        
-                        this.events.on('experienceEarned', ((data) => {
-                            let text = this.add.text(this.player.x + 10 , this.player.y - 10, `${data} XP`, this.smallStyle);
-                            this.time.delayedCall(1500, () => {
-                                text.destroy();
-                            }); 
-                        })); 
+                        this.player.fishing(playerDirection, this.fishingObj.getRandomFish());                                                                        
                         this.events.on('fishBit', () => this.createEmote('exclamation', this.player));          
                         this.events.emit('updateUI', this.playerInfo);                                                   
                         this.cooldown = this.FISHING_COOLDOWN_DELAY;
@@ -345,8 +332,7 @@ export default class GameScene extends Scene {
                         this.spawnCoin(this.player);                          
                         this.events.emit('showUIPopup', `You sold all your fish! And made a total of $${this.shopObj.getTotalOfSale()}`);   
                         this.playerInventory.fish.length = 0;      
-                        this.events.emit('updateUI', this.playerInfo);               
-                        // this.coins = this.spawnCoins();                                                
+                        this.events.emit('updateUI', this.playerInfo);                                                          
                 }
             }                   
         } 

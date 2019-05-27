@@ -41,7 +41,7 @@ export default class Level {
     }
 
     showExperienceText(amount) {
-        this.scene.events.emit('experienceEarned', amount);
+        this.scene.events.emit('showTextPopup', [`${amount} XP`, this.player]);   
     }
 
     checkForLevelUp(xpRecieved) {
@@ -49,13 +49,16 @@ export default class Level {
         let xpNeeded = this.levelTree[currentLevel];
         if (this.player.info.xpPool >= xpNeeded) {
             this.levelUp();
+            return true;
+        } else {
+            return false;
         }
     }
 
     levelUp() {
         console.log('level up!');
         this.player.info.level += 1;
-        this.scene.events.emit('levelUp');
+        this.scene.events.emit('showTextPopup', [`Congratulations you reached level ${this.player.info.level}!`, this.player]);   
     }
 
     getCurrentLevel(player) {

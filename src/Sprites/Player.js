@@ -4,7 +4,7 @@ import Game from '../Scenes/GameScene'
 import Level from '../Classes/Level';
 
 export default class Player extends Entity {
-    
+        
     constructor(scene, x, y, key) {        
         super(scene, x, y, key, "Player");
         
@@ -44,7 +44,7 @@ export default class Player extends Entity {
 
         this.level = new Level(this.scene, this);
 
-        let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
+        // let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
         
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
@@ -147,19 +147,24 @@ export default class Player extends Entity {
         //     fishCaught = true;
         // }
         this.bobble.destroy();
-        // this.scene.cameras.main.shake(100, 0.01, 0.01),
         this.spawnSplash();
         return fishCaught;
     }
         
     collectFish(fish) {                       
         if (this.checkForFish()) {                 
-            this.info.inventory.fish.push(fish);                   
-            this.scene.events.emit('showUIPopup', `You caught yourself a ${fish.name}!`);     
+            this.info.inventory.fish.push(fish);   
+            this.info.xpPool += 10;          
+            this.scene.events.emit('showUIPopup', `You caught yourself a ${fish.name}!`);                          
         } else {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }        
-        this.scene.events.emit('updateUI', this.info);    
+        this.scene.events.emit('updateUI', this.info);  
+                           
+        if (!this.level.checkForLevelUp()) {
+            this.level.showExperienceText(10); 
+        } 
+        
         console.log(this.info);                
         this.scene.time.delayedCall(200, () => {             
             this.splash.destroy();
@@ -203,11 +208,7 @@ export default class Player extends Entity {
         this.info.catchesRemainingForTheDay -= 1;                   
     }
 
-    fishing(direction ,fish) {                        
-        this.info.xpPool += this.level.addExperiencePoints(10);    
-        this.level.showExperienceText(10);  
-        this.level.checkForLevelUp();     
-        console.log(this.info.xpPool);
+    fishing(direction ,fish) {                                         
         this.spawnBobble(direction);
         this.decreaseCatchesRemaining();        
         // TODO: Add more random amount of time to catch fish
@@ -246,6 +247,7 @@ export default class Player extends Entity {
 
     update() {
         
+        if (this.player)
         this.body.setVelocity(0, 0);
         
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);

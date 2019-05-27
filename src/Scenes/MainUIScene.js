@@ -11,6 +11,7 @@ export default class MainUIScene extends Scene {
     constructor ()
     {
         super({ key: 'UIScene', active: true });        
+        this.style = { font: '24px Arial', fill: '#7729DE', align: 'center' }  
 
     }
     
@@ -102,6 +103,16 @@ export default class MainUIScene extends Scene {
         }, [], this);
     }
     
+    showTextPopup(data) { 
+        let string = data[0]; // text string to add
+        let object = data[1]; // object to render text above
+        
+        let text = this.add.text(object.x + 100, object.y - 100, `${string}`, this.style);
+            this.time.delayedCall(1500, () => {
+                text.destroy();
+            });            
+    }
+
     create () {                 
         this.gameScene.events.on('updateUI', ((data) => {
             this.updateUI(data);         
@@ -114,6 +125,19 @@ export default class MainUIScene extends Scene {
         this.gameScene.events.on('createInteractiveSleepPanel', ((data) => {
             this.createInteractiveSleepPanel(data);         
         })); 
+
+        this.gameScene.events.on('showTextPopup', ((data) => {
+            this.showTextPopup(data);
+        }))
+         
+
+        // this.events.on('levelUp', () => {
+        //     this.playerText.setText(this.playerInfo.level);
+        //     let text = this.add.text(this.player.x , this.player.y - 20, "LEVEL UP!", this.styleGold);
+        //     this.time.delayedCall(2500, () => {
+        //         text.destroy();
+        //     });                             
+        // });
         
         
     }
