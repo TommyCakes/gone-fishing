@@ -72,6 +72,7 @@ export default class Level {
         console.log('level up!');
         this.player.info.level += 1;
         this.scene.events.emit('showTextPopup', [`Congratulations you reached level ${this.player.info.level}!`, this.player]);   
+        this.events.emit('updateUI', this.player.info); 
     }
 
     getExperiencePool() {

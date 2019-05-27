@@ -25,6 +25,7 @@ export default class Player extends Entity {
             xpPool: 0,
             inventory: {
                 fish: [
+                    {name: "Seabass", description: "Just your standard sea-dweller, like to be called Baz for short", weight: "3", value: "18", rarity: "uncommon"}
 
                 ],
                 rods: [
