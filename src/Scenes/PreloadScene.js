@@ -108,6 +108,11 @@ export default class PreloadScene extends Scene {
         this.load.image('brownPanel', 'assets/longBrown.png');
         this.load.image('crossBrown', 'assets/crossBrown.png');
         this.load.image('checkBlue', 'assets/checkBlue.png');
+        this.load.image('seabass', 'assets/blue-fish.png');
+        this.load.image('shark', 'assets/shark.png');
+        this.load.image('prawn', 'assets/red-fish.png');
+        this.load.image('sardine', 'assets/green-fish.png');
+        this.load.image('sand-eel', 'assets/brown-fish.png');
         // this.load.image('energyBar', 'assets/energybar.png');
         // this.load.image("energyContainer", "assets/energycontainer.png");
         this.load.spritesheet('sprPlayer', 'assets/yan.png', { 

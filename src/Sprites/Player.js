@@ -156,9 +156,9 @@ export default class Player extends Entity {
         if (this.checkForFish()) {                 
             this.info.inventory.fish.push(fish);   
             this.info.xpPool += 10;          
-            this.scene.events.emit('showUIPopup', `You caught yourself a ${fish.name}!`);                          
+            this.scene.events.emit('showFishUIPopup', fish);                          
         } else {
-            this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
+            this.scene.events.emit('showFishUIPopup', "Unlucky your line came up empty...");           
         }        
         this.scene.events.emit('updateUI', this.info);  
                            
@@ -243,7 +243,7 @@ export default class Player extends Entity {
                 this.scene.cameras.main.resetFX();        
             }, [], this);                                                                      
         } 
-        this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
+        this.scene.events.emit('showFishUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
     }
 
     update() {

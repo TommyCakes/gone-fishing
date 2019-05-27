@@ -37,20 +37,44 @@ export default class MainUIScene extends Scene {
         return this.ui;
     }
 
-    showUIPopup(text) {        
-        let style = { font: '13px Arial', fill: '#fff', align: 'center' }                 
-        this.container = this.add.container(this.cameras.main.centerX / 3, this.cameras.main.centerY / 3);
+    getBasicStyle(color) {
+        return { font: '20px Arial', fill: color, align: 'center', wordWrap: { width: 450, useAdvancedWrap: true } }  
+    }
+    createBasicUIContainer(text) { 
+        let style = this.getBasicStyle('#fff');                      
+        this.container = this.add.container(this.game.config.width / 4, this.game.config.height / 4 - 60);
         this.uiBackground = this.add.image(this.container.x, this.container.y, 'panel').setScrollFactor(0);  
-        this.uiBackground.setOrigin(0.5, 0.5)
-        this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 10, 'brownPanel').setScrollFactor(0);  
-        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, text, style).setScrollFactor(0)
+        this.uiBackground.setOrigin(0.5, 0.5)        
+        this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 30, 'brownPanel').setScrollFactor(0);  
+        this.titleText = this.add.text(this.uiBackground.x, this.brownPanel.y, text, style).setScrollFactor(0)
+        
         this.uiBackground.setScale(1);        
-        this.uiBackground.displayWidth = 400;        
-        this.brownPanel.displayWidth = 375;           
-        this.uiBackground.displayHeight = 80;
-        this.text.setOrigin(0.5, 0.5);   
+        this.uiBackground.displayWidth = 500;        
+        this.brownPanel.displayWidth = 400;           
+        this.brownPanel.displayHeight = 70;           
+        this.uiBackground.displayHeight = 180;
+        this.titleText.setOrigin(0.5, 0.5);   
         this.container.setDepth(1);
-        this.container.add([ this.uiBackground, this.brownPanel, this.text]); 
+        this.container.add([this.uiBackground, this.brownPanel, this.titleText]);         
+        return this.container;
+    }
+    showUIPopup(text) {    
+        this.container = this.createBasicUIContainer(text);
+        this.removeUI(this.container);
+    }
+
+    showFishUIPopup(data) {  
+        let style = this.getBasicStyle('#fff');    
+        let darkStyle = this.getBasicStyle('#000');    
+        let fishInfo = data;
+
+        this.container = this.createBasicUIContainer(`You caught yourself a ${fishInfo.name}!`);                       
+        this.image = this.add.image(this.brownPanel.width - 58, this.brownPanel.y, fishInfo.name.toLowerCase());
+        this.image.displayHeight = 40;
+        this.image.displayWidth = 40;
+        this.subText = this.add.text(this.uiBackground.x, this.brownPanel.y + 80, fishInfo.description, darkStyle).setScrollFactor(0)          
+        this.subText.setOrigin(0.5, 0.5);   
+        this.container.add([this.subText, this.image])
         this.removeUI(this.container);
     }
 
@@ -108,6 +132,10 @@ export default class MainUIScene extends Scene {
         
         this.gameScene.events.on('showUIPopup', ((data) => {
             this.showUIPopup(data);         
+        }));  
+
+        this.gameScene.events.on('showFishUIPopup', ((data) => {
+            this.showFishUIPopup(data);         
         }));  
 
         this.gameScene.events.on('createInteractiveSleepPanel', ((data) => {
