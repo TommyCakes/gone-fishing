@@ -162,7 +162,7 @@ export default class Player extends Entity {
         this.scene.events.emit('updateUI', this.info);  
                            
         if (!this.level.checkForLevelUp()) {
-            this.level.showExperienceText(10); 
+            this.level.showExperienceText(fish); 
         } 
         
         console.log(this.info);                

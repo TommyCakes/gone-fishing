@@ -35,12 +35,25 @@ export default class Level {
         return levels            
     }
     
-    addExperiencePoints(xpAmount) {               
-        this.experiencePool += xpAmount;        
-        return this.experiencePool;
+    amountOfExperiencePointsOnRarity(rarity) {
+        let xpAmount;
+
+        switch(rarity) {
+            case 'common':
+                xpAmount = 5;
+            case 'uncommon':
+                xpAmount = 15;
+            case 'rare':
+                xpAmount = 40
+            case 'super rare':
+                xpAmout = 100;
+            case 'legendary':
+                xpAmount = 250;
+        }
     }
 
-    showExperienceText(amount) {
+    showExperienceText(fish) {
+        let amount = this.amountOfExperiencePointsOnRarity(fish.rarity)
         this.scene.events.emit('showTextPopup', [`${amount} XP`, this.player]);   
     }
 
@@ -59,10 +72,6 @@ export default class Level {
         console.log('level up!');
         this.player.info.level += 1;
         this.scene.events.emit('showTextPopup', [`Congratulations you reached level ${this.player.info.level}!`, this.player]);   
-    }
-
-    getCurrentLevel(player) {
-       
     }
 
     getExperiencePool() {
