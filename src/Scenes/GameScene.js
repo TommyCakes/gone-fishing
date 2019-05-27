@@ -17,6 +17,19 @@ export default class GameScene extends Scene {
         this.cooldown -= 1;          
     }
 
+    updateClock() {
+        this.timeOfDay += 1;
+    }
+
+    createNewTimer(delay, func) {
+        return this.time.addEvent({
+            delay: this.second * delay,
+            callback: func,
+            callbackScope: this,
+            loop: true
+        })
+    }
+    
     createInteractiveSleepPanel(f) {
         
         let container = this.add.container(this.cameras.main.centerX / 2, this.cameras.main.centerY / 2);
@@ -73,26 +86,27 @@ export default class GameScene extends Scene {
     }
 
     create() {    
+
+        // set up timer for day clock
+        this.timeOfDay = 10;
+        this.nextHourDelay = 10;
+        this.second = 1000;
+
+        this.timeOfDayTimer = this.createNewTimer(this.nextHourDelay, this.updateClock);
+
+        // Setup fishing timer
+        this.FISHING_COOLDOWN_DELAY = 2;
+        this.cooldown = 0;        
+        
+        this.fishingtimer = this.createNewTimer(this.FISHING_COOLDOWN_DELAY, this.updateTime);
+                 
+        this.timeOfDayTimer.paused = false;
+        this.fishingtimer.paused = false;
+        
         this.UIScene = this.scene.get('UIScene');  
         let fishList = this.cache.json.get('fishList').fish.type;
-        console.log(fishList);
         this.fishingObj = new Fishing(fishList);
-        console.log(this.fishingObj.getRandomFish());
-
-        // Setup timer
-        this.FISHING_COOLDOWN_DELAY = 2;
-        this.cooldown = 0;
-        this.second = 1000;
         
-        this.timer = this.time.addEvent({
-            delay: this.second * this.FISHING_COOLDOWN_DELAY,                
-            callback: this.updateTime,
-            callbackScope: this,
-            loop: true
-        });      
-        
-        this.timer.paused = false;
-
         // Setup input keys                                
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -294,10 +308,10 @@ export default class GameScene extends Scene {
 
         if (this.player.info.catchesRemainingForTheDay > 0 && this.canFish) {             
             if (this.cooldown > 0) {                            
-                this.timer.paused = false;             
+                this.fishingtimer.paused = false;             
             } else if (this.cooldown === 0) {                
                 this.toggleKeyboard(true);
-                this.timer.paused = true;                                  
+                this.fishingtimer.paused = true;                                  
                 if (this.keySpace.isDown) {                                                           
                     if (touching && wasTouching) {  
                         this.events.emit('updateUI', this.playerInfo);  
@@ -313,7 +327,7 @@ export default class GameScene extends Scene {
                             playerDirection = 'right';
                         }                                             
                         this.player.anims.play('fish', true);                                                  
-                        this.timer.paused = false;             
+                        this.fishingtimer.paused = false;             
                                                                             
                         this.player.fishing(playerDirection, this.fishingObj.getRandomFish());                                                                        
                         this.events.on('fishBit', () => this.createEmote('exclamation', this.player));          
