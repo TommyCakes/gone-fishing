@@ -23,6 +23,7 @@ export default class Player extends Entity {
             rarestFishCaught: "",
             level: 0,
             xpPool: 0,
+            timeOfDay: 8,
             inventory: {
                 fish: [
                     {name: "Seabass", description: "Just your standard sea-dweller, like to be called Baz for short", weight: "3", value: "18", rarity: "uncommon"}
@@ -160,7 +161,7 @@ export default class Player extends Entity {
         } else {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }        
-        this.scene.events.emit('updateUI', this.info);  
+        this.scene.events.emit('updateUI', null, this.info);  
                            
         if (!this.level.checkForLevelUp()) {
             this.level.showExperienceText(fish); 
@@ -246,9 +247,9 @@ export default class Player extends Entity {
         this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
     }
 
-    update() {
-        
-        if (this.player)
+   
+
+    update() {        
         this.body.setVelocity(0, 0);
         
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);

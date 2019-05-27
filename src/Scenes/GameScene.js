@@ -16,9 +16,12 @@ export default class GameScene extends Scene {
     updateTime() {                
         this.cooldown -= 1;          
     }
-
+    
     updateClock() {
-        this.timeOfDay += 1;
+        this.player.info.timeOfDay += 1;   
+        console.log(this.timeOfDayTimer.getElapsedSeconds());     
+        console.log(this.player.info.timeOfDay); 
+        this.triggerUIUpdate();    
     }
 
     createNewTimer(delay, func) {
@@ -27,9 +30,13 @@ export default class GameScene extends Scene {
             callback: func,
             callbackScope: this,
             loop: true
-        })
+        });
     }
     
+    triggerUIUpdate() {
+        this.events.emit('updateUI', this.playerInfo);     
+    }
+
     createInteractiveSleepPanel(f) {
         
         let container = this.add.container(this.cameras.main.centerX / 2, this.cameras.main.centerY / 2);
@@ -86,10 +93,8 @@ export default class GameScene extends Scene {
     }
 
     create() {    
-
-        // set up timer for day clock
-        this.timeOfDay = 10;
-        this.nextHourDelay = 10;
+        // set up timer for day clock        
+        this.nextHourDelay = 26;
         this.second = 1000;
 
         this.timeOfDayTimer = this.createNewTimer(this.nextHourDelay, this.updateClock);
@@ -127,11 +132,6 @@ export default class GameScene extends Scene {
         this.playerInventory = this.player.getInventory();               
         this.player.setDepth(1);
         
-        // this.playerText = this.add.text(this.player.x , this.player.y - 30, '0', this.style)
-        // .setScrollFactor(0);
-        // this.playerText.setOrigin(0.5);
-        // this.playerText.setDepth(1);
-
         this.doggo = new Pet(
             this,
             210,
@@ -202,7 +202,7 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);
         this.physics.add.collider(this.player, waterLayer, () => this.doggo.bumpCount += 1);           
         this.physics.add.collider(this.doggo, waterLayer);           
-        this.events.emit('updateUI', this.playerInfo, this.cameras.main);               
+        this.events.emit('updateUI', this.playerInfo);               
         
         this.catchesRemaining = this.playerInfo.catchesRemainingForTheDay 
         this.cash = this.playerInfo.cash 

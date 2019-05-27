@@ -18,8 +18,13 @@ export default class MainUIScene extends Scene {
     preload() {              
     }
 
+    refactorTimeDisplay(time) {
+        let paddedTime = time.toString().padStart(2, '0');
+        return `${paddedTime} : 00`;
+    }
     
     updateUI (data) {
+        let time = this.refactorTimeDisplay(data.timeOfDay);
         let cash = data.cash;
         let level = data.level;
         let style = { font: '20px Arial', fill: '#fff', align: 'center' }      
@@ -27,8 +32,8 @@ export default class MainUIScene extends Scene {
         this.ui = this.add.group();    
         this.uiBg = this.uiBackground = this.add.image(this.game.config.width - 136, 136, 'NEW_UI').setScrollFactor(0);          
 
+        this.timeOfDayText = this.add.text(this.uiBackground.x, this.uiBackground.y - 31, time, style).setScrollFactor(0);
         this.moneyText = this.add.text(this.uiBackground.x, this.uiBackground.y + 18, cash, style).setScrollFactor(0);
-
         this.levelText = this.add.text(this.uiBackground.x + 10, this.moneyText.y + 64, level, style).setScrollFactor(0);                                               
 
         this.ui.add(this.uiBg);
@@ -40,6 +45,7 @@ export default class MainUIScene extends Scene {
     getBasicStyle(color) {
         return { font: '20px Arial', fill: color, align: 'center', wordWrap: { width: 450, useAdvancedWrap: true } }  
     }
+
     createBasicUIContainer(text) { 
         let style = this.getBasicStyle('#fff');                      
         this.container = this.add.container(this.game.config.width / 4, this.game.config.height / 4 - 60);
@@ -58,6 +64,7 @@ export default class MainUIScene extends Scene {
         this.container.add([this.uiBackground, this.brownPanel, this.titleText]);         
         return this.container;
     }
+
     showUIPopup(text) {    
         this.container = this.createBasicUIContainer(text);
         this.removeUI(this.container);
