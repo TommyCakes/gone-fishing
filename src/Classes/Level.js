@@ -78,7 +78,7 @@ export default class Level {
     }
 
     levelUp() {
-        this.scene.time.delayedCall(2000, () => {
+        this.scene.time.delayedCall(4000, () => {
             console.log('level up!');
             this.player.info.level += 1;        
             this.scene.events.emit('pauseGame');

@@ -24,8 +24,8 @@ export default class MainUIScene extends Scene {
         return `${paddedTime} : 00`;
     }
     
-    getBasicStyle(color) {
-        return { font: '20px Arial', fill: color, align: 'center', wordWrap: { width: 390, useAdvancedWrap: true } }  
+    getBasicStyle(color, align = 'center') {
+        return { font: '20px Arial', fill: color, align: align, wordWrap: { width: 390, useAdvancedWrap: true } }  
     }
 
     updateUI (data) {        
@@ -56,7 +56,7 @@ export default class MainUIScene extends Scene {
 
     createBasicUIContainer(text) { 
         let style = this.getBasicStyle('#fff');                      
-        this.container = this.add.container(this.game.config.width / 4, this.game.config.height / 4 - 60);
+        this.container = this.add.container(this.game.config.width / 4, this.game.config.height / 2 - 160);
         this.uiBackground = this.add.image(this.container.x, this.container.y, 'panel').setScrollFactor(0);  
         this.uiBackground.setOrigin(0.5, 0.5)        
         this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 30, 'brownPanel').setScrollFactor(0);  
@@ -86,17 +86,23 @@ export default class MainUIScene extends Scene {
 
     showFishUIPopup(data) {  
         let style = this.getBasicStyle('#fff');    
-        let darkStyle = this.getBasicStyle('#000');    
+        let darkStyle = this.getBasicStyle('#000', 'left');    
+        let rarityStyle = this.getBasicStyle("#800080", 'right');    
         let fishInfo = data;
 
         this.container = this.createBasicUIContainer(`You caught yourself a ${fishInfo.name}!`);                       
         this.image = this.add.image(this.brownPanel.width - 58, this.brownPanel.y, fishInfo.name.toLowerCase());
-        this.image.displayHeight = 40;
-        this.image.displayWidth = 40;
-        this.subText = this.add.text(this.uiBackground.x, this.brownPanel.y + 80, fishInfo.description, darkStyle).setScrollFactor(0)          
+        this.image.displayHeight = 60;
+        this.image.displayWidth = 60;
+
+        this.subText = this.add.text(this.uiBackground.x - 30, this.brownPanel.y + 70, `"${fishInfo.description}"`, darkStyle).setScrollFactor(0)          
         this.subText.setOrigin(0.5, 0.5);   
-        this.container.add([this.subText, this.image])
-        this.removeUI(this.container);
+
+        this.rarityText = this.add.text(this.uiBackground.x + 160, this.brownPanel.y + 100, fishInfo.rarity, rarityStyle).setScrollFactor(0)          
+        this.rarityText.setOrigin(0.5, 0.5);   
+
+        this.container.add([this.subText, this.image, this.rarityText])
+        this.removeUI(this.container, 40000);
     }
 
     createInteractiveSleepPanel(player) {

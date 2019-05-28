@@ -219,13 +219,13 @@ export default class GameScene extends Scene {
         this.hasInteractedWithDog = false;  
         
         this.hasFished = false;
-
+        
         this.events.on('pauseGame', () => {
-            this.scene.pause();
+            // this.scene.pause();
             this.events.emit('showLevelUpPopup', this.player.info.level);              
-            this.time.delayedCall(4000, () => {
-                this.scene.resume();  
-            });
+            // this.time.delayedCall(4000, () => {
+            //     this.scene.resume();  
+            // });
         })
     }  
     
