@@ -24,7 +24,7 @@ export default class Player extends Entity {
             level: 0,
             xpPool: 0,
             // build day / month / time class
-            timeOfDay: 6,
+            timeOfDay: 18,
             dayOfTheWeek: 'Mon',
             inventory: {
                 fish: [
@@ -162,40 +162,11 @@ export default class Player extends Entity {
         this.spawnSplash();
         return fishCaught;
     }
-    
-    // TODO: add fish helper to make more DRY
-    amountOfExperiencePointsOnRarity(rarity) {
-        let xpAmount;
-
-        switch(rarity) {
-            case 'common':
-                xpAmount = 5;
-                break;
-            case 'uncommon':
-                xpAmount = 15;
-                break;
-            case 'rare':
-                xpAmount = 40
-                break;
-            case 'super rare':
-                xpAmount = 100;
-                break;
-            case 'legendary':
-                xpAmount = 250;
-                break;
-            default:
-                xpAmount = 0;
-        }
-
-        console.log(`xp earned = ${xpAmount}`)
-        return xpAmount;
-    }
-
+        
     collectFish(fish) {                       
-        if (this.checkForFish()) {                
-            let amountOfXP = this.amountOfExperiencePointsOnRarity(fish.rarity)
+        if (this.checkForFish()) {                 
             this.info.inventory.fish.push(fish);   
-            this.info.xpPool += amountOfXP;          
+            this.info.xpPool += 10;          
             this.scene.events.emit('showFishUIPopup', fish);                          
         } else {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           

@@ -25,7 +25,7 @@ export default class Level {
     // While increase the amount of rare fish you could encounter
 
     buildLevelTree() {
-        let baseNumber = 50; // change back to 50
+        let baseNumber = 50;
         let levels = {}
         
         for (let i = 0; i < this.maxLevel; i += 1) {             
@@ -41,28 +41,19 @@ export default class Level {
         switch(rarity) {
             case 'common':
                 xpAmount = 5;
-                break;
             case 'uncommon':
                 xpAmount = 15;
-                break;
             case 'rare':
                 xpAmount = 40
-                break;
             case 'super rare':
                 xpAmount = 100;
-                break;
             case 'legendary':
                 xpAmount = 250;
-                break;
-            default:
-                xpAmount = 0;
         }
-        return xpAmount;
     }
 
     showExperienceText(fish) {
-        let amount = this.amountOfExperiencePointsOnRarity(fish.rarity);
-        console.log(fish.rarity);
+        let amount = this.amountOfExperiencePointsOnRarity(fish.rarity)
         this.scene.events.emit('showTextPopup', [`${amount} XP`, this.player]);   
     }
 
@@ -80,7 +71,7 @@ export default class Level {
     levelUp() {
         console.log('level up!');
         this.player.info.level += 1;
-        this.scene.events.emit('showUIPopup', `Congratulations you have reached level ${this.player.info.level}!`);  
+        this.scene.events.emit('showTextPopup', [`Congratulations you reached level ${this.player.info.level}!`, this.player]);   
         this.scene.events.emit('updateUI', this.player.info); 
     }
 
