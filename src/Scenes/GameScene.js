@@ -253,7 +253,7 @@ export default class GameScene extends Scene {
         // this.playerText.x = this.player.x;
         // this.playerText.y = this.player.y - 30;
         
-        this.events.on('resetDay', () => this.playerInfo.timeOfDay = 1); 
+        this.events.on('resetDay', () => this.playerInfo.resetDay()); 
 
         this.player.body.setVelocity(0);   
         
@@ -286,14 +286,13 @@ export default class GameScene extends Scene {
         }
 
         if (this.canSleep) {  
-            if (touching && wasTouching) {        
-                this.events.emit('showUIPopup', "Do you want to turn in for the day?");                                                                      
+            if (touching && wasTouching) {                                                                            
                 if (this.keySpace.isDown) {
                     
                     // this.player.anims.stop();                                       
                     // this.events.emit('createInteractiveSleepPanel', this.player);  
                     // this.toggleKeyboard(false);   
-                    this.toggleKeyboard(true);                                 
+                    // this.toggleKeyboard(true);                                 
                     this.player.sleep(true);    
                     this.events.emit('updateUI', this.playerInfo);                                      
                 }

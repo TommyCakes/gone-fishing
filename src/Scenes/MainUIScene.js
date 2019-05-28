@@ -12,84 +12,57 @@ export default class MainUIScene extends Scene {
     {
         super({ key: 'UIScene', active: true });        
         this.style = { font: '24px Arial', fill: '#7729DE', align: 'center' }  
-        this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }  
 
     }
     
     preload() {              
     }
 
-    refactorTimeDisplay(time) {
-        let paddedTime = time.toString().padStart(2, '0');
-        return `${paddedTime} : 00`;
-    }
     
-    getBasicStyle(color) {
-        return { font: '20px Arial', fill: color, align: 'center', wordWrap: { width: 390, useAdvancedWrap: true } }  
-    }
-
-    updateUI (data) {        
-        if (data.timeOfDay === 21) {            
-            this.showUIPopup('You need to get home before the monsters come...');
-        } else if (data.timeOfDay === 23) {
-            this.showUIPopup('A new day has dawned!');
-            this.gameScene.events.emit('resetDay', this.info);  
-        }
-
-        let time = this.refactorTimeDisplay(data.timeOfDay);        
+    updateUI (data) {
+        let fishAmount = data.inventory.fish.length;
         let cash = data.cash;
-        let level = data.level;
-        let style = { font: '20px Arial', fill: '#fff', align: 'center' }      
+        let catches = data.catchesRemainingForTheDay;
+        let style = { font: '13px Arial', fill: '#fff', align: 'center' }      
         
-        this.ui = this.add.group();    
-        this.uiBg = this.uiBackground = this.add.image(this.game.config.width - 136, 136, 'NEW_UI').setScrollFactor(0);          
+        this.ui = this.add.group();
+        this.uiBg = this.add.rectangle(0, 20, 700, 80, '0x000000', 0.5).setScrollFactor(0);  
 
-        this.timeOfDayText = this.add.text(this.uiBackground.x, this.uiBackground.y - 31, time, style).setScrollFactor(0);
-        this.moneyText = this.add.text(this.uiBackground.x, this.uiBackground.y + 18, cash, style).setScrollFactor(0);
-        this.levelText = this.add.text(this.uiBackground.x + 10, this.moneyText.y + 64, level, style).setScrollFactor(0);                                               
+        this.money = this.add.text(32, 20, cash, style).setScrollFactor(0);
+        this.moneyIcon = this.add.sprite(this.money.x - 16, this.money.y + 16, 'goldCoin', 2).setScrollFactor(0);                     
+
+        this.catchesRemainingText = this.add.text(200, 20, `Left: ${catches}`, style).setScrollFactor(0);                                               
+        this.catchesIcon = this.add.image(this.catchesRemainingText.x - 22, this.catchesRemainingText.y + 8, 'rod').setScrollFactor(0);     
+        this.catchesIcon.setScale(0.7);
+
+        this.amountOfFish = this.add.text(123, 20, `${fishAmount}`, style).setScrollFactor(0);                                               
+        this.fishIcon = this.add.image(this.amountOfFish.x - 16, this.amountOfFish.y + 8, 'fish').setScrollFactor(0);     
+        this.fishIcon.setScale(0.4);
 
         this.ui.add(this.uiBg);
-        this.ui.add(this.moneyText);
-        this.ui.add(this.levelText);
+        this.ui.add(this.money);
+        this.ui.add(this.moneyIcon);
+        this.ui.add(this.catchesRemainingText);
+        this.ui.add(this.catchesIcon);
+        this.ui.add(this.amountOfFish);
+        this.ui.add(this.fishIcon);
         return this.ui;
     }
 
-    createBasicUIContainer(text) { 
-        let style = this.getBasicStyle('#fff');                      
-        this.container = this.add.container(this.game.config.width / 4, this.game.config.height / 4 - 60);
+    showUIPopup(text) {        
+        let style = { font: '13px Arial', fill: '#fff', align: 'center' }                 
+        this.container = this.add.container(this.cameras.main.centerX / 3, this.cameras.main.centerY / 3);
         this.uiBackground = this.add.image(this.container.x, this.container.y, 'panel').setScrollFactor(0);  
-        this.uiBackground.setOrigin(0.5, 0.5)        
-        this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 30, 'brownPanel').setScrollFactor(0);  
-        this.titleText = this.add.text(this.uiBackground.x, this.brownPanel.y, text, style).setScrollFactor(0)
-        
+        this.uiBackground.setOrigin(0.5, 0.5)
+        this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 10, 'brownPanel').setScrollFactor(0);  
+        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, text, style).setScrollFactor(0)
         this.uiBackground.setScale(1);        
-        this.uiBackground.displayWidth = 500;        
-        this.brownPanel.displayWidth = 400;           
-        this.brownPanel.displayHeight = 70;           
-        this.uiBackground.displayHeight = 180;
-        this.titleText.setOrigin(0.5, 0.5);   
+        this.uiBackground.displayWidth = 400;        
+        this.brownPanel.displayWidth = 375;           
+        this.uiBackground.displayHeight = 80;
+        this.text.setOrigin(0.5, 0.5);   
         this.container.setDepth(1);
-        this.container.add([this.uiBackground, this.brownPanel, this.titleText]);         
-        return this.container;
-    }
-
-    showUIPopup(text) {    
-        this.container = this.createBasicUIContainer(text);
-        this.removeUI(this.container);
-    }
-
-    showFishUIPopup(data) {  
-        let style = this.getBasicStyle('#fff');    
-        let darkStyle = this.getBasicStyle('#000');    
-        let fishInfo = data;
-
-        this.container = this.createBasicUIContainer(`You caught yourself a ${fishInfo.name}!`);                       
-        this.image = this.add.image(this.brownPanel.width - 58, this.brownPanel.y, fishInfo.name.toLowerCase());
-        this.image.displayHeight = 40;
-        this.image.displayWidth = 40;
-        this.subText = this.add.text(this.uiBackground.x, this.brownPanel.y + 80, fishInfo.description, darkStyle).setScrollFactor(0)          
-        this.subText.setOrigin(0.5, 0.5);   
-        this.container.add([this.subText, this.image])
+        this.container.add([ this.uiBackground, this.brownPanel, this.text]); 
         this.removeUI(this.container);
     }
 
@@ -134,7 +107,7 @@ export default class MainUIScene extends Scene {
         let string = data[0]; // text string to add
         let object = data[1]; // object to render text above
         
-        let text = this.add.text(object.x + 150, object.y, string, this.bigStyle);
+        let text = this.add.text(object.x + 100, object.y - 100, `${string}`, this.style);
             this.time.delayedCall(1500, () => {
                 text.destroy();
             });            
@@ -149,28 +122,13 @@ export default class MainUIScene extends Scene {
             this.showUIPopup(data);         
         }));  
 
-        this.gameScene.events.on('showFishUIPopup', ((data) => {
-            this.showFishUIPopup(data);         
-        }));  
-
         this.gameScene.events.on('createInteractiveSleepPanel', ((data) => {
             this.createInteractiveSleepPanel(data);         
         })); 
 
         this.gameScene.events.on('showTextPopup', ((data) => {
             this.showTextPopup(data);
-        }))
-         
-
-        // this.events.on('levelUp', () => {
-        //     this.playerText.setText(this.playerInfo.level);
-        //     let text = this.add.text(this.player.x , this.player.y - 20, "LEVEL UP!", this.styleGold);
-        //     this.time.delayedCall(2500, () => {
-        //         text.destroy();
-        //     });                             
-        // });
-        
-        
+        }))        
     }
 
     update () {      

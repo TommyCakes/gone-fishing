@@ -114,6 +114,14 @@ export default class Player extends Entity {
         return this.info.inventory;
     }
 
+    resetDay() {
+        this.info.timeOfDay = 6;
+        this.scene.cameras.main.fadeOut(250, 0, 0, 0)                                      
+        this.scene.time.delayedCall(1000, function() {   
+            this.saveGame();
+            this.scene.cameras.main.resetFX();        
+        }, [], this);  
+    }
     moveUp() {
         this.body.velocity.y = -this.getData("speed");
     }
@@ -267,15 +275,10 @@ export default class Player extends Entity {
         if (bool) {
             this.info.catchesRemainingForTheDay = 0;
             this.info.catchesRemainingForTheDay = 5;
-            
-            this.scene.cameras.main.fadeOut(250, 0, 0, 0)                                      
-
-            this.scene.time.delayedCall(1000, function() {   
-                this.saveGame();
-                this.scene.cameras.main.resetFX();        
-            }, [], this);                                                                      
-        } 
-        this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
+                                               
+            this.resetDay();                   
+            this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");                                                     
+        }         
     }
 
    
