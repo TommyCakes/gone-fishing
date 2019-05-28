@@ -111,6 +111,7 @@ export default class PreloadScene extends Scene {
         this.load.image('prawn', 'assets/red-fish.png');
         this.load.image('sardine', 'assets/green-fish.png');
         this.load.image('sand-eel', 'assets/brown-fish.png');
+        this.load.image('xpChunk', 'assets/xp-chunk.png');
         // this.load.image('energyBar', 'assets/energybar.png');
         // this.load.image("energyContainer", "assets/energycontainer.png");
         this.load.spritesheet('sprPlayer', 'assets/yan.png', { 

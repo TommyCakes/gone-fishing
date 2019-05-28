@@ -78,6 +78,12 @@ export default class MainUIScene extends Scene {
         this.removeUI(this.container);
     }
 
+    showLevelUpPopup(info) {  
+        let text = `Congratulations you have reached level ${info}!`  
+        this.container = this.createBasicUIContainer(text);
+        this.removeUI(this.container, 5000);
+    }
+
     showFishUIPopup(data) {  
         let style = this.getBasicStyle('#fff');    
         let darkStyle = this.getBasicStyle('#000');    
@@ -124,8 +130,8 @@ export default class MainUIScene extends Scene {
         return container;                                                                                          
     }
 
-    removeUI(ui) {
-        this.time.delayedCall(2000, () => {                             
+    removeUI(ui, delay = 2000) {
+        this.time.delayedCall(delay, () => {                             
             ui.removeAll(true);
         }, [], this);
     }
@@ -147,6 +153,10 @@ export default class MainUIScene extends Scene {
         
         this.gameScene.events.on('showUIPopup', ((data) => {
             this.showUIPopup(data);         
+        }));  
+
+        this.gameScene.events.on('showLevelUpPopup', ((data) => {
+            this.showLevelUpPopup(data);         
         }));  
 
         this.gameScene.events.on('showFishUIPopup', ((data) => {

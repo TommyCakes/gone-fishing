@@ -206,6 +206,7 @@ export default class Player extends Entity {
         console.log(this.info);                
         this.scene.time.delayedCall(200, () => {             
             this.splash.destroy();
+            this.scene.events.emit('fishCaught')
         }, [], this);                                                                                                                   
     }
     

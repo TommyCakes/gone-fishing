@@ -219,7 +219,14 @@ export default class GameScene extends Scene {
         this.hasInteractedWithDog = false;  
         
         this.hasFished = false;
-        this.player.anims.play('fish', true);  
+
+        this.events.on('pauseGame', () => {
+            this.scene.pause();
+            this.events.emit('showLevelUpPopup', this.player.info.level);              
+            this.time.delayedCall(4000, () => {
+                this.scene.resume();  
+            });
+        })
     }  
     
     createEmote(emoteName, character) {
@@ -288,7 +295,7 @@ export default class GameScene extends Scene {
 
         if (this.canSleep) {  
             if (touching && wasTouching) {        
-                this.events.emit('showUIPopup', "Do you want to turn in for the day?");                                                                      
+                // this.events.emit('showUIPopup', "Do you want to turn in for the day?");                                                                      
                 if (this.keySpace.isDown) {
                     
                     // this.player.anims.stop();                                       
@@ -304,7 +311,7 @@ export default class GameScene extends Scene {
         if (this.canBuyBait && this.playerInfo.cash !== 0) {   
             if (touching && wasTouching) {
                 this.createEmote('cash', this.baitShopKeeper);
-                this.events.emit('showUIPopup', "Hello sir! Bait is 10 gold for 1 bait, would you like to buy some?");  
+                // this.events.emit('showUIPopup', "Hello sir! Bait is 10 gold for 1 bait, would you like to buy some?");  
                 if (this.keySpace.isDown) {                                                                                   
                         this.events.emit('showUIPopup', "You bought some more bait!");                          
                         this.playerInfo.catchesRemainingForTheDay += 1;
@@ -317,8 +324,7 @@ export default class GameScene extends Scene {
         if (this.player.info.catchesRemainingForTheDay > 0 && this.canFish) {             
             if (this.cooldown > 0) {                            
                 this.fishingtimer.paused = false;             
-            } else if (this.cooldown === 0) {                
-                this.toggleKeyboard(true);
+            } else if (this.cooldown === 0) {                                
                 this.fishingtimer.paused = true;  
                 if (touching && wasTouching) {   
                     if (!this.hasFished) {
@@ -340,15 +346,17 @@ export default class GameScene extends Scene {
                         }                                             
                         let fishingAnim = this.player.anims.play('fish', true); 
 
-                        fishingAnim.on('animationcomplete', () => {
-                            
+                        fishingAnim.on('animationcomplete', () => {                            
                         });
 
                         this.fishingtimer.paused = false;                                                                                         
                         this.player.fishing(this.fishingObj.getRandomFish(), playerDirection);                                                                        
                         this.events.on('fishBit', () => {
                             this.createEmote('exclamation', this.player);                            
-                        });          
+                        });         
+                        this.events.on('fishCaught', () => {
+                            this.toggleKeyboard(true); 
+                        }) 
                         this.events.emit('updateUI', this.playerInfo);                                                   
                         this.cooldown = this.FISHING_COOLDOWN_DELAY;   
                     }                    

@@ -25,7 +25,7 @@ export default class Level {
     // While increase the amount of rare fish you could encounter
 
     buildLevelTree() {
-        let baseNumber = 50; // change back to 50
+        let baseNumber = 10; // change back to 50
         let levels = {}
         
         for (let i = 0; i < this.maxLevel; i += 1) {             
@@ -66,7 +66,7 @@ export default class Level {
         this.scene.events.emit('showTextPopup', [`${amount} XP`, this.player]);   
     }
 
-    checkForLevelUp(xpRecieved) {
+    checkForLevelUp() {
         let currentLevel = this.player.info.level;
         let xpNeeded = this.levelTree[currentLevel];
         if (this.player.info.xpPool >= xpNeeded) {
@@ -78,10 +78,12 @@ export default class Level {
     }
 
     levelUp() {
-        console.log('level up!');
-        this.player.info.level += 1;
-        this.scene.events.emit('showUIPopup', `Congratulations you have reached level ${this.player.info.level}!`);  
-        this.scene.events.emit('updateUI', this.player.info); 
+        this.scene.time.delayedCall(2000, () => {
+            console.log('level up!');
+            this.player.info.level += 1;        
+            this.scene.events.emit('pauseGame');
+            this.scene.events.emit('updateUI', this.player.info); 
+        });
     }
 
     getExperiencePool() {
