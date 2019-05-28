@@ -78,12 +78,12 @@ export default class Player extends Entity {
 
         this.scene.anims.create({
             key: 'fish',
-            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 13, end: 15
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 12, end: 14
         }),
-            frameRate: 10,
-            repeat: -1
+            frameRate: 15,
+            repeat: 0
         });
-            
+                
         this.scene.anims.create({
             key: 'down',
             frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 6, end: 8
@@ -128,6 +128,10 @@ export default class Player extends Entity {
 
     moveRight() {
         this.body.velocity.x = this.getData("speed");
+    }
+
+    stop() {
+        this.body.velocity.x = 0;
     }
 
     getRandomIntBetween(max) {
@@ -184,7 +188,8 @@ export default class Player extends Entity {
     }
 
     collectFish(fish) {                       
-        if (this.checkForFish()) {                
+        if (this.checkForFish()) {    
+            this.anims.playReverse('catch-fish');            
             let amountOfXP = this.amountOfExperiencePointsOnRarity(fish.rarity)
             this.info.inventory.fish.push(fish);   
             this.info.xpPool += amountOfXP;          
@@ -241,7 +246,7 @@ export default class Player extends Entity {
         this.info.catchesRemainingForTheDay -= 1;                   
     }
 
-    fishing(direction ,fish) {                                         
+    fishing(fish, direction) {                                         
         this.spawnBobble(direction);
         this.decreaseCatchesRemaining();        
         // TODO: Add more random amount of time to catch fish
@@ -282,7 +287,7 @@ export default class Player extends Entity {
 
     update() {        
         this.body.setVelocity(0, 0);
-        
+    
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);
         this.y = Phaser.Math.Clamp(this.y, 0, this.scene.game.config.height);        
     }

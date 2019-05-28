@@ -219,6 +219,7 @@ export default class GameScene extends Scene {
         this.hasInteractedWithDog = false;  
         
         this.hasFished = false;
+        this.player.anims.play('fish', true);  
     }  
     
     createEmote(emoteName, character) {
@@ -249,16 +250,16 @@ export default class GameScene extends Scene {
     }
 
     update() {  
+                         
+        this.player.update();      
+        this.doggo.update();
 
         // this.playerText.x = this.player.x;
         // this.playerText.y = this.player.y - 30;
         
         this.events.on('resetDay', () => this.playerInfo.timeOfDay = 1); 
 
-        this.player.body.setVelocity(0);   
         
-        this.player.update();      
-        this.doggo.update();
 
         if (this.player.body.embedded) this.player.body.touching.none = false;
         let touching = !this.player.body.touching.none;
@@ -323,11 +324,11 @@ export default class GameScene extends Scene {
                     if (!this.hasFished) {
                         this.hasFished = true;
                         this.events.emit('showUIPopup', "Press space to cast your rod");
+                        this.player.anims.stop(); 
                     }                                                    
                     if (this.keySpace.isDown) {                                                                               
                         this.events.emit('updateUI', this.playerInfo);  
-                        this.events.emit('showUIPopup', "You cast your rod out into the water...");                          
-                        this.player.anims.stop(); 
+                        this.events.emit('showUIPopup', "You cast your rod out into the water...");                                                  
                         this.toggleKeyboard(false);  
                         let playerDirection;
                         if (this.player.x - this.waterZone.x > 0) {
@@ -337,14 +338,19 @@ export default class GameScene extends Scene {
                             this.player.flipX = false;
                             playerDirection = 'right';
                         }                                             
-                        this.player.anims.play('fish', true);                                                  
-                        this.fishingtimer.paused = false;             
-                                                                            
-                        this.player.fishing(playerDirection, this.fishingObj.getRandomFish());                                                                        
-                        this.events.on('fishBit', () => this.createEmote('exclamation', this.player));          
+                        let fishingAnim = this.player.anims.play('fish', true); 
+
+                        fishingAnim.on('animationcomplete', () => {
+                            
+                        });
+
+                        this.fishingtimer.paused = false;                                                                                         
+                        this.player.fishing(this.fishingObj.getRandomFish(), playerDirection);                                                                        
+                        this.events.on('fishBit', () => {
+                            this.createEmote('exclamation', this.player);                            
+                        });          
                         this.events.emit('updateUI', this.playerInfo);                                                   
-                        this.cooldown = this.FISHING_COOLDOWN_DELAY;
-                         
+                        this.cooldown = this.FISHING_COOLDOWN_DELAY;   
                     }                    
                 }                                                                                              
             } 
@@ -354,7 +360,7 @@ export default class GameScene extends Scene {
             if (this.keySpace.isDown) {                    
                 if (touching && wasTouching) {                         
                         this.events.emit('updateUI', this.playerInfo);                         
-                        this.player.anims.stop();                                                                                                                                               
+                        // this.player.anims.stop();                                                                                                                                               
                         this.shopObj.sellAllFish(this.player);  
                         this.spawnCoin(this.player);                          
                         this.events.emit('showUIPopup', `You sold all your fish! And made a total of $${this.shopObj.getTotalOfSale()}`);   
@@ -364,6 +370,8 @@ export default class GameScene extends Scene {
             }                   
         } 
         
+        
+
         if (this.keyW.isDown || this.cursors.up.isDown ) {
             this.player.moveUp();
             this.player.anims.play('up', true);               
@@ -378,9 +386,9 @@ export default class GameScene extends Scene {
             this.player.moveRight();
             this.player.resetFlip();
             this.player.anims.play('right', true);
-        } else {     
-            this.player.anims.stop();
-        } 
+        } else {            
+            this.player.stop();             
+        }
         
         this.player.body.velocity.normalize().scale(this.player.getData("speed"));
         this.doggo.body.velocity.normalize().scale(this.doggo.getData("speed"));
