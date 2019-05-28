@@ -16,6 +16,26 @@ export default class GameScene extends Scene {
     updateTime() {                
         this.cooldown -= 1;          
     }
+    
+    updateClock() {
+        this.player.info.timeOfDay += 1;   
+        console.log(this.timeOfDayTimer.getElapsedSeconds());     
+        console.log(this.player.info.timeOfDay); 
+        this.triggerUIUpdate();    
+    }
+
+    createNewTimer(delay, func) {
+        return this.time.addEvent({
+            delay: this.second * delay,
+            callback: func,
+            callbackScope: this,
+            loop: true
+        });
+    }
+    
+    triggerUIUpdate() {
+        this.events.emit('updateUI', this.playerInfo);     
+    }
 
     createInteractiveSleepPanel(f) {
         
@@ -73,26 +93,28 @@ export default class GameScene extends Scene {
     }
 
     create() {    
+        // set up timer for day clock     
+        let dayLengthInMinutes = 3;
+        let dayLengthInSeconds = dayLengthInMinutes * 60;  
+        let hoursInDay = 16
+        this.nextHourDelay = dayLengthInSeconds / hoursInDay; // gives us 3 minute days
+        this.second = 1000; 
+
+        this.timeOfDayTimer = this.createNewTimer(this.nextHourDelay, this.updateClock);
+
+        // Setup fishing timer
+        this.FISHING_COOLDOWN_DELAY = 2;
+        this.cooldown = 0;        
+        
+        this.fishingtimer = this.createNewTimer(this.FISHING_COOLDOWN_DELAY, this.updateTime);
+                 
+        this.timeOfDayTimer.paused = false;
+        this.fishingtimer.paused = false;
+        
         this.UIScene = this.scene.get('UIScene');  
         let fishList = this.cache.json.get('fishList').fish.type;
-        console.log(fishList);
         this.fishingObj = new Fishing(fishList);
-        console.log(this.fishingObj.getRandomFish());
-
-        // Setup timer
-        this.FISHING_COOLDOWN_DELAY = 2;
-        this.cooldown = 0;
-        this.second = 1000;
         
-        this.timer = this.time.addEvent({
-            delay: this.second * this.FISHING_COOLDOWN_DELAY,                
-            callback: this.updateTime,
-            callbackScope: this,
-            loop: true
-        });      
-        
-        this.timer.paused = false;
-
         // Setup input keys                                
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -113,11 +135,6 @@ export default class GameScene extends Scene {
         this.playerInventory = this.player.getInventory();               
         this.player.setDepth(1);
         
-        // this.playerText = this.add.text(this.player.x , this.player.y - 30, '0', this.style)
-        // .setScrollFactor(0);
-        // this.playerText.setOrigin(0.5);
-        // this.playerText.setDepth(1);
-
         this.doggo = new Pet(
             this,
             210,
@@ -182,13 +199,13 @@ export default class GameScene extends Scene {
         
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
-        this.cameras.main.setFollowOffset(-80, -120);
+        this.cameras.main.setFollowOffset(-50, -30);
         this.cameras.main.zoom = 4;
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);
         this.physics.add.collider(this.player, waterLayer, () => this.doggo.bumpCount += 1);           
         this.physics.add.collider(this.doggo, waterLayer);           
-        this.events.emit('updateUI', this.playerInfo, this.cameras.main);               
+        this.events.emit('updateUI', this.playerInfo);               
         
         this.catchesRemaining = this.playerInfo.catchesRemainingForTheDay 
         this.cash = this.playerInfo.cash 
@@ -199,7 +216,9 @@ export default class GameScene extends Scene {
         this.canShop = true;
         this.canBuyBait = true;
         this.canSleep = true;                             
-        this.hasInteractedWithDog = false;                                     
+        this.hasInteractedWithDog = false;  
+        
+        this.hasFished = false;
     }  
     
     createEmote(emoteName, character) {
@@ -234,6 +253,8 @@ export default class GameScene extends Scene {
         // this.playerText.x = this.player.x;
         // this.playerText.y = this.player.y - 30;
         
+        this.events.on('resetDay', () => this.playerInfo.timeOfDay = 1); 
+
         this.player.body.setVelocity(0);   
         
         this.player.update();      
@@ -264,13 +285,15 @@ export default class GameScene extends Scene {
             this.doggo.anims.play('idle', true); 
         }
 
-        if (this.canSleep) {                                                             
-            this.toggleKeyboard(true);
-            if (this.keySpace.isDown) {
-                if (touching && wasTouching) { 
+        if (this.canSleep) {  
+            if (touching && wasTouching) {        
+                this.events.emit('showUIPopup', "Do you want to turn in for the day?");                                                                      
+                if (this.keySpace.isDown) {
+                    
                     // this.player.anims.stop();                                       
                     // this.events.emit('createInteractiveSleepPanel', this.player);  
-                    // this.toggleKeyboard(false);                                    
+                    // this.toggleKeyboard(false);   
+                    this.toggleKeyboard(true);                                 
                     this.player.sleep(true);    
                     this.events.emit('updateUI', this.playerInfo);                                      
                 }
@@ -292,12 +315,16 @@ export default class GameScene extends Scene {
 
         if (this.player.info.catchesRemainingForTheDay > 0 && this.canFish) {             
             if (this.cooldown > 0) {                            
-                this.timer.paused = false;             
+                this.fishingtimer.paused = false;             
             } else if (this.cooldown === 0) {                
                 this.toggleKeyboard(true);
-                this.timer.paused = true;                                  
-                if (this.keySpace.isDown) {                                                           
-                    if (touching && wasTouching) {  
+                this.fishingtimer.paused = true;  
+                if (touching && wasTouching) {   
+                    if (!this.hasFished) {
+                        this.hasFished = true;
+                        this.events.emit('showUIPopup', "Press space to cast your rod");
+                    }                                                    
+                    if (this.keySpace.isDown) {                                                                               
                         this.events.emit('updateUI', this.playerInfo);  
                         this.events.emit('showUIPopup', "You cast your rod out into the water...");                          
                         this.player.anims.stop(); 
@@ -311,7 +338,7 @@ export default class GameScene extends Scene {
                             playerDirection = 'right';
                         }                                             
                         this.player.anims.play('fish', true);                                                  
-                        this.timer.paused = false;             
+                        this.fishingtimer.paused = false;             
                                                                             
                         this.player.fishing(playerDirection, this.fishingObj.getRandomFish());                                                                        
                         this.events.on('fishBit', () => this.createEmote('exclamation', this.player));          

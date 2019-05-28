@@ -91,8 +91,6 @@ export default class PreloadScene extends Scene {
         
         this.load.image('fisherman', 'assets/fisherman.png');
         this.load.image('water', 'assets/water.png');
-        this.load.image('shop', 'assets/shop.png');
-        this.load.image('home', 'assets/house.png');
         this.load.image('fishSign', 'assets/fish_sign.png');
         this.load.image('heart', 'assets/emote_heart.png');
         this.load.image('anger', 'assets/emote_anger.png');
@@ -108,6 +106,11 @@ export default class PreloadScene extends Scene {
         this.load.image('brownPanel', 'assets/longBrown.png');
         this.load.image('crossBrown', 'assets/crossBrown.png');
         this.load.image('checkBlue', 'assets/checkBlue.png');
+        this.load.image('seabass', 'assets/blue-fish.png');
+        this.load.image('shark', 'assets/shark.png');
+        this.load.image('prawn', 'assets/red-fish.png');
+        this.load.image('sardine', 'assets/green-fish.png');
+        this.load.image('sand-eel', 'assets/brown-fish.png');
         // this.load.image('energyBar', 'assets/energybar.png');
         // this.load.image("energyContainer", "assets/energycontainer.png");
         this.load.spritesheet('sprPlayer', 'assets/yan.png', { 
@@ -147,8 +150,11 @@ export default class PreloadScene extends Scene {
             frameHeight: 32 
         });
 
+        this.load.image("NEW_UI", "../assets/NEW_UI@2x.png");
+
         this.load.image("tiles", "../assets/overworld.png");
         this.load.tilemapTiledJSON("map", "../assets/fishing-map.json");
+        
         
     }         
 }

@@ -23,8 +23,12 @@ export default class Player extends Entity {
             rarestFishCaught: "",
             level: 0,
             xpPool: 0,
+            // build day / month / time class
+            timeOfDay: 6,
+            dayOfTheWeek: 'Mon',
             inventory: {
                 fish: [
+                    {name: "Seabass", description: "Just your standard sea-dweller, like to be called Baz for short", weight: "3", value: "18", rarity: "uncommon"}
 
                 ],
                 rods: [
@@ -150,12 +154,41 @@ export default class Player extends Entity {
         this.spawnSplash();
         return fishCaught;
     }
-        
+    
+    // TODO: add fish helper to make more DRY
+    amountOfExperiencePointsOnRarity(rarity) {
+        let xpAmount;
+
+        switch(rarity) {
+            case 'common':
+                xpAmount = 5;
+                break;
+            case 'uncommon':
+                xpAmount = 15;
+                break;
+            case 'rare':
+                xpAmount = 40
+                break;
+            case 'super rare':
+                xpAmount = 100;
+                break;
+            case 'legendary':
+                xpAmount = 250;
+                break;
+            default:
+                xpAmount = 0;
+        }
+
+        console.log(`xp earned = ${xpAmount}`)
+        return xpAmount;
+    }
+
     collectFish(fish) {                       
-        if (this.checkForFish()) {                 
+        if (this.checkForFish()) {                
+            let amountOfXP = this.amountOfExperiencePointsOnRarity(fish.rarity)
             this.info.inventory.fish.push(fish);   
-            this.info.xpPool += 10;          
-            this.scene.events.emit('showUIPopup', `You caught yourself a ${fish.name}!`);                          
+            this.info.xpPool += amountOfXP;          
+            this.scene.events.emit('showFishUIPopup', fish);                          
         } else {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }        
@@ -245,9 +278,9 @@ export default class Player extends Entity {
         this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
     }
 
-    update() {
-        
-        if (this.player)
+   
+
+    update() {        
         this.body.setVelocity(0, 0);
         
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);
