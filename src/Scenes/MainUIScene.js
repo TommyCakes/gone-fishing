@@ -15,19 +15,16 @@ export default class MainUIScene extends Scene {
         this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }  
 
         this.conversation = [ "Hello!"]
-
+        
     }
-    
-    preload() {              
-    }
-
+  
     refactorTimeDisplay(time) {
         let paddedTime = time.toString().padStart(2, '0');
         return `${paddedTime} : 00`;
     }
     
-    getBasicStyle(color, align = 'center') {
-        return { font: '20px Arial', fill: color, align: align, wordWrap: { width: 390, useAdvancedWrap: true } }  
+    getBasicStyle(color, align = 'center', size = '20px') {
+        return { font: `${size} Copperplate`, fill: color, align: align, wordWrap: { width: 390, useAdvancedWrap: true } }  
     }
 
     updateUI (data) {        
@@ -52,7 +49,7 @@ export default class MainUIScene extends Scene {
 
         this.ui.add(this.uiBg);
         this.ui.add(this.moneyText);
-        this.ui.add(this.levelText);
+        this.ui.add(this.levelText);        
         return this.ui;
     }
 
@@ -138,9 +135,17 @@ export default class MainUIScene extends Scene {
         return container;                                                                                          
     }
 
-    createDialoguePopup() {
-        this.image = this.add.image(this.game.config.width / 2, this.game.config.height - 145, 'speech');
-        this.image.setScale(0.8);
+    createDialoguePopup(characterArray) {
+        let style = this.getBasicStyle('#5d5d2f', 'left', '30px');  
+        this.container = this.add.container(this.game.config.width / 2, this.game.config.height - 145);
+        this.uiBackground = this.add.image(this.x, this.y, 'speechEmpty');
+        this.currentTalkingFace = this.add.image(300, 10, 'clarisHappy');
+        this.speechText = this.add.text(this.uiBackground.x - this.container.width, this.uiBackground.y, "HELLO!", style);
+        this.uiBackground.setScale(0.6);
+        this.currentTalkingFace.setScale(2.3);
+        this.speechText.setOrigin(0.5, 0.5);   
+        this.container.add([this.uiBackground, this.currentTalkingFace, this.speechText]);
+        return this.container;
     }
 
     removeUI(ui, delay = 2000) {

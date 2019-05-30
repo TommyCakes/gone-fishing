@@ -113,8 +113,8 @@ export default class PreloadScene extends Scene {
         this.load.image('sand-eel', 'assets/brown-fish.png');
         this.load.image('xpChunk', 'assets/xp-chunk.png');
         this.load.image('speech', 'assets/speech.png');
-        // this.load.image('energyBar', 'assets/energybar.png');
-        // this.load.image("energyContainer", "assets/energycontainer.png");
+        this.load.image('speechEmpty', 'assets/speech-empty.png');
+
         this.load.spritesheet('sprPlayer', 'assets/yan.png', { 
             frameWidth: 48, 
             frameHeight: 64 
@@ -157,6 +157,8 @@ export default class PreloadScene extends Scene {
         });
 
         this.load.image("NEW_UI", "../assets/NEW_UI@2x.png");
+        this.load.image("clarisHappy", "../assets/claris-happy.png");
+        this.load.image("playerSurprised", "../assets/player-surprised.png");
 
         this.load.image("tiles", "../assets/overworld.png");
         this.load.tilemapTiledJSON("map", "../assets/fishing-map.json");

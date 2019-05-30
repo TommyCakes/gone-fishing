@@ -226,7 +226,7 @@ export default class GameScene extends Scene {
             // this.time.delayedCall(4000, () => {
             //     this.scene.resume();  
             // });
-        })
+        });
     }  
     
     createEmote(emoteName, character) {
