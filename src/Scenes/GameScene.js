@@ -171,7 +171,7 @@ export default class GameScene extends Scene {
         this.dogZone = this.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
         // this.waterAreas.addMultiple([this.waterZone, this.waterZone2]) ;
         
-        this.baitShopKeeper = this.physics.add.sprite(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'baitShopKeeper', 9); 
+        this.baitShopKeeper = this.physics.add.sprite(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'claris', 9); 
         this.baitShopKeeper.body.moves = false;
         this.baitShopKeeper.body.setCircle(25);        
         this.baitShopKeeper.setScale(0.4); 
@@ -311,7 +311,7 @@ export default class GameScene extends Scene {
         if (this.canBuyBait && this.playerInfo.cash !== 0) {   
             if (touching && wasTouching) {
                 this.createEmote('cash', this.baitShopKeeper);
-                // this.events.emit('showUIPopup', "Hello sir! Bait is 10 gold for 1 bait, would you like to buy some?");  
+                this.events.emit('showDialoguePopup');  
                 if (this.keySpace.isDown) {                                                                                   
                         this.events.emit('showUIPopup', "You bought some more bait!");                          
                         this.playerInfo.catchesRemainingForTheDay += 1;
@@ -395,7 +395,7 @@ export default class GameScene extends Scene {
             this.player.resetFlip();
             this.player.anims.play('right', true);
         } else {            
-            this.player.stop();             
+            this.player.anims.stop();             
         }
         
         this.player.body.velocity.normalize().scale(this.player.getData("speed"));

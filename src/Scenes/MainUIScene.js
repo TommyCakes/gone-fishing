@@ -14,6 +14,8 @@ export default class MainUIScene extends Scene {
         this.style = { font: '24px Arial', fill: '#7729DE', align: 'center' }  
         this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }  
 
+        this.conversation = [ "Hello!"]
+
     }
     
     preload() {              
@@ -136,6 +138,11 @@ export default class MainUIScene extends Scene {
         return container;                                                                                          
     }
 
+    createDialoguePopup() {
+        this.image = this.add.image(this.game.config.width / 2, this.game.config.height - 145, 'speech');
+        this.image.setScale(0.8);
+    }
+
     removeUI(ui, delay = 2000) {
         this.time.delayedCall(delay, () => {                             
             ui.removeAll(true);
@@ -176,6 +183,8 @@ export default class MainUIScene extends Scene {
         this.gameScene.events.on('showTextPopup', ((data) => {
             this.showTextPopup(data);
         }))
+
+        this.gameScene.events.on('showDialoguePopup', () => this.createDialoguePopup());
          
 
         // this.events.on('levelUp', () => {

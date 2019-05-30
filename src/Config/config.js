@@ -4,8 +4,8 @@ export default {
   type: Phaser.AUTO,
   pixelArt: true,
   roundPixels: true,
-  width: 1200,
-  height: 1200,
+  width: 1300,
+  height: 900,
   // zoom: 4,
   physics: {
     default: 'arcade',
