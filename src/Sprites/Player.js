@@ -48,8 +48,8 @@ export default class Player extends Entity {
 
         this.level = new Level(this.scene, this);
 
-        // let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
-        
+        let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
+        this.setDepth(1);
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
 

@@ -114,6 +114,7 @@ export default class PreloadScene extends Scene {
         this.load.image('xpChunk', 'assets/xp-chunk.png');
         this.load.image('speech', 'assets/speech.png');
         this.load.image('speechEmpty', 'assets/speech-empty.png');
+        this.load.image('river', 'assets/river.jpg');
 
         this.load.spritesheet('sprPlayer', 'assets/yan.png', { 
             frameWidth: 48, 

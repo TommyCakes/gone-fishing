@@ -7,6 +7,7 @@ import TitleScene from './Scenes/TitleScene';
 import OptionsScene from './Scenes/OptionsScene';
 import CreditsScene from './Scenes/CreditsScene';
 import UIScene from './Scenes/MainUIScene';
+import InteriorScene from './Scenes/InteriorScene';
 
 class Game extends Phaser.Game {
     constructor() {
@@ -17,12 +18,13 @@ class Game extends Phaser.Game {
         // this.scene.add('Options', OptionsScene);
         // this.scene.add('Credits', CreditsScene);        
         this.scene.add('Game', GameScene);
-        this.scene.add('UIScene', UIScene);
+        // this.scene.add('UIScene', UIScene);        
+        this.scene.add('InteriorScene', InteriorScene);        
 
         this.scene.start('Boot');
         // this.scene.start('Preload');      
         // this.scene.start('Game');      
-        this.scene.start('UIScene');      
+        // this.scene.start('UIScene');      
     }
 }
 

@@ -126,8 +126,8 @@ export default class GameScene extends Scene {
                 
         this.player = new Player(
             this,
-            120,
-            270,
+            400,
+            160,
             "sprPlayer"
         );
         
@@ -169,6 +169,7 @@ export default class GameScene extends Scene {
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
         this.baitShopZone = this.createNewZone(180, 300, 60, 40);        
         this.dogZone = this.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
+        this.caveEntrance = this.createNewZone(350, 180, 20, 16);        
         // this.waterAreas.addMultiple([this.waterZone, this.waterZone2]) ;
         
         this.baitShopKeeper = this.physics.add.sprite(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'claris', 9); 
@@ -196,6 +197,7 @@ export default class GameScene extends Scene {
         this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
         this.physics.add.overlap(this.player, this.baitShopZone, () => { this.isShoppingForBait = true; this.canShop = false; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false});            
         this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false; this.canBuyBait = false});            
+        this.physics.add.overlap(this.player, this.caveEntrance, () => { this.scene.pause(); this.scene.start('InteriorScene')});            
         
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
@@ -227,6 +229,10 @@ export default class GameScene extends Scene {
             //     this.scene.resume();  
             // });
         });
+
+        this.input.keyboard.on('keydown_A', function (event) {
+            console.log('Hello from the A Key!');
+          });
     }  
     
     createEmote(emoteName, character) {
@@ -265,8 +271,6 @@ export default class GameScene extends Scene {
         // this.playerText.y = this.player.y - 30;
         
         this.events.on('resetDay', () => this.playerInfo.timeOfDay = 1); 
-
-        
 
         if (this.player.body.embedded) this.player.body.touching.none = false;
         let touching = !this.player.body.touching.none;
@@ -395,7 +399,7 @@ export default class GameScene extends Scene {
             this.player.resetFlip();
             this.player.anims.play('right', true);
         } else {            
-            this.player.anims.stop();             
+            // this.player.anims.stop();             
         }
         
         this.player.body.velocity.normalize().scale(this.player.getData("speed"));
