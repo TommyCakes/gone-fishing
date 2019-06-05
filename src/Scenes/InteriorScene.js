@@ -3,18 +3,19 @@ import Player from "../Sprites/Player";
 
 export default class InteriorScene extends Scene {
 
-    init (data) {
-        //Method 1. Introduce sceneA At the time of initialization, you can get the value passed by Scene Scene;
-        this.gameScene = this.scene.get('Game');      
+    constructor() {
+        super({ key: 'InteriorScene' });            
     }
 
-    constructor() {
-        super({ key: 'InteriorScene' });        
+    createNewZone(x, y, w, h) {
+        this.zone = this.add.zone(x, y).setSize(w, h);
+        this.physics.world.enable(this.zone, 0);
+        this.zone.body.moves = false;
+        return this.zone;
     }
 
     create() {
-        let style = { font: '20px Arial', fill: '#fff', align: 'center' }      
-        this.moneyText = this.add.text(100, 400, 'welcome to the interior', style).setScrollFactor(0);
+        this.scene.bringToTop('UIScene');
 
         // Setup input keys                                
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -25,20 +26,37 @@ export default class InteriorScene extends Scene {
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        
+        const map = this.make.tilemap({ key: "cave-1" });
+        const tileset = map.addTilesetImage("overworld", "tiles");
+             
+        const belowLayer = map.createStaticLayer("BP", tileset, 0, 0);        
+        const waterLayer = map.createStaticLayer("Water", tileset, 0, 0);   
+        const worldLayer = map.createStaticLayer("W", tileset, 0, 0);
+
+        waterLayer.setCollisionByProperty({ collides: true });
+        worldLayer.setCollisionByProperty({ collides: true });
+
+            
         this.player = new Player(
             this,
+            120,
             400,
-            160,
             "sprPlayer"
         );
         
-        this.add.image(100, 100, 'river');
-        
+        this.player.body.setCollideWorldBounds(true);
+        this.player.body.onWorldBounds = true;
+
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(-50, -30);
         this.cameras.main.zoom = 4;
+        this.physics.add.collider(this.player, worldLayer);
+        this.physics.add.collider(this.player, waterLayer);  
+        
+        this.caveExit = this.createNewZone(120, 420, 30, 16);  
+
+        this.physics.add.overlap(this.player, this.caveExit, () => { this.scene.pause(); this.scene.start('Game')});            
 
         
     }

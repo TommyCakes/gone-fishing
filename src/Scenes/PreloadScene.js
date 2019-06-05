@@ -162,7 +162,8 @@ export default class PreloadScene extends Scene {
         this.load.image("playerSurprised", "../assets/player-surprised.png");
 
         this.load.image("tiles", "../assets/overworld.png");
-        this.load.tilemapTiledJSON("map", "../assets/fishing-map.json");
+        this.load.tilemapTiledJSON("main-world", "../assets/fishing-map.json");
+        this.load.tilemapTiledJSON("cave-1", "../assets/cave-1-map.json");
         
         
     }         

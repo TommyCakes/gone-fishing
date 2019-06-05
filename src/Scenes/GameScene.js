@@ -126,8 +126,8 @@ export default class GameScene extends Scene {
                 
         this.player = new Player(
             this,
-            400,
-            160,
+            350,
+            210,
             "sprPlayer"
         );
         
@@ -149,7 +149,7 @@ export default class GameScene extends Scene {
         this.doggo.anims.play('idle', true);
         
         // Load map
-        const map = this.make.tilemap({ key: "map" });
+        const map = this.make.tilemap({ key: "main-world" });
         const tileset = map.addTilesetImage("overworld", "tiles");
 
         const waterLayer = map.createStaticLayer("Water", tileset, 0, 0);        
@@ -163,7 +163,7 @@ export default class GameScene extends Scene {
         
         // this.waterAreas = this.physics.add.group();
         this.waterZone = this.createNewZone(0, 0, 70, 900);
-        // this.waterZone2 = this.createNewZone(230, 180, 100, 180);
+        // this.waterZone2 = this.cwreateNewZone(230, 180, 100, 180);
 
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
@@ -197,6 +197,7 @@ export default class GameScene extends Scene {
         this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
         this.physics.add.overlap(this.player, this.baitShopZone, () => { this.isShoppingForBait = true; this.canShop = false; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false});            
         this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false; this.canBuyBait = false});            
+        
         this.physics.add.overlap(this.player, this.caveEntrance, () => { this.scene.pause(); this.scene.start('InteriorScene')});            
         
         this.cameras.main.startFollow(this.player);
