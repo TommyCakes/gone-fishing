@@ -116,7 +116,7 @@ export default class PreloadScene extends Scene {
         this.load.image('speechEmpty', 'assets/speech-empty.png');
         this.load.image('river', 'assets/river.jpg');
 
-        this.load.spritesheet('sprPlayer', 'assets/yan.png', { 
+        this.load.spritesheet('sprPlayer', 'assets/yan-fixed?.png', { 
             frameWidth: 48, 
             frameHeight: 64 
         });        

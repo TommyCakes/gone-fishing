@@ -126,7 +126,7 @@ export default class GameScene extends Scene {
                 
         this.player = new Player(
             this,
-            350,
+            150,
             210,
             "sprPlayer"
         );
@@ -163,7 +163,7 @@ export default class GameScene extends Scene {
         
         // this.waterAreas = this.physics.add.group();
         this.waterZone = this.createNewZone(0, 0, 70, 900);
-        // this.waterZone2 = this.cwreateNewZone(230, 180, 100, 180);
+        this.waterZone2 = this.createNewZone(230, 180, 100, 180);
 
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
@@ -192,7 +192,7 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
 
         this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
-        // this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
+        this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
         this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
         this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
         this.physics.add.overlap(this.player, this.baitShopZone, () => { this.isShoppingForBait = true; this.canShop = false; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false});            
@@ -265,7 +265,8 @@ export default class GameScene extends Scene {
 
     update() {  
                          
-        this.player.update();      
+        this.player.update();   
+        this.playerDirection = this.player.facing;   
         this.doggo.update();
 
         // this.playerText.x = this.player.x;
@@ -276,9 +277,9 @@ export default class GameScene extends Scene {
         if (this.player.body.embedded) this.player.body.touching.none = false;
         let touching = !this.player.body.touching.none;
         let wasTouching = !this.player.body.wasTouching.none;
-
+        
         if (touching && !wasTouching) { 
-            
+
         } else if (!touching && wasTouching) { 
             this.isShopping = false; 
             this.canShop = true; 
@@ -332,35 +333,36 @@ export default class GameScene extends Scene {
             } else if (this.cooldown === 0) {                                
                 this.fishingtimer.paused = true;  
                 if (touching && wasTouching) {   
+                                         
+                    this.player.anims.play('idle-fishing');
+                    
                     if (!this.hasFished) {
                         this.hasFished = true;
                         this.events.emit('showUIPopup', "Press space to cast your rod");
-                        this.player.anims.stop(); 
                     }                                                    
                     if (this.keySpace.isDown) {                                                                               
                         this.events.emit('updateUI', this.playerInfo);  
                         this.events.emit('showUIPopup', "You cast your rod out into the water...");                                                  
                         this.toggleKeyboard(false);  
-                        let playerDirection;
-                        if (this.player.x - this.waterZone.x > 0) {
-                            this.player.flipX = true;
-                            playerDirection = 'left';
-                        } else if (this.player.x - this.waterZone.x < 0) {
-                            this.player.flipX = false;
-                            playerDirection = 'right';
-                        }                                             
-                        let fishingAnim = this.player.anims.play('fish', true); 
-
-                        fishingAnim.on('animationcomplete', () => {                            
+             
+                        if (this.playerDirection === 'left') {
+                            this.player.anims.playReverse('fish-left');
+                        } else if (this.playerDirection === 'right') {
+                            this.player.anims.play('fish-right');
+                        }  
+                        
+                        this.time.delayedCall(3900, () => {                                                         
+                            this.player.anims.play('fish-left');   
                         });
 
                         this.fishingtimer.paused = false;                                                                                         
-                        this.player.fishing(this.fishingObj.getRandomFish(), playerDirection);                                                                        
+                        this.player.fishing(this.fishingObj.getRandomFish(), this.playerDirection);                                                                        
                         this.events.on('fishBit', () => {
-                            this.createEmote('exclamation', this.player);                            
-                        });         
-                        this.events.on('fishCaught', () => {
-                            this.toggleKeyboard(true); 
+                            this.createEmote('exclamation', this.player);                                 
+                        });                                    
+
+                        this.events.on('fishCaught', () => {                            
+                            this.toggleKeyboard(true);                                                          
                         }) 
                         this.events.emit('updateUI', this.playerInfo);                                                   
                         this.cooldown = this.FISHING_COOLDOWN_DELAY;   
@@ -382,9 +384,7 @@ export default class GameScene extends Scene {
                 }
             }                   
         } 
-        
-        
-
+                
         if (this.keyW.isDown || this.cursors.up.isDown ) {
             this.player.moveUp();
             this.player.anims.play('up', true);               
@@ -393,14 +393,13 @@ export default class GameScene extends Scene {
             this.player.anims.play('down', true);
         } else if (this.keyA.isDown || this.cursors.left.isDown) {
             this.player.moveLeft();           
-            this.player.resetFlip(); 
+
             this.player.anims.play('left', true);
         } else if (this.keyD.isDown || this.cursors.right.isDown) {
             this.player.moveRight();
-            this.player.resetFlip();
             this.player.anims.play('right', true);
         } else {            
-            // this.player.anims.stop();             
+            // this.player.anims.stop();                                   
         }
         
         this.player.body.velocity.normalize().scale(this.player.getData("speed"));

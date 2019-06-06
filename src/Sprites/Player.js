@@ -46,6 +46,8 @@ export default class Player extends Entity {
             }            
         }
 
+        this.facing = "";
+
         this.level = new Level(this.scene, this);
 
         let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
@@ -70,15 +72,23 @@ export default class Player extends Entity {
             repeat: -1
         });
 
-        this.scene.anims.create({
-            key: 'turn',
-            frames: [ { key: 'sprPlayer', frame: 8} ],
-            framerate: 20
-        });
+        // this.scene.anims.create({
+        //     key: 'idle-fishing',
+        //     frames: [ { key: 'sprPlayer', frame: 9} ],
+        //     framerate: 20
+        // });
 
         this.scene.anims.create({
-            key: 'fish',
+            key: 'fish-right',
             frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 12, end: 14
+        }),
+            frameRate: 15,
+            repeat: 0
+        });
+        
+        this.scene.anims.create({
+            key: 'fish-left',
+            frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 15, end: 17
         }),
             frameRate: 15,
             repeat: 0
@@ -116,18 +126,22 @@ export default class Player extends Entity {
 
     moveUp() {
         this.body.velocity.y = -this.getData("speed");
+        this.facing = 'up';
     }
 
     moveDown() {
         this.body.velocity.y = this.getData("speed");
+        this.facing = 'down';
     }
 
     moveLeft() {
         this.body.velocity.x = -this.getData("speed");
+        this.facing = 'left';
     }
 
     moveRight() {
         this.body.velocity.x = this.getData("speed");
+        this.facing = 'right';
     }
 
     stop() {
@@ -187,9 +201,9 @@ export default class Player extends Entity {
         return xpAmount;
     }
 
-    collectFish(fish) {                       
-        if (this.checkForFish()) {    
-            this.anims.playReverse('catch-fish');            
+    collectFish(fish) {   
+
+        if (this.checkForFish()) {                     
             let amountOfXP = this.amountOfExperiencePointsOnRarity(fish.rarity)
             this.info.inventory.fish.push(fish);   
             this.info.xpPool += amountOfXP;          
@@ -197,17 +211,18 @@ export default class Player extends Entity {
         } else {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }        
+ 
         this.scene.events.emit('updateUI', this.info);  
-                           
+
         if (!this.level.checkForLevelUp()) {
             this.level.showExperienceText(fish); 
         } 
         
         console.log(this.info);                
-        this.scene.time.delayedCall(200, () => {             
+        // this.scene.time.delayedCall(100, () => {             
             this.splash.destroy();
             this.scene.events.emit('fishCaught')
-        }, [], this);                                                                                                                   
+        // }, [], this);                                                                                                                   
     }
     
     spawnBobble(direction) {
