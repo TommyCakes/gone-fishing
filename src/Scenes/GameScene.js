@@ -1,6 +1,5 @@
 import { Scene } from 'phaser';
 import Player from "../Sprites/Player";
-import Lake from '../Sprites/Lake';
 import Shop from '../Classes/Shop';
 import Fishing from '../Classes/Fishing';
 import Pet from '../Sprites/Pet';
@@ -34,45 +33,6 @@ export default class GameScene extends Scene {
     triggerUIUpdate() {
         this.events.emit('updateUI', this.playerInfo);     
     }
-
-    createInteractiveSleepPanel(f) {
-        
-        let container = this.add.container(this.cameras.main.centerX / 2, this.cameras.main.centerY / 2);
-        this.uiBackground = this.add.image(container.x, container.y, 'panel').setScrollFactor(0);  
-        this.uiBackground.setOrigin(0.5, 0.5)
-        this.brownPanel = this.add.image(this.uiBackground.x + this.uiBackground.width - 90, this.uiBackground.y - 40, 'brownPanel').setScrollFactor(0);          
-        this.text = this.add.text(this.uiBackground.x, this.brownPanel.y, 'Will you settle down for the night, and save your progress?', this.style).setScrollFactor(0)
-        this.buttonYes = this.add.image(this.uiBackground.x - 40 , this.brownPanel.y + 60 , 'greyButton').setScrollFactor(0).setInteractive();  
-        this.buttonYes.name = 'yesBtn';
-        this.check = this.add.image(this.uiBackground.x - 40, this.brownPanel.y + 70, 'checkBlue').setScrollFactor(0)
-        this.buttonNo = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.buttonYes.y, 'greyButton').setScrollFactor(0).setInteractive();          
-        this.buttonNo.name = 'noBtn';
-        this.cross = this.add.image(this.buttonYes.x + this.buttonYes.width * 2, this.text.y + 100, 'crossBrown').setScrollFactor(0)
-
-        this.uiBackground.setScale(1);        
-        this.uiBackground.displayWidth = 400;        
-        this.brownPanel.displayWidth = 375;               
-        this.uiBackground.displayHeight = 200;    
-
-        this.buttonYes.setScale(1.5);
-        this.buttonNo.setScale(1.5);
-            
-        this.text.setOrigin(0.5, 0.5);   
-        container.setDepth(1);
-        container.add([ this.uiBackground, this.brownPanel, this.text, this.buttonYes, this.buttonNo, this.check, this.cross]); 
-                                    
-        this.buttonYes.on('pointerdown', f); 
-
-        this.input.on('pointerdown', () => {                           
-            this.uiPanel.children.iterate(child => {
-                if (child.name === 'no Btn') {
-                    child.destroy(child, true);
-                }
-            });
-            this.uiPanel.clear(true);
-        })  
-                                                            
-    }              
 
     toggleKeyboard(bool) {
         this.keyW.enabled = bool;
@@ -122,17 +82,17 @@ export default class GameScene extends Scene {
         this.cursors = this.input.keyboard.createCursorKeys();            
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-                
+        
+        console.log(constants);
         this.player = new Player(
-            this,
+            this,            
             150,
             210,
             "sprPlayer"
         );
         
         this.playerInfo = this.player.getInfo();
-        this.playerInventory = this.player.getInventory();               
-        this.player.setDepth(1);
+        this.playerInventory = this.player.getInventory();                       
         
         this.doggo = new Pet(
             this,
@@ -141,8 +101,7 @@ export default class GameScene extends Scene {
             "doggo"            
         );
         
-        this.doggo.setDepth(1);
-                       
+                               
         // this.doggo.anims.play('walk-right', true);
         // this.doggo.moveRight();
         this.doggo.anims.play('idle', true);
@@ -160,7 +119,6 @@ export default class GameScene extends Scene {
         waterLayer.setCollisionByProperty({ collides: true });
         worldLayer.setCollisionByProperty({ collides: true });
         
-        // this.waterAreas = this.physics.add.group();
         this.waterZone = this.createNewZone(0, 0, 70, 900);
         this.waterZone2 = this.createNewZone(230, 180, 100, 180);
 
@@ -169,7 +127,6 @@ export default class GameScene extends Scene {
         this.baitShopZone = this.createNewZone(180, 300, 60, 40);        
         this.dogZone = this.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
         this.caveEntrance = this.createNewZone(350, 180, 20, 16);        
-        // this.waterAreas.addMultiple([this.waterZone, this.waterZone2]) ;
         
         this.baitShopKeeper = this.physics.add.sprite(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'claris', 9); 
         this.baitShopKeeper.body.moves = false;
@@ -344,7 +301,8 @@ export default class GameScene extends Scene {
                     if (!this.hasFished) {
                         this.hasFished = true;
                         this.events.emit('showUIPopup', "Press space to cast your rod");
-                    }                                                    
+                    }      
+
                     if (this.keySpace.isDown) {                                                                               
                         this.events.emit('updateUI', this.playerInfo);  
                         this.events.emit('showUIPopup', "You cast your rod out into the water...");                                                  

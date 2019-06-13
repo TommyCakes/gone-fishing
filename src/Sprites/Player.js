@@ -12,7 +12,8 @@ export default class Player extends Entity {
         this.setData("isFishing", false);
         this.setData("timerFishingDelay", 5000);
         this.body.moves = true;  
-        // this.play("sprPlayer");        
+        this.setDepth(1);
+
         /* The player object */        
         this.info = {
             name: "TommyCakes",
@@ -57,8 +58,7 @@ export default class Player extends Entity {
         this.setDepth(1);
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
-
-        // this.setScale(0.5);        
+     
         this.scene.anims.create({
             key: 'left',
             frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 11

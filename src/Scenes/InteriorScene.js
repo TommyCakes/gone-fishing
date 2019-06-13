@@ -57,8 +57,6 @@ export default class InteriorScene extends Scene {
         this.caveExit = this.createNewZone(120, 420, 30, 16);  
 
         this.physics.add.overlap(this.player, this.caveExit, () => { this.scene.pause(); this.scene.start('Game')});            
-
-        
     }
 
     update() {
