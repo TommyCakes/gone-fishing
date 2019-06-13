@@ -93,15 +93,11 @@ export default class GameScene extends Scene {
         this.playerInfo = this.player.getInfo();
         this.playerInventory = this.player.getInventory();  
         
-        // this.playerContainer = this.add.container();
+        // torch light for player
         this.lampShape = this.make.graphics({ 
             fillStyle: { color: 0x000000 }, add: false})
             .fillCircleShape(new Phaser.Geom.Circle(this.player.x, this.player.y, 20));
-        this.lampShape.alpha = 0;
-        // this.lampShape.setDepth(1);
-        // this.playerContainer.add(this.player);
-        // this.playerContainer.add(this.lampShape);
-        // this.playerContainer.setDepth(1);
+        this.lampShape.alpha = 0.5;
         
         this.doggo = new Pet(
             this,
@@ -205,16 +201,15 @@ export default class GameScene extends Scene {
         this.sky.setScale(2);        
         this.mask = this.lampShape.createGeometryMask();
         this.mask.invertAlpha = true;  
-        // this.sky.setOrigin(0.5, 0.5);   
         this.sky.setMask(this.mask);        
 
         this.events.on('nightTime', () => {                                  
             this.tweens.add({
                 targets: this.sky,
-                alphaTopLeft: { value: 0.7, duration: 2000, ease: 'Power1' },
-                alphaTopRight: { value: 0.7, duration: 2000, ease: 'Power1' },
-                alphaBottomRight: { value: 0.7, duration: 2000, ease: 'Power1' },
-                alphaBottomLeft: { value: 0.7, duration: 2000, ease: 'Power1'},
+                alphaTopLeft: { value: 0.9, duration: 10000, ease: 'Power1' },
+                alphaTopRight: { value: 0.9, duration: 10000, ease: 'Power1' },
+                alphaBottomRight: { value: 0.9, duration: 10000, ease: 'Power1' },
+                alphaBottomLeft: { value: 0.9, duration: 10000, ease: 'Power1'},
                 hold: 50000,
                 yoyo: true,
                 repeat: 0,
@@ -328,8 +323,7 @@ export default class GameScene extends Scene {
                     if (this.outOfCatchAttempts) {
                         this.events.emit('showUIPopup', "You're all fished out for the day!");
                         return;
-                    }
-                    this.player.anims.play('idle-fishing');
+                    }                    
                     
                     if (!this.hasFished) {
                         this.hasFished = true;
