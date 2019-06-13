@@ -14,7 +14,7 @@ export default class MainUIScene extends Scene {
         super({ key: 'UIScene', active: true });        
         this.style = { font: '24px Arial', fill: '#7729DE', align: 'center' }  
         this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }   
-        this.endOfDay = false;                      
+        this.endOfDay = false;                           
     }
     
     refactorTimeDisplay(time) {
@@ -26,24 +26,10 @@ export default class MainUIScene extends Scene {
         return { font: `${size} Copperplate`, fill: color, align: align, wordWrap: { width: wrapWidth, useAdvancedWrap: true } }  
     }
 
-    updateMainUI (data) {    
-        
-        this.sky = this.add.image(0, 0, 'nightSky').setAlpha(0);
-        this.sky.setScale(2);
-
-        if (data.timeOfDay === 20) {                       
-            this.showUIPopup('You need to get home before the monsters come...');
-            this.tweens.add({
-                targets: this.sky,
-                alphaTopLeft: { value: 0.65, duration: 11000, ease: 'Power1' },
-                alphaTopRight: { value: 0.65, duration: 11000, ease: 'Power1' },
-                alphaBottomRight: { value: 0.65, duration: 11000, ease: 'Power1' },
-                alphaBottomLeft: { value: 0.65, duration: 11000, ease: 'Power1'},
-                hold: 50000,
-                yoyo: true,
-                repeat: 0,
-
-            });
+    updateMainUI (data) {                           
+        if (data.timeOfDay === 20) {   
+            this.gameScene.events.emit('nightTime');                    
+            this.showUIPopup('You need to get home before the monsters come...');           
         } else if (data.timeOfDay === 23) {
             this.showUIPopup('A new day has dawned!');
             this.gameScene.events.emit('resetDay', this.info);  
@@ -230,12 +216,11 @@ export default class MainUIScene extends Scene {
             });            
     }
 
-    create () { 
-        
+    create () {             
         this.conversations = this.gameScene.conversations;
 
         this.gameScene.events.on('endOfDay', () => this.endOfDay = true);
-
+        
         this.gameScene.events.on('updateUI', ((data) => {
             this.updateMainUI(data);  
             this.updateSubUI(data);                  
@@ -280,7 +265,8 @@ export default class MainUIScene extends Scene {
         
     }
 
-    update () {      
+    update () {   
+                
     }
 }
 

@@ -9,7 +9,8 @@ export default class Pet extends Entity {
         this.setData("speed", 30);
         this.body.moves = true;  
         this.body.immovable = true;
-        
+        this.setDepth(1);
+
         this.scene.anims.create({
             key: 'idle',
             frames: this.scene.anims.generateFrameNumbers('doggo', { start: 18, end: 19

@@ -12,7 +12,8 @@ export default class Player extends Entity {
         this.setData("isFishing", false);
         this.setData("timerFishingDelay", 5000);
         this.body.moves = true;  
-        // this.play("sprPlayer");        
+        this.setDepth(1);
+
         /* The player object */        
         this.info = {
             name: "TommyCakes",
@@ -25,7 +26,7 @@ export default class Player extends Entity {
             xpPool: 0,
             chapter: 1,
             // build day / month / time class
-            timeOfDay: 20,
+            timeOfDay: 18,
             maximumAmountOfFishHeld: 5,
             dayOfTheWeek: 'Mon',
             inventory: {
@@ -57,8 +58,7 @@ export default class Player extends Entity {
         this.setDepth(1);
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
-
-        // this.setScale(0.5);        
+     
         this.scene.anims.create({
             key: 'left',
             frames: this.scene.anims.generateFrameNumbers('sprPlayer', { start: 10, end: 11
@@ -328,8 +328,6 @@ export default class Player extends Entity {
         this.scene.events.emit('endOfDay');  
     }
 
-   
-
     update() {        
 
         if (this.body.velocity.x === 0 && this.body.velocity.y === 0 && !this.isFishing) {
@@ -350,7 +348,7 @@ export default class Player extends Entity {
         }
 
         this.body.setVelocity(0, 0);
-                
+        
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);
         this.y = Phaser.Math.Clamp(this.y, 0, this.scene.game.config.height);        
     }
