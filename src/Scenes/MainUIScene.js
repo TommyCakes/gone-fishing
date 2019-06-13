@@ -13,7 +13,8 @@ export default class MainUIScene extends Scene {
     {
         super({ key: 'UIScene', active: true });        
         this.style = { font: '24px Arial', fill: '#7729DE', align: 'center' }  
-        this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }                 
+        this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }   
+        this.endOfDay = false;              
     }
     
     refactorTimeDisplay(time) {
@@ -54,9 +55,11 @@ export default class MainUIScene extends Scene {
     updateSubUI (data) {                       
         let catchesLeft = data.catchesRemainingForTheDay;
                 
-        this.ui = this.add.group();            
+        this.ui = this.add.group();                        
         this.uiBg = this.add.image(210, 46, 'catchesLeftUI').setScrollFactor(0);          
         this.uiBg.setScale(1.7);                   
+        
+        this.ui.clear(true, this);
         
         if (catchesLeft <= 4) {
             for (let i = 0; i <= catchesLeft; i += 1) {
@@ -64,6 +67,10 @@ export default class MainUIScene extends Scene {
                 fish.setScale(0.7);
                 this.ui.add(fish);            
             }
+        }
+
+        if (this.endOfDay) {
+            this.ui.clear(true, this);
         }
         
         let children = this.ui.getChildren();  
@@ -216,7 +223,7 @@ export default class MainUIScene extends Scene {
             this.updateMainUI(data);         
             this.updateSubUI(data);         
         })); 
-        
+                
         this.gameScene.events.on('showUIPopup', ((data) => {
             this.showUIPopup(data);         
         }));  

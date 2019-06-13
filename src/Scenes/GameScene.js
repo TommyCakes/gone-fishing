@@ -314,7 +314,8 @@ export default class GameScene extends Scene {
                     // this.toggleKeyboard(false);   
                     this.toggleKeyboard(true);                                 
                     this.player.sleep(true);    
-                    this.events.emit('updateUI', this.playerInfo);                                      
+                    this.events.emit('updateUI', this.playerInfo);     
+                    this.events.emit('endOfDay');                                   
                 }
             }
         } 
