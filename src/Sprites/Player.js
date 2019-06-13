@@ -26,10 +26,11 @@ export default class Player extends Entity {
             chapter: 1,
             // build day / month / time class
             timeOfDay: 6,
+            maximumAmountOfFishHeld: 5,
             dayOfTheWeek: 'Mon',
             inventory: {
                 fish: [
-                    {name: "Seabass", description: "Just your standard sea-dweller, like to be called Baz for short", weight: "3", value: "18", rarity: "uncommon"}
+                    // {name: "Seabass", description: "Just your standard sea-dweller, like to be called Baz for short", weight: "3", value: "18", rarity: "uncommon"}
 
                 ],
                 rods: [
@@ -51,7 +52,7 @@ export default class Player extends Entity {
 
         this.level = new Level(this.scene, this);
 
-        let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
+        // let savedGame = localStorage.getItem('save') ? this.info = this.loadGame() : this.info;
         this.setDepth(1);
         let style = { font: '20px Arial', fill: '#fff' }         
         this.infoText = this.scene.add.text(100, 360, "", style); 
@@ -157,13 +158,14 @@ export default class Player extends Entity {
         let rdmNum = this.getRandomIntBetween(101);
         let fishCaught = false;
     
-        if (rdmNum <= 40) { 
-            fishCaught = false;
-        } else if (rdmNum <= 60) {
-            fishCaught = false;
-        } else if (rdmNum <= 80) {
-            fishCaught = false;
-        } else if (rdmNum < 100) {
+        // if (rdmNum <= 40) { 
+        //     fishCaught = false;
+        // } else if (rdmNum <= 60) {
+        //     fishCaught = false;
+        // } else if (rdmNum <= 80) {
+        //     fishCaught = false;
+        // } else 
+        if (rdmNum < 100) {
             fishCaught = true;
         }
         this.bobble.destroy();
@@ -295,6 +297,7 @@ export default class Player extends Entity {
             }, [], this);                                                                      
         } 
         this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
+        this.scene.events.emit('endOfDay');  
     }
 
    
