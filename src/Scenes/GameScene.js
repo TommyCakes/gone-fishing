@@ -105,7 +105,6 @@ export default class GameScene extends Scene {
         this.cooldown = 0;        
         
         this.fishingtimer = this.createNewTimer(this.FISHING_COOLDOWN_DELAY, this.updateTime);
-                 
         this.timeOfDayTimer.paused = false;
         this.fishingtimer.paused = false;
         

@@ -14,7 +14,7 @@ export default class MainUIScene extends Scene {
         super({ key: 'UIScene', active: true });        
         this.style = { font: '24px Arial', fill: '#7729DE', align: 'center' }  
         this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }   
-        this.endOfDay = false;              
+        this.endOfDay = false;                      
     }
     
     refactorTimeDisplay(time) {
@@ -26,19 +26,35 @@ export default class MainUIScene extends Scene {
         return { font: `${size} Copperplate`, fill: color, align: align, wordWrap: { width: wrapWidth, useAdvancedWrap: true } }  
     }
 
-    updateMainUI (data) {        
-        if (data.timeOfDay === 21) {            
+    updateMainUI (data) {    
+        
+        this.sky = this.add.image(0, 0, 'nightSky').setAlpha(0);
+        this.sky.setScale(2);
+
+        if (data.timeOfDay === 20) {                       
             this.showUIPopup('You need to get home before the monsters come...');
+            this.tweens.add({
+                targets: this.sky,
+                alphaTopLeft: { value: 0.8, duration: 11000, ease: 'Power1' },
+                alphaTopRight: { value: 0.8, duration: 11000, ease: 'Power1' },
+                alphaBottomRight: { value: 0.8, duration: 11000, ease: 'Power1' },
+                alphaBottomLeft: { value: 0.8, duration: 11000, ease: 'Power1'},
+                hold: 50000,
+                // hold: 5000,
+                yoyo: true,
+                repeat: 0,
+
+            });
         } else if (data.timeOfDay === 23) {
             this.showUIPopup('A new day has dawned!');
             this.gameScene.events.emit('resetDay', this.info);  
-        }
+        } 
 
         let time = this.refactorTimeDisplay(data.timeOfDay);        
         let cash = data.cash;
         let level = data.level;
         let style = { font: '20px Arial', fill: '#fff', align: 'center' }      
-        
+                        
         this.ui = this.add.group();    
         this.uiBg = this.add.image(this.game.config.width - 136, 136, 'NEW_UI').setScrollFactor(0);          
 
@@ -216,7 +232,7 @@ export default class MainUIScene extends Scene {
     }
 
     create () { 
-
+        
         this.conversations = this.gameScene.conversations;
 
         this.gameScene.events.on('endOfDay', () => this.endOfDay = true);

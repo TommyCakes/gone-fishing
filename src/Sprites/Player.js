@@ -25,7 +25,7 @@ export default class Player extends Entity {
             xpPool: 0,
             chapter: 1,
             // build day / month / time class
-            timeOfDay: 6,
+            timeOfDay: 20,
             maximumAmountOfFishHeld: 5,
             dayOfTheWeek: 'Mon',
             inventory: {
