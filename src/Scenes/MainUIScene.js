@@ -6,7 +6,8 @@ export default class MainUIScene extends Scene {
     
     init (data) {
         //Method 1. Introduce sceneA At the time of initialization, you can get the value passed by Scene Scene;
-        this.gameScene = this.scene.get('Game');        
+        this.gameScene = this.scene.get('Game');    
+        this.popupDelayTime = 4000;    
     }
 
     constructor ()
@@ -78,7 +79,7 @@ export default class MainUIScene extends Scene {
     showLevelUpPopup(info) {  
         let text = `Congratulations you have reached level ${info}!`  
         this.container = this.createBasicUIContainer(text);
-        this.removeUI(this.container, 5000);
+        this.removeUI(this.container, this.popupDelayTime);
     }
 
     showFishUIPopup(data) {  
@@ -99,7 +100,7 @@ export default class MainUIScene extends Scene {
         this.rarityText.setOrigin(0.5, 0.5);   
 
         this.container.add([this.subText, this.image, this.rarityText])
-        this.removeUI(this.container, 40000);
+        this.removeUI(this.container, this.popupDelayTime);
     }
 
     createInteractiveSleepPanel(player) {

@@ -224,7 +224,7 @@ export default class GameScene extends Scene {
         this.hasInteractedWithDog = false;  
         
         this.hasFished = false;
-        
+        this.outOfCatchAttempts = false; 
         this.isTalking = false;
 
         this.events.on('pauseGame', () => {
@@ -237,7 +237,8 @@ export default class GameScene extends Scene {
 
         this.input.keyboard.on('keydown_A', function (event) {
             console.log('Hello from the A Key!');
-          });            
+        }); 
+                
     }  
     
     createEmote(emoteName, character) {
@@ -333,14 +334,18 @@ export default class GameScene extends Scene {
                 }
             }
         }
-
-        if (this.player.info.catchesRemainingForTheDay > 0 && this.canFish) {             
+        
+        if (this.player.info.catchesRemainingForTheDay >= 0 && this.canFish) {             
             if (this.cooldown > 0) {                            
                 this.fishingtimer.paused = false;             
             } else if (this.cooldown === 0) {                                
                 this.fishingtimer.paused = true;  
                 if (touching && wasTouching) {   
-                                         
+
+                    if (this.outOfCatchAttempts) {
+                        this.events.emit('showUIPopup', "You're all fished out for the day!");
+                        return;
+                    }
                     this.player.anims.play('idle-fishing');
                     
                     if (!this.hasFished) {
@@ -373,7 +378,11 @@ export default class GameScene extends Scene {
                         }) 
                         this.events.emit('updateUI', this.playerInfo);                                                   
                         this.cooldown = this.FISHING_COOLDOWN_DELAY;   
-                    }                    
+                    }      
+                    
+                    if (this.player.info.catchesRemainingForTheDay === 0){            
+                        this.outOfCatchAttempts = true;           
+                    }
                 }                                                                                              
             } 
         } 

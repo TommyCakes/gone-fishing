@@ -25,7 +25,7 @@ export default class Level {
     // While increase the amount of rare fish you could encounter
 
     buildLevelTree() {
-        let baseNumber = 10; // change back to 50
+        let baseNumber = 50; // change back to 50
         let levels = {}
         
         for (let i = 0; i < this.maxLevel; i += 1) {             

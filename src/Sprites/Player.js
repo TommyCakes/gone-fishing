@@ -18,7 +18,7 @@ export default class Player extends Entity {
             name: "TommyCakes",
             level: 1,    
             // for testing...
-            catchesRemainingForTheDay: 100,
+            catchesRemainingForTheDay: 5,
             cash: 10,
             rarestFishCaught: "",
             level: 0,
@@ -157,18 +157,15 @@ export default class Player extends Entity {
         let rdmNum = this.getRandomIntBetween(101);
         let fishCaught = false;
     
-        if (rdmNum <= 100) {
+        if (rdmNum <= 40) { 
+            fishCaught = false;
+        } else if (rdmNum <= 60) {
+            fishCaught = false;
+        } else if (rdmNum <= 80) {
+            fishCaught = false;
+        } else if (rdmNum < 100) {
             fishCaught = true;
         }
-        // } else if (rdmNum <= 40) { 
-        //     fishCaught = false;
-        // } else if (rdmNum <= 60) {
-        //     fishCaught = false;
-        // } else if (rdmNum <= 80) {
-        //     fishCaught = false;
-        // } else if (rdmNum < 100) {
-        //     fishCaught = true;
-        // }
         this.bobble.destroy();
         this.spawnSplash();
         return fishCaught;
