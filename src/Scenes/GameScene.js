@@ -18,9 +18,7 @@ export default class GameScene extends Scene {
     }
     
     updateClock() {
-        this.player.info.timeOfDay += 1;   
-        console.log(this.timeOfDayTimer.getElapsedSeconds());     
-        console.log(this.player.info.timeOfDay); 
+        this.player.info.timeOfDay += 1;           
         this.triggerUIUpdate();    
     }
 
@@ -235,8 +233,7 @@ export default class GameScene extends Scene {
             // });
         });
 
-        this.input.keyboard.on('keydown_A', function (event) {
-            console.log('Hello from the A Key!');
+        this.input.keyboard.on('keydown_A', function (event) {            
         }); 
                 
     }  
