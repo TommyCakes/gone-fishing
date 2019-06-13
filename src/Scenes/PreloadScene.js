@@ -88,6 +88,7 @@ export default class PreloadScene extends Scene {
         this.load.image('rod', 'assets/fishing_rod.png');  
         this.load.image('rabbit', '/assets/wabbit.png');
         this.load.json('fishList', 'assets/fishList.json');
+        this.load.json('conversations', 'assets/conversations.json');
         
         this.load.image('fisherman', 'assets/fisherman.png');
         this.load.image('water', 'assets/water.png');
@@ -158,8 +159,8 @@ export default class PreloadScene extends Scene {
         });
 
         this.load.image("NEW_UI", "../assets/NEW_UI@2x.png");
-        this.load.image("clarisHappy", "../assets/claris-happy.png");
-        this.load.image("playerSurprised", "../assets/player-surprised.png");
+        this.load.image("claris1", "../assets/claris1.png");
+        this.load.image("player1", "../assets/player1.png");
 
         this.load.image("tiles", "../assets/overworld.png");
         this.load.tilemapTiledJSON("main-world", "../assets/fishing-map.json");

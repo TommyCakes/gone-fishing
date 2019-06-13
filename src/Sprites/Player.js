@@ -23,6 +23,7 @@ export default class Player extends Entity {
             rarestFishCaught: "",
             level: 0,
             xpPool: 0,
+            chapter: 1,
             // build day / month / time class
             timeOfDay: 6,
             dayOfTheWeek: 'Mon',

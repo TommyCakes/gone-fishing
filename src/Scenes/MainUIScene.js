@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import Player from '../Sprites/Player';
+import Dialogue from '../Classes/DialogueSystem';
 
 export default class MainUIScene extends Scene {
     
@@ -12,19 +13,16 @@ export default class MainUIScene extends Scene {
     {
         super({ key: 'UIScene', active: true });        
         this.style = { font: '24px Arial', fill: '#7729DE', align: 'center' }  
-        this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }  
-
-        this.conversation = [ "Hello!"]
-        
+        this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }                 
     }
-  
+    
     refactorTimeDisplay(time) {
         let paddedTime = time.toString().padStart(2, '0');
         return `${paddedTime} : 00`;
     }
     
-    getBasicStyle(color, align = 'center', size = '20px') {
-        return { font: `${size} Copperplate`, fill: color, align: align, wordWrap: { width: 390, useAdvancedWrap: true } }  
+    getBasicStyle(color, align = 'center', size = '20px', wrapWidth = 390) {
+        return { font: `${size} Copperplate`, fill: color, align: align, wordWrap: { width: wrapWidth, useAdvancedWrap: true } }  
     }
 
     updateUI (data) {        
@@ -135,17 +133,39 @@ export default class MainUIScene extends Scene {
         return container;                                                                                          
     }
 
-    createDialoguePopup(characterArray) {
-        let style = this.getBasicStyle('#5d5d2f', 'left', '30px');  
+    // moveOnText() {
+    //     // change character
+    //     this.charIndex += 1;                     
+    //     if (this.charIndex === 2) {
+    //         this.charIndex = 0;  
+    //     }
+    // }
+
+    createDialoguePopup(info) {
+        
+        let npc = info[0];
+        let chapter = info[1];
+
+        let style = this.getBasicStyle('#5d5d2f', 'left', '30px', 500);  
         this.container = this.add.container(this.game.config.width / 2, this.game.config.height - 145);
         this.uiBackground = this.add.image(this.x, this.y, 'speechEmpty');
-        this.currentTalkingFace = this.add.image(300, 10, 'clarisHappy');
-        this.speechText = this.add.text(this.uiBackground.x - this.container.width, this.uiBackground.y, "HELLO!", style);
-        this.uiBackground.setScale(0.6);
-        this.currentTalkingFace.setScale(2.3);
-        this.speechText.setOrigin(0.5, 0.5);   
-        this.container.add([this.uiBackground, this.currentTalkingFace, this.speechText]);
-        return this.container;
+        // this.currentTalkingFace = this.add.image(300, 10, chars[this.charIndex]);     
+        let d = new Dialogue(this.conversations);
+        d.startConversation();
+        // console.log(d);
+        // this.speechText = this.add.text(
+        //     this.container.width / 2 - 40, 
+        //     this.uiBackground.y, 
+        //     ""
+        // );
+        // this.speechText.setText("");
+        // this.speechText.setText(convo[chars[this.charIndex]][0]);
+        
+        // this.uiBackground.setScale(0.6);
+        // this.currentTalkingFace.setScale(2.3);
+        // this.speechText.setOrigin(0.5, 0.5);   
+        // this.container.add([this.uiBackground, this.currentTalkingFace, this.speechText]);
+        // this.removeUI(this.container, 1000);
     }
 
     removeUI(ui, delay = 2000) {
@@ -164,7 +184,10 @@ export default class MainUIScene extends Scene {
             });            
     }
 
-    create () {                 
+    create () { 
+
+        this.conversations = this.gameScene.conversations;
+
         this.gameScene.events.on('updateUI', ((data) => {
             this.updateUI(data);         
         })); 
@@ -189,7 +212,11 @@ export default class MainUIScene extends Scene {
             this.showTextPopup(data);
         }))
 
-        this.gameScene.events.on('showDialoguePopup', () => this.createDialoguePopup());
+        this.gameScene.events.on('showDialoguePopup', ((data) => { 
+            this.createDialoguePopup(data);
+        }));
+
+        this.gameScene.events.on('moveOnText', () => this.moveOnText());
          
 
         // this.events.on('levelUp', () => {

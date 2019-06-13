@@ -114,7 +114,9 @@ export default class GameScene extends Scene {
         this.UIScene = this.scene.get('UIScene');  
         let fishList = this.cache.json.get('fishList').fish.type;
         this.fishingObj = new Fishing(fishList);
-        
+        this.conversations = this.cache.json.get('conversations');
+        console.log(this.conversations);  
+                
         // Setup input keys                                
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -223,6 +225,8 @@ export default class GameScene extends Scene {
         
         this.hasFished = false;
         
+        this.isTalking = false;
+
         this.events.on('pauseGame', () => {
             // this.scene.pause();
             this.events.emit('showLevelUpPopup', this.player.info.level);              
@@ -233,7 +237,7 @@ export default class GameScene extends Scene {
 
         this.input.keyboard.on('keydown_A', function (event) {
             console.log('Hello from the A Key!');
-          });
+          });            
     }  
     
     createEmote(emoteName, character) {
@@ -316,13 +320,16 @@ export default class GameScene extends Scene {
         
         if (this.canBuyBait && this.playerInfo.cash !== 0) {   
             if (touching && wasTouching) {
-                this.createEmote('cash', this.baitShopKeeper);
-                this.events.emit('showDialoguePopup');  
-                if (this.keySpace.isDown) {                                                                                   
-                        this.events.emit('showUIPopup', "You bought some more bait!");                          
-                        this.playerInfo.catchesRemainingForTheDay += 1;
-                        this.playerInfo.cash -= 10;
-                        this.events.emit('updateUI', this.playerInfo);  
+                this.createEmote('cash', this.baitShopKeeper);                                                
+                if (this.keySpace.isDown) {    
+                    this.events.emit('showDialoguePopup', ['claris', this.player.chapter]);  
+                    // this.events.emit('moveOnText'); 
+                    this.keySpace.reset();                                                                                               
+                        // this.events.emit('moveOnText');
+                        // this.events.emit('showUIPopup', "You bought some more bait!");                          
+                        // this.playerInfo.catchesRemainingForTheDay += 1;
+                        // this.playerInfo.cash -= 10;
+                        // this.events.emit('updateUI', this.playerInfo);  
                 }
             }
         }
