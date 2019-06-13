@@ -37,7 +37,7 @@ export default class MainUIScene extends Scene {
         let time = this.refactorTimeDisplay(data.timeOfDay);        
         let cash = data.cash;
         let level = data.level;
-        let style = { font: '20px Arial', fill: '#fff', align: 'center' }      
+        let style = { font: '30px Arial', fill: '#fff', align: 'center' }      
         
         this.ui = this.add.group();    
         this.uiBg = this.uiBackground = this.add.image(this.game.config.width - 136, 136, 'NEW_UI').setScrollFactor(0);          
