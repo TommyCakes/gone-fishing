@@ -51,21 +51,27 @@ export default class MainUIScene extends Scene {
         return this.ui;
     }
 
-    updateSubUI (data) {        
-               
+    updateSubUI (data) {                       
         let catchesLeft = data.catchesRemainingForTheDay;
-            
-        this.ui = this.add.group();    
+                
+        this.ui = this.add.group();            
         this.uiBg = this.add.image(210, 46, 'catchesLeftUI').setScrollFactor(0);          
-        this.uiBg.setScale(1.7);
+        this.uiBg.setScale(1.7);                   
         
-        for (let i = 0; i <= 4; i += 1) {
-            let fish = this.add.image(fish ? fish.x + 65 : (this.uiBg.x - 48) / 2, 94, 'fish').setScrollFactor(0);          
-            fish.setScale(0.7);
-            this.ui.add(fish);
+        if (catchesLeft <= 4) {
+            for (let i = 0; i <= catchesLeft; i += 1) {
+                let fish = this.add.image(fish ? fish.x + 65 : (this.uiBg.x - 48) / 2, 94, 'fish').setScrollFactor(0);          
+                fish.setScale(0.7);
+                this.ui.add(fish);            
+            }
         }
         
+        let children = this.ui.getChildren();  
+        
+        this.ui.remove(children[children.length - 1]);
+        this.ui.clear(true, this);                
         this.ui.add(this.uiBg);        
+        
         return this.ui;
     }
 
