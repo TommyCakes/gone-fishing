@@ -83,7 +83,6 @@ export default class GameScene extends Scene {
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
-        console.log(constants);
         this.player = new Player(
             this,            
             150,
@@ -92,7 +91,17 @@ export default class GameScene extends Scene {
         );
         
         this.playerInfo = this.player.getInfo();
-        this.playerInventory = this.player.getInventory();                       
+        this.playerInventory = this.player.getInventory();  
+        
+        // this.playerContainer = this.add.container();
+        this.lampShape = this.make.graphics({ 
+            fillStyle: { color: 0x000000 }, add: false})
+            .fillCircleShape(new Phaser.Geom.Circle(this.player.x, this.player.y, 20));
+        this.lampShape.alpha = 0;
+        // this.lampShape.setDepth(1);
+        // this.playerContainer.add(this.player);
+        // this.playerContainer.add(this.lampShape);
+        // this.playerContainer.setDepth(1);
         
         this.doggo = new Pet(
             this,
@@ -100,8 +109,7 @@ export default class GameScene extends Scene {
             200,
             "doggo"            
         );
-        
-                               
+                                       
         // this.doggo.anims.play('walk-right', true);
         // this.doggo.moveRight();
         this.doggo.anims.play('idle', true);
@@ -191,7 +199,28 @@ export default class GameScene extends Scene {
 
         this.input.keyboard.on('keydown_A', function (event) {            
         }); 
-                
+
+        this.sky = this.add.image(0, 0, 'nightSky').setAlpha(0);
+        this.sky.setDepth(1)
+        this.sky.setScale(2);        
+        this.mask = this.lampShape.createGeometryMask();
+        this.mask.invertAlpha = true;  
+        // this.sky.setOrigin(0.5, 0.5);   
+        this.sky.setMask(this.mask);        
+
+        this.events.on('nightTime', () => {                                  
+            this.tweens.add({
+                targets: this.sky,
+                alphaTopLeft: { value: 0.7, duration: 2000, ease: 'Power1' },
+                alphaTopRight: { value: 0.7, duration: 2000, ease: 'Power1' },
+                alphaBottomRight: { value: 0.7, duration: 2000, ease: 'Power1' },
+                alphaBottomLeft: { value: 0.7, duration: 2000, ease: 'Power1'},
+                hold: 50000,
+                yoyo: true,
+                repeat: 0,
+
+            });
+        });                
     }  
     
     createEmote(emoteName, character) {
@@ -227,6 +256,10 @@ export default class GameScene extends Scene {
         this.playerDirection = this.player.facing;   
         this.doggo.update();
         
+        this.lampShape.x = this.player.x - 150;      
+        this.lampShape.y = this.player.y - 210;      
+       
+
         this.events.on('resetDay', () => this.playerInfo.timeOfDay = 1); 
 
         if (this.player.body.embedded) this.player.body.touching.none = false;

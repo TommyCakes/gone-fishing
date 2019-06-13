@@ -26,7 +26,7 @@ export default class Player extends Entity {
             xpPool: 0,
             chapter: 1,
             // build day / month / time class
-            timeOfDay: 20,
+            timeOfDay: 18,
             maximumAmountOfFishHeld: 5,
             dayOfTheWeek: 'Mon',
             inventory: {
@@ -328,8 +328,6 @@ export default class Player extends Entity {
         this.scene.events.emit('endOfDay');  
     }
 
-   
-
     update() {        
 
         if (this.body.velocity.x === 0 && this.body.velocity.y === 0 && !this.isFishing) {
@@ -350,7 +348,7 @@ export default class Player extends Entity {
         }
 
         this.body.setVelocity(0, 0);
-                
+        
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);
         this.y = Phaser.Math.Clamp(this.y, 0, this.scene.game.config.height);        
     }
