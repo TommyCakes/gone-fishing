@@ -111,6 +111,30 @@ export default class Player extends Entity {
             frameRate: 10,
             repeat: -1
         });     
+
+        this.scene.anims.create({
+            key: 'idle-up',
+            frames: [ { key: 'sprPlayer', frame: 0} ],
+            frameRate: 10,
+        });
+
+        this.scene.anims.create({
+            key: 'idle-down',
+            frames: [ { key: 'sprPlayer', frame: 6} ],
+            frameRate: 10,
+        });
+
+        this.scene.anims.create({
+            key: 'idle-left',
+            frames: [ { key: 'sprPlayer', frame: 10} ],
+            frameRate: 10,
+        });
+
+        this.scene.anims.create({
+            key: 'idle-right',
+            frames: [ { key: 'sprPlayer', frame: 4} ],
+            frameRate: 10,
+        });
                 
         this.setScale(0.4);     
         this.body.setCircle(16, 16);
@@ -303,8 +327,26 @@ export default class Player extends Entity {
    
 
     update() {        
+
+        if (this.body.velocity.x === 0 && this.body.velocity.y === 0) {
+            switch (this.facing) {
+                case 'left': 
+                    this.play('idle-left')
+                    break;                    
+                case 'right':
+                    this.play('idle-right');
+                    break;
+                case 'up':
+                    this.play('idle-up');
+                    break;    
+                case 'down':
+                    this.play('idle-down');
+                    break;
+            }            
+        }
+
         this.body.setVelocity(0, 0);
-    
+                
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);
         this.y = Phaser.Math.Clamp(this.y, 0, this.scene.game.config.height);        
     }
