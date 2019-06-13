@@ -6,8 +6,7 @@ export default class MainUIScene extends Scene {
     
     init (data) {
         //Method 1. Introduce sceneA At the time of initialization, you can get the value passed by Scene Scene;
-        this.gameScene = this.scene.get('Game');    
-        this.popupDelayTime = 4000;    
+        this.gameScene = this.scene.get('Game');        
     }
 
     constructor ()
@@ -26,7 +25,7 @@ export default class MainUIScene extends Scene {
         return { font: `${size} Copperplate`, fill: color, align: align, wordWrap: { width: wrapWidth, useAdvancedWrap: true } }  
     }
 
-    updateUI (data) {        
+    updateMainUI (data) {        
         if (data.timeOfDay === 21) {            
             this.showUIPopup('You need to get home before the monsters come...');
         } else if (data.timeOfDay === 23) {
@@ -40,15 +39,33 @@ export default class MainUIScene extends Scene {
         let style = { font: '20px Arial', fill: '#fff', align: 'center' }      
         
         this.ui = this.add.group();    
-        this.uiBg = this.uiBackground = this.add.image(this.game.config.width - 136, 136, 'NEW_UI').setScrollFactor(0);          
+        this.uiBg = this.add.image(this.game.config.width - 136, 136, 'NEW_UI').setScrollFactor(0);          
 
-        this.timeOfDayText = this.add.text(this.uiBackground.x, this.uiBackground.y - 31, time, style).setScrollFactor(0);
-        this.moneyText = this.add.text(this.uiBackground.x, this.uiBackground.y + 18, cash, style).setScrollFactor(0);
-        this.levelText = this.add.text(this.uiBackground.x + 10, this.moneyText.y + 64, level, style).setScrollFactor(0);                                               
+        this.timeOfDayText = this.add.text(this.uiBg.x, this.uiBg.y - 31, time, style).setScrollFactor(0);
+        this.moneyText = this.add.text(this.uiBg.x, this.uiBg.y + 18, cash, style).setScrollFactor(0);
+        this.levelText = this.add.text(this.uiBg.x + 10, this.moneyText.y + 64, level, style).setScrollFactor(0);                                               
 
         this.ui.add(this.uiBg);
         this.ui.add(this.moneyText);
         this.ui.add(this.levelText);        
+        return this.ui;
+    }
+
+    updateSubUI (data) {        
+               
+        let catchesLeft = data.catchesRemainingForTheDay;
+            
+        this.ui = this.add.group();    
+        this.uiBg = this.add.image(210, 46, 'catchesLeftUI').setScrollFactor(0);          
+        this.uiBg.setScale(1.7);
+        
+        for (let i = 0; i <= 4; i += 1) {
+            let fish = this.add.image(fish ? fish.x + 65 : (this.uiBg.x - 48) / 2, 94, 'fish').setScrollFactor(0);          
+            fish.setScale(0.7);
+            this.ui.add(fish);
+        }
+        
+        this.ui.add(this.uiBg);        
         return this.ui;
     }
 
@@ -79,7 +96,7 @@ export default class MainUIScene extends Scene {
     showLevelUpPopup(info) {  
         let text = `Congratulations you have reached level ${info}!`  
         this.container = this.createBasicUIContainer(text);
-        this.removeUI(this.container, this.popupDelayTime);
+        this.removeUI(this.container, 5000);
     }
 
     showFishUIPopup(data) {  
@@ -100,7 +117,7 @@ export default class MainUIScene extends Scene {
         this.rarityText.setOrigin(0.5, 0.5);   
 
         this.container.add([this.subText, this.image, this.rarityText])
-        this.removeUI(this.container, this.popupDelayTime);
+        this.removeUI(this.container, 40000);
     }
 
     createInteractiveSleepPanel(player) {
@@ -190,7 +207,8 @@ export default class MainUIScene extends Scene {
         this.conversations = this.gameScene.conversations;
 
         this.gameScene.events.on('updateUI', ((data) => {
-            this.updateUI(data);         
+            this.updateMainUI(data);         
+            this.updateSubUI(data);         
         })); 
         
         this.gameScene.events.on('showUIPopup', ((data) => {
