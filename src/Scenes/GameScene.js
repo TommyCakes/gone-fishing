@@ -270,9 +270,6 @@ export default class GameScene extends Scene {
         this.player.update();   
         this.playerDirection = this.player.facing;   
         this.doggo.update();
-
-        // this.playerText.x = this.player.x;
-        // this.playerText.y = this.player.y - 30;
         
         this.events.on('resetDay', () => this.playerInfo.timeOfDay = 1); 
 
@@ -305,8 +302,7 @@ export default class GameScene extends Scene {
             if (touching && wasTouching) {        
                 // this.events.emit('showUIPopup', "Do you want to turn in for the day?");                                                                      
                 if (this.keySpace.isDown) {
-                    
-                    // this.player.anims.stop();                                       
+                                                 
                     // this.events.emit('createInteractiveSleepPanel', this.player);  
                     // this.toggleKeyboard(false);   
                     this.toggleKeyboard(true);                                 
@@ -388,8 +384,7 @@ export default class GameScene extends Scene {
         if (this.canShop && this.playerInventory.fish.length > 0) {                                              
             if (this.keySpace.isDown) {                    
                 if (touching && wasTouching) {                         
-                        this.events.emit('updateUI', this.playerInfo);                         
-                        // this.player.anims.stop();                                                                                                                                               
+                        this.events.emit('updateUI', this.playerInfo);                                                                                                                                                                      
                         this.shopObj.sellAllFish(this.player);  
                         this.spawnCoin(this.player);                          
                         this.events.emit('showUIPopup', `You sold all your fish! And made a total of $${this.shopObj.getTotalOfSale()}`);   
@@ -412,8 +407,7 @@ export default class GameScene extends Scene {
         } else if (this.keyD.isDown || this.cursors.right.isDown) {
             this.player.moveRight();
             this.player.anims.play('right', true);
-        } else {            
-            // this.player.anims.stop();                                   
+        } else {                                            
         }
         
         this.player.body.velocity.normalize().scale(this.player.getData("speed"));
