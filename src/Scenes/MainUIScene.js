@@ -35,12 +35,11 @@ export default class MainUIScene extends Scene {
             this.showUIPopup('You need to get home before the monsters come...');
             this.tweens.add({
                 targets: this.sky,
-                alphaTopLeft: { value: 0.8, duration: 11000, ease: 'Power1' },
-                alphaTopRight: { value: 0.8, duration: 11000, ease: 'Power1' },
-                alphaBottomRight: { value: 0.8, duration: 11000, ease: 'Power1' },
-                alphaBottomLeft: { value: 0.8, duration: 11000, ease: 'Power1'},
+                alphaTopLeft: { value: 0.65, duration: 11000, ease: 'Power1' },
+                alphaTopRight: { value: 0.65, duration: 11000, ease: 'Power1' },
+                alphaBottomRight: { value: 0.65, duration: 11000, ease: 'Power1' },
+                alphaBottomLeft: { value: 0.65, duration: 11000, ease: 'Power1'},
                 hold: 50000,
-                // hold: 5000,
                 yoyo: true,
                 repeat: 0,
 

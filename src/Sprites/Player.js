@@ -49,6 +49,7 @@ export default class Player extends Entity {
         }
 
         this.facing = "";
+        this.isFishing = false;
 
         this.level = new Level(this.scene, this);
 
@@ -242,6 +243,8 @@ export default class Player extends Entity {
             this.level.showExperienceText(fish); 
         } 
         
+        this.isFishing = false;
+
         console.log(this.info);                
         // this.scene.time.delayedCall(100, () => {             
             this.splash.destroy();
@@ -288,7 +291,8 @@ export default class Player extends Entity {
 
     fishing(fish, direction) {                                         
         this.spawnBobble(direction);
-        this.decreaseCatchesRemaining();        
+        this.decreaseCatchesRemaining();  
+        this.isFishing = true;      
         // TODO: Add more random amount of time to catch fish
         // Better rod = faster catch time && cooldown                
         this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.collectFish, [fish], this);                                                                                                                                                                                                                  
@@ -328,7 +332,7 @@ export default class Player extends Entity {
 
     update() {        
 
-        if (this.body.velocity.x === 0 && this.body.velocity.y === 0) {
+        if (this.body.velocity.x === 0 && this.body.velocity.y === 0 && !this.isFishing) {
             switch (this.facing) {
                 case 'left': 
                     this.play('idle-left')
