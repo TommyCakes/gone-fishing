@@ -84,92 +84,86 @@ export default class PreloadScene extends Scene {
         this.timedEvent = this.time.delayedCall(1000, this.ready, [], this);
         
         // load all assets needed in the game
-        this.load.image('fish', 'assets/fish.png');
-        this.load.image('rod', 'assets/fishing_rod.png');  
-        this.load.image('rabbit', '/assets/wabbit.png');
-        this.load.json('fishList', 'assets/fishList.json');
-        this.load.json('conversations', 'assets/conversations.json');
+        this.load.image('fish', 'assets/images/fish/fish.png');
+        this.load.image('rod', 'assets/images/fishing_rod.png');  
+        this.load.image('rabbit', '/assets/images/wabbit.png');
+        this.load.json('fishList', 'assets/JSON/fishList.json');
+        this.load.json('conversations', 'assets/JSON/conversations.json');
         
-        this.load.image('water', 'assets/water.png');
-        this.load.image('fishSign', 'assets/fish_sign.png');
-        this.load.image('heart', 'assets/emote_heart.png');
-        this.load.image('anger', 'assets/emote_anger.png');
-        this.load.image('exclamation', 'assets/emote_exclamation.png');
-        this.load.image('sleep', 'assets/emote_sleeps.png');
-        this.load.image('star', 'assets/emote_star.png');
-        this.load.image('cash', 'assets/emote_cash.png');
-        this.load.image('happyFace', 'assets/emote_faceHappy.png');
-        this.load.image('question', 'assets/emote_question.png');
+        this.load.image('fishSign', 'assets/images/fish_sign.png');
+        this.load.image('heart', 'assets/images/emote_heart.png');
+        this.load.image('anger', 'assets/images/emote_anger.png');
+        this.load.image('exclamation', 'assets/images/emote_exclamation.png');
+        this.load.image('sleep', 'assets/images/emote_sleeps.png');
+        this.load.image('star', 'assets/images/emote_star.png');
+        this.load.image('cash', 'assets/images/emote_cash.png');
+        this.load.image('happyFace', 'assets/images/emote_faceHappy.png');
+        this.load.image('question', 'assets/images/emote_question.png');
         // this.load.image('bg', 'assets/grass.png');
-        this.load.image('greyButton', 'assets/greyButton.png');
-        this.load.image('panel', 'assets/panel.png');
-        this.load.image('brownPanel', 'assets/longBrown.png');
-        this.load.image('crossBrown', 'assets/crossBrown.png');
-        this.load.image('checkBlue', 'assets/checkBlue.png');
-        this.load.image('seabass', 'assets/blue-fish.png');
-        this.load.image('shark', 'assets/shark.png');
-        this.load.image('prawn', 'assets/red-fish.png');
-        this.load.image('sardine', 'assets/green-fish.png');
-        this.load.image('sand-eel', 'assets/brown-fish.png');
-        this.load.image('xpChunk', 'assets/xp-chunk.png');
-        this.load.image('speech', 'assets/speech.png');
-        this.load.image('speechEmpty', 'assets/speech-empty.png');
-        this.load.image('river', 'assets/river.jpg');
+        this.load.image('greyButton', 'assets/ui/greyButton.png');
+        this.load.image('panel', 'assets/ui/panel.png');
+        this.load.image('brownPanel', 'assets/ui/longBrown.png');
+        this.load.image('crossBrown', 'assets/ui/crossBrown.png');
+        this.load.image('checkBlue', 'assets/ui/checkBlue.png');
+        this.load.image('seabass', 'assets/images/fish/blue-fish.png');
+        this.load.image('shark', 'assets/images/fish/shark.png');
+        this.load.image('prawn', 'assets/images/fish/red-fish.png');
+        this.load.image('sardine', 'assets/images/fish/green-fish.png');
+        this.load.image('sand-eel', 'assets/images/fish/brown-fish.png');
+        this.load.image('xpChunk', 'assets/ui/xp-chunk.png');
+        this.load.image('speech', 'assets/ui/speech.png');
+        this.load.image('speechEmpty', 'assets/ui/speech-empty.png');
 
-        this.load.spritesheet('sprPlayer', 'assets/yan-fixed?.png', { 
+        this.load.spritesheet('sprPlayer', 'assets/sprites/yan-fixed?.png', { 
             frameWidth: 48, 
             frameHeight: 64 
         });        
-        this.load.spritesheet('shopKeeper', 'assets/elder.png', { 
+        this.load.spritesheet('shopKeeper', 'assets/sprites/elder.png', { 
             frameWidth: 48, 
             frameHeight: 64 
         });        
-        this.load.spritesheet('claris', 'assets/claris.png', { 
+        this.load.spritesheet('claris', 'assets/sprites/claris.png', { 
             frameWidth: 48, 
             frameHeight: 64 
         });        
-        this.load.spritesheet('cultist', 'assets/cultist.png', { 
+        this.load.spritesheet('cultist', 'assets/sprites/cultist.png', { 
             frameWidth: 48, 
             frameHeight: 64 
         });        
-        this.load.spritesheet('baitShopKeeper', 'assets/baitShopKeeper.png', { 
+        this.load.spritesheet('baitShopKeeper', 'assets/sprites/baitShopKeeper.png', { 
             frameWidth: 48, 
             frameHeight: 64 
-        });        
-        this.load.spritesheet('waterMoving', 'assets/water_moving.png', { 
-            frameWidth: 48, 
-            frameHeight: 64 
-        });
-        this.load.spritesheet('fishingBobble', 'assets/fishing_bobbles.png', { 
+        });                
+        this.load.spritesheet('fishingBobble', 'assets/sprites/fishing_bobbles.png', { 
             frameWidth: 24, 
             frameHeight: 24 
         });
-        this.load.spritesheet('splash', 'assets/splash.png', { 
+        this.load.spritesheet('splash', 'assets/sprites/splash.png', { 
             frameWidth: 32, 
             frameHeight: 32 
         });
-        this.load.spritesheet('chests', 'assets/chests.png', { 
+        this.load.spritesheet('chests', 'assets/sprites/chests.png', { 
             frameWidth: 32, 
             frameHeight: 32 
         });
-        this.load.spritesheet('doggo', 'assets/doggo.png', { 
+        this.load.spritesheet('doggo', 'assets/sprites/doggo.png', { 
             frameWidth: 32, 
             frameHeight: 32 
         });
-        this.load.spritesheet('goldCoin', 'assets/coin_gold.png', { 
+        this.load.spritesheet('goldCoin', 'assets/sprites/coin_gold.png', { 
             frameWidth: 32, 
             frameHeight: 32 
         });
 
-        this.load.image("NEW_UI", "../assets/NEW_UI@2x.png");
-        this.load.image("catchesLeftUI", "../assets/catches-left-ui.png");
-        this.load.image("nightSky", "../assets/sky-test.png");
-        this.load.image("claris1", "../assets/claris1.png");
-        this.load.image("player1", "../assets/player1.png");
+        this.load.image("NEW_UI", "../assets/ui/NEW_UI@2x.png");
+        this.load.image("catchesLeftUI", "../assets/ui/catches-left-ui.png");
+        this.load.image("nightSky", "../assets/images/sky-test.png");
+        this.load.image("claris1", "../assets/faces/claris1.png");
+        this.load.image("player1", "../assets/faces/player1.png");
 
-        this.load.image("tiles", "../assets/overworld.png");
-        this.load.tilemapTiledJSON("main-world", "../assets/fishing-map.json");
-        this.load.tilemapTiledJSON("cave-1", "../assets/cave-1-map.json");
+        this.load.image("tiles", "../assets/sprites/overworld.png");
+        this.load.tilemapTiledJSON("main-world", "../assets/JSON/fishing-map.json");
+        this.load.tilemapTiledJSON("cave-1", "../assets/JSON/cave-1-map.json");
         
         
     }         
