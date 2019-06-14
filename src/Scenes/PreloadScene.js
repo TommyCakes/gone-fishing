@@ -129,6 +129,10 @@ export default class PreloadScene extends Scene {
             frameWidth: 48, 
             frameHeight: 64 
         });        
+        this.load.spritesheet('cultist', 'assets/cultist.png', { 
+            frameWidth: 48, 
+            frameHeight: 64 
+        });        
         this.load.spritesheet('baitShopKeeper', 'assets/baitShopKeeper.png', { 
             frameWidth: 48, 
             frameHeight: 64 

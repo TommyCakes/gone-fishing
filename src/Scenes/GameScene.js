@@ -150,7 +150,7 @@ export default class GameScene extends Scene {
         this.shopKeeper.setDepth(2); 
         this.physics.add.collider(this.player, this.shopKeeper);  
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
-
+                       
         this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
         this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
         this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
@@ -215,7 +215,13 @@ export default class GameScene extends Scene {
                 repeat: 0,
 
             });
-        });                
+            this.nightTime();
+        });  
+        
+        this.events.on('resetDay', () => {
+            this.playerInfo.timeOfDay = 1;
+            this.dayTime();
+        });            
     }  
     
     createEmote(emoteName, character) {
@@ -225,6 +231,34 @@ export default class GameScene extends Scene {
             emote.destroy();
             this.hasInteractedWithDog = false;
         });                        
+    }
+
+    nightTime() {
+        this.toggleCultist(true); 
+        this.setUpEnemySpawnPoint();       
+    }
+    
+    dayTime() {
+        this.toggleCultist(false);        
+    }
+    
+    toggleCultist(visible) {
+        // only appears at night, warns you of monsters
+        this.cultist = this.physics.add.sprite(120, 180, 'cultist', 7); 
+        this.cultist.body.moves = false;
+        this.cultist.body.setCircle(45);        
+        this.cultist.setScale(0.4); 
+        this.cultist.setDepth(2); 
+        this.cultist.setActive(visible).setVisible(visible);
+        this.physics.add.collider(this.player, this.cultist);   
+    }
+
+    setUpEnemySpawnPoint() {
+        this.spawnEnemy();
+    }
+
+    spawnEnemy() {
+
     }
 
     spawnCoin(player) {        
@@ -253,10 +287,7 @@ export default class GameScene extends Scene {
         
         this.lampShape.x = this.player.x - 150;      
         this.lampShape.y = this.player.y - 210;      
-       
-
-        this.events.on('resetDay', () => this.playerInfo.timeOfDay = 1); 
-
+               
         if (this.player.body.embedded) this.player.body.touching.none = false;
         let touching = !this.player.body.touching.none;
         let wasTouching = !this.player.body.wasTouching.none;
