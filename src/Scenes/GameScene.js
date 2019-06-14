@@ -214,13 +214,15 @@ export default class GameScene extends Scene {
                 repeat: 0,
 
             });
-            this.nightTime();
+            // this.nightTime();
         });  
         
-        this.events.on('resetDay', () => {
-            this.playerInfo.timeOfDay = 1;
+        this.events.on('resetDay', ((time) => {
+            this.playerInfo.timeOfDay = time;
             this.dayTime();
-        });            
+        }));        
+        
+        this.nightTime(); // testing only
     }  
     
     createEmote(emoteName, character) {
@@ -253,7 +255,7 @@ export default class GameScene extends Scene {
             this.cultist.setActive(visible).setVisible(visible);
             this.physics.add.collider(this.player, this.cultist);   
         } else {
-            this.cultist.destroy();
+            this.cultist ? this.cultist.destroy() : null;
         }
     }
 
@@ -272,7 +274,7 @@ export default class GameScene extends Scene {
                 repeat: -1
             });
 
-            this.slime = this.physics.add.sprite(190, 180, 'slime', 1); 
+            this.slime = this.physics.add.sprite(190, 400, 'slime', 1); 
             this.slime.body.moves = false;
             this.slime.body.setCircle(15);        
             this.slime.setScale(1); 
@@ -282,18 +284,21 @@ export default class GameScene extends Scene {
 
             var tween = this.tweens.add({
                 targets: this.slime,
-                x: this.slime.x + 10,
+                x: this.slime.x + 20,
                 ease: 'Power1',
                 duration: 3000,
                 flipX: true,
                 yoyo: true,
                 repeat: -1
             });
-            this.physics.add.overlap(this.player, this.slime, () => { tween.pause() });   
+            this.physics.add.overlap(this.player, this.slime, () => { 
+                tween.pause(); 
+                this.player.dropAllFish();                
+            });   
 
 
         } else {
-            this.slime.destroy();
+            this.slime ? this.slime.destroy() : null;
         }
     }
 

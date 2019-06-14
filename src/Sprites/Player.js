@@ -31,7 +31,7 @@ export default class Player extends Entity {
             dayOfTheWeek: 'Mon',
             inventory: {
                 fish: [
-                    // {name: "Seabass", description: "Just your standard sea-dweller, like to be called Baz for short", weight: "3", value: "18", rarity: "uncommon"}
+                    {name: "Seabass", description: "Just your standard sea-dweller, like to be called Baz for short", weight: "3", value: "18", rarity: "uncommon"}
 
                 ],
                 rods: [
@@ -325,9 +325,12 @@ export default class Player extends Entity {
             }, [], this);                                                                      
         } 
         this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
-        this.scene.events.emit('endOfDay');  
+        this.scene.events.emit('resetDay', '7');  
     }
 
+    dropAllFish() {
+        this.info.inventory.fish.length = 0;
+    }
     update() {        
 
         if (this.body.velocity.x === 0 && this.body.velocity.y === 0 && !this.isFishing) {
