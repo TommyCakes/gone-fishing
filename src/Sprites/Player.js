@@ -325,7 +325,7 @@ export default class Player extends Entity {
             }, [], this);                                                                      
         } 
         this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
-        this.scene.events.emit('resetDay', '7');  
+        this.scene.events.emit('resetDay', 7);  
     }
 
     dropAllFish() {

@@ -3,6 +3,7 @@ import Player from "../Sprites/Player";
 import Shop from '../Classes/Shop';
 import Fishing from '../Classes/Fishing';
 import Pet from '../Sprites/Pet';
+import Enemy from '../Sprites/Enemy';
 
 export default class GameScene extends Scene {
 
@@ -109,7 +110,7 @@ export default class GameScene extends Scene {
         // this.doggo.anims.play('walk-right', true);
         // this.doggo.moveRight();
         this.doggo.anims.play('idle', true);
-        
+                        
         // Load map
         const map = this.make.tilemap({ key: "main-world" });
         const tileset = map.addTilesetImage("overworld", "tiles");
@@ -266,23 +267,16 @@ export default class GameScene extends Scene {
     spawnEnemy(visible) {        
 
         if (visible) {
-            this.anims.create({
-                key: 'moving',
-                frames: this.anims.generateFrameNumbers('slime', { start: 0, end: 7
-            }),
-                frameRate: 10,
-                repeat: -1
-            });
-
-            this.slime = this.physics.add.sprite(190, 400, 'slime', 1); 
-            this.slime.body.moves = false;
-            this.slime.body.setCircle(15);        
-            this.slime.setScale(1); 
-            this.slime.setDepth(2); 
+            this.slime = new Enemy(
+                this,
+                100,
+                400,
+                "slime"
+            );
             this.slime.setActive(visible).setVisible(visible);
             this.slime.anims.play('moving');
 
-            var tween = this.tweens.add({
+            let tween = this.tweens.add({
                 targets: this.slime,
                 x: this.slime.x + 20,
                 ease: 'Power1',
@@ -291,12 +285,11 @@ export default class GameScene extends Scene {
                 yoyo: true,
                 repeat: -1
             });
+
             this.physics.add.overlap(this.player, this.slime, () => { 
                 tween.pause(); 
                 this.player.dropAllFish();                
             });   
-
-
         } else {
             this.slime ? this.slime.destroy() : null;
         }
