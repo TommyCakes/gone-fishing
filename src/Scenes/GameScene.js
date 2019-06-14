@@ -211,8 +211,8 @@ export default class GameScene extends Scene {
                 alphaBottomRight: { value: 0.9, duration: 10000, ease: 'Power1' },
                 alphaBottomLeft: { value: 0.9, duration: 10000, ease: 'Power1'},
                 hold: 50000,
-                yoyo: true,
-                repeat: 0,
+                // yoyo: true,
+                // repeat: 0,
 
             });
             // this.nightTime();
@@ -221,6 +221,17 @@ export default class GameScene extends Scene {
         this.events.on('resetDay', ((time) => {
             this.playerInfo.timeOfDay = time;
             this.dayTime();
+            this.tweens.add({
+                targets: this.sky,
+                alphaTopLeft: { value: 0, duration: 2000, ease: 'Power1' },
+                alphaTopRight: { value: 0, duration: 2000, ease: 'Power1' },
+                alphaBottomRight: { value: 0, duration: 2000, ease: 'Power1' },
+                alphaBottomLeft: { value: 0, duration: 2000, ease: 'Power1'},
+                hold: 50000,
+                // yoyo: true,
+                // repeat: 0,
+
+            });
         }));        
         
         this.nightTime(); // testing only

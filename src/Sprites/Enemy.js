@@ -12,7 +12,6 @@ export default class Enemy extends Entity {
             repeat: -1
         });
         
-        this.body.bounce.set(1);
         // this.body.moves = false;
         this.body.setCircle(5);        
         this.setScale(1); 
