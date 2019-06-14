@@ -244,13 +244,20 @@ export default class GameScene extends Scene {
     
     toggleCultist(visible) {
         // only appears at night, warns you of monsters
-        this.cultist = this.physics.add.sprite(120, 180, 'cultist', 7); 
-        this.cultist.body.moves = false;
-        this.cultist.body.setCircle(45);        
-        this.cultist.setScale(0.4); 
-        this.cultist.setDepth(2); 
-        this.cultist.setActive(visible).setVisible(visible);
-        this.physics.add.collider(this.player, this.cultist);   
+        if (visible) {
+            this.cultist = this.physics.add.sprite(120, 180, 'cultist', 7); 
+            this.cultist.body.moves = false;
+            this.cultist.body.setCircle(45);        
+            this.cultist.setScale(0.4); 
+            this.cultist.setDepth(2); 
+            this.cultist.setActive(visible).setVisible(visible);
+            this.physics.add.collider(this.player, this.cultist);   
+        } else {
+            this.cultist.destroy();
+        }
+
+        
+        
     }
 
     setUpEnemySpawnPoint() {
