@@ -234,11 +234,12 @@ export default class GameScene extends Scene {
 
     nightTime() {
         this.toggleCultist(true); 
-        this.setUpEnemySpawnPoint();       
+        this.spawnEnemy(true);       
     }
     
     dayTime() {
-        this.toggleCultist(false);        
+        this.toggleCultist(false); 
+        this.spawnEnemy(false);       
     }
     
     toggleCultist(visible) {
@@ -254,17 +255,46 @@ export default class GameScene extends Scene {
         } else {
             this.cultist.destroy();
         }
-
-        
-        
     }
 
     setUpEnemySpawnPoint() {
         this.spawnEnemy();
     }
 
-    spawnEnemy() {
+    spawnEnemy(visible) {        
 
+        if (visible) {
+            this.anims.create({
+                key: 'moving',
+                frames: this.anims.generateFrameNumbers('slime', { start: 0, end: 7
+            }),
+                frameRate: 10,
+                repeat: -1
+            });
+
+            this.slime = this.physics.add.sprite(190, 180, 'slime', 1); 
+            this.slime.body.moves = false;
+            this.slime.body.setCircle(15);        
+            this.slime.setScale(1); 
+            this.slime.setDepth(2); 
+            this.slime.setActive(visible).setVisible(visible);
+            this.slime.anims.play('moving');
+
+            var tween = this.tweens.add({
+                targets: this.slime,
+                x: this.slime.x + 10,
+                ease: 'Power1',
+                duration: 3000,
+                flipX: true,
+                yoyo: true,
+                repeat: -1
+            });
+            this.physics.add.overlap(this.player, this.slime, () => { tween.pause() });   
+
+
+        } else {
+            this.slime.destroy();
+        }
     }
 
     spawnCoin(player) {        
