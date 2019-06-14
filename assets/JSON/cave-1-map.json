@@ -47,7 +47,7 @@
         {
          "columns":40,
          "firstgid":1,
-         "image":"overworld.png",
+         "image":"..\/sprites\/overworld.png",
          "imageheight":576,
          "imagewidth":640,
          "margin":0,
