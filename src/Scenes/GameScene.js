@@ -116,9 +116,8 @@ export default class GameScene extends Scene {
 
         const waterLayer = map.createStaticLayer("Water", tileset, 0, 0);        
 
-        const belowLayer = map.createStaticLayer("BP", tileset, 0, 0);        
-        const worldLayer = map.createStaticLayer("W", tileset, 0, 0);
-        const waterOverlap = map.createFromObjects("Overlap", 'fish');
+        const belowLayer = map.createStaticLayer("BelowPlayer", tileset, 0, 0);        
+        const worldLayer = map.createStaticLayer("World", tileset, 0, 0);
 
         waterLayer.setCollisionByProperty({ collides: true });
         worldLayer.setCollisionByProperty({ collides: true });
