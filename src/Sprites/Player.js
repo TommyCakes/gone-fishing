@@ -312,25 +312,57 @@ export default class Player extends Entity {
         return JSON.parse(localStorage.getItem('save'));
     }
 
-    sleep(bool) {
-        if (bool) {
-            this.info.catchesRemainingForTheDay = 0;
-            this.info.catchesRemainingForTheDay = 5;
-            
-            this.scene.cameras.main.fadeOut(250, 0, 0, 0)                                      
+    isSleeping() {
+        this.scene.cameras.main.fadeOut(250, 0, 0, 0)                                      
 
-            this.scene.time.delayedCall(1000, function() {   
-                this.saveGame();
-                this.scene.cameras.main.resetFX();        
-            }, [], this);                                                                      
-        } 
+        this.scene.time.delayedCall(1000, function() {   
+            this.saveGame();
+            this.scene.cameras.main.resetFX();        
+        }, [], this);                                                                      
+
         this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
         this.scene.events.emit('resetDay', 7);  
+        this.resetPlayer();
+        this.x = 136;
+        this.y = 100;
     }
 
-    dropAllFish() {
-        this.info.inventory.fish.length = 0;
+    resetPlayer() {
+        this.alpha = 1;
+        this.angle = 0;
+        this.setDepth(1);
     }
+
+    isKnockedOut() {
+        let tween = this.scene.tweens.add({
+            targets: this,
+            angle: 180,
+            alpha: 0,
+            ease: 'Power1',
+            duration: 800,
+            repeat: 0
+        });
+    }
+
+    sleep(readyToSleep, wasKnockedOut) {     
+        if (readyToSleep) {
+            this.info.catchesRemainingForTheDay = 0;
+            this.info.catchesRemainingForTheDay = 5;                   
+            if (wasKnockedOut) {
+                this.isKnockedOut()
+                this.scene.time.delayedCall(1400, () => { 
+                    this.isSleeping();
+                });
+            } else {
+                this.isSleeping();
+            } 
+        }           
+    }
+
+    monsterAttack() {
+        this.sleep(true, true);
+    }
+
     update() {        
 
         if (this.body.velocity.x === 0 && this.body.velocity.y === 0 && !this.isFishing) {

@@ -286,9 +286,11 @@ export default class GameScene extends Scene {
                 repeat: -1
             });
 
-            this.physics.add.overlap(this.player, this.slime, () => { 
+            this.physics.add.collider(this.player, this.slime, () => { 
+                this.events.emit('showUIPopup', "The monster knocked you out...");   
                 tween.pause(); 
-                this.player.dropAllFish();                
+                this.player.monsterAttack();  
+                console.log('opps!');              
             });   
         } else {
             this.slime ? this.slime.destroy() : null;
