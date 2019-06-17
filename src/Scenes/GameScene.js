@@ -222,6 +222,10 @@ export default class GameScene extends Scene {
         
         this.events.on('resetDay', ((time) => {
             this.playerInfo.timeOfDay = time;
+        }));
+
+        this.events.on('dayTime', () => {
+            this.playerInfo.timeOfDay = 7;
             this.dayTime();
             this.tweens.add({
                 targets: this.sky,
@@ -232,12 +236,8 @@ export default class GameScene extends Scene {
                 hold: 50000,
                 // yoyo: true,
                 // repeat: 0,
-
             });
-        }));   
-                    
-         // testing only
-        // this.nightTime();        
+        });                                      
     }  
     
     createEmote(emoteName, character) {

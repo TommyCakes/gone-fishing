@@ -317,14 +317,16 @@ export default class Player extends Entity {
 
         this.scene.time.delayedCall(1000, function() {   
             this.saveGame();
-            this.scene.cameras.main.resetFX();        
+            this.scene.cameras.main.resetFX(); 
+            
+            this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
+            this.scene.events.emit('dayTime');  
+            this.scene.events.emit('updateUI', this.info);  
+            this.resetPlayer();
+            this.x = 136;
+            this.y = 100;
         }, [], this);                                                                      
-
-        this.scene.events.emit('showUIPopup', "You fall asleep and dream of tiny goats wearing tophats...");  
-        this.scene.events.emit('resetDay', 7);  
-        this.resetPlayer();
-        this.x = 136;
-        this.y = 100;
+        
     }
 
     resetPlayer() {
