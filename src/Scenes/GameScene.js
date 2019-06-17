@@ -4,6 +4,7 @@ import Shop from '../Classes/Shop';
 import Fishing from '../Classes/Fishing';
 import Pet from '../Sprites/Pet';
 import Enemy from '../Sprites/Enemy';
+import Npc from '../Sprites/Npc';
 
 export default class GameScene extends Scene {
 
@@ -132,20 +133,17 @@ export default class GameScene extends Scene {
         this.dogZone = this.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
         this.caveEntrance = this.createNewZone(350, 180, 20, 16);        
         
-        this.baitShopKeeper = this.physics.add.sprite(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'claris', 9); 
-        this.baitShopKeeper.body.moves = false;
-        this.baitShopKeeper.body.setCircle(25);        
-        this.baitShopKeeper.setScale(0.4); 
+        this.baitShopKeeper = this.createNewNpc(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'claris', 'Claris');
+        this.baitShopKeeper.setFrame(9);        
         this.physics.add.collider(this.player, this.baitShopKeeper);  
 
-        this.shopKeeper = this.physics.add.sprite(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 8); 
+        this.shopKeeper = this.createNewNpc(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 'Xaven'); 
+        this.shopKeeper.setFrame(8);     
+
         this.sign = this.add.sprite(this.shopKeeper.x + 30, this.shopZone.y + 40, 'fishSign');
         this.sign.displayHeight = 24;
         this.sign.displayWidth = 24;
 
-        this.shopKeeper.body.moves = false;
-        this.shopKeeper.body.setCircle(25);        
-        this.shopKeeper.setScale(0.5); 
         this.physics.add.collider(this.player, this.shopKeeper);  
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
                        
@@ -263,11 +261,9 @@ export default class GameScene extends Scene {
     
     toggleCultist(visible) {
         // only appears at night, warns you of monsters
-        if (visible) {
-            this.cultist = this.physics.add.sprite(120, 180, 'cultist', 7); 
-            this.cultist.body.moves = false;
-            this.cultist.body.setCircle(45);        
-            this.cultist.setScale(0.4); 
+        if (visible) {            
+            this.cultist = this.createNewNpc(120, 180, 'cultist', '???'); 
+            this.cultist.setFrame(7);     
             this.cultist.setActive(visible).setVisible(visible);
             this.physics.add.collider(this.player, this.cultist);   
         } else {
@@ -328,6 +324,17 @@ export default class GameScene extends Scene {
             });   
 
             return slime;
+    }
+
+
+    createNewNpc(x, y, key, name) {
+        return new Npc(
+            this,
+            x,
+            y,
+            key, 
+            name
+        );
     }
 
     spawnCoin(player) {        
@@ -399,7 +406,7 @@ export default class GameScene extends Scene {
         
         if (this.canBuyBait && this.playerInfo.cash !== 0) {   
             if (touching && wasTouching) {
-                this.createEmote('cash', this.baitShopKeeper);                                                
+                this.baitShopKeeper.createEmote('cash');                                                
                 if (this.keySpace.isDown) {    
                     this.events.emit('showDialoguePopup', ['claris', this.player.chapter]);  
                     // this.events.emit('moveOnText'); 
@@ -419,7 +426,7 @@ export default class GameScene extends Scene {
             } else if (this.cooldown === 0) {                                
                 this.fishingtimer.paused = true;  
                 if (touching && wasTouching) {   
-
+                    
                     if (this.outOfCatchAttempts) {
                         this.events.emit('showUIPopup', "You're all fished out for the day!");
                         return;
@@ -465,15 +472,16 @@ export default class GameScene extends Scene {
             } 
         } 
                 
-        if (this.canShop && this.playerInventory.fish.length > 0) {                                              
-            if (this.keySpace.isDown) {                    
-                if (touching && wasTouching) {                         
-                        this.events.emit('updateUI', this.playerInfo);                                                                                                                                                                      
-                        this.shopObj.sellAllFish(this.player);  
-                        this.spawnCoin(this.player);                          
-                        this.events.emit('showUIPopup', `You sold all your fish! And made a total of $${this.shopObj.getTotalOfSale()}`);   
-                        this.playerInventory.fish.length = 0;      
-                        this.events.emit('updateUI', this.playerInfo);                                                          
+        if (this.canShop && this.playerInventory.fish.length > 0) { 
+            if (touching && wasTouching) {   
+                this.shopKeeper.createEmote('cash');                                                  
+                if (this.keySpace.isDown) {                                                 
+                    this.events.emit('updateUI', this.playerInfo);                                                                                                                                                                      
+                    this.shopObj.sellAllFish(this.player);  
+                    this.spawnCoin(this.player);                          
+                    this.events.emit('showUIPopup', `You sold all your fish! And made a total of $${this.shopObj.getTotalOfSale()}`);   
+                    this.playerInventory.fish.length = 0;      
+                    this.events.emit('updateUI', this.playerInfo);                                                          
                 }
             }                   
         } 

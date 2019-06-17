@@ -177,15 +177,15 @@ export default class MainUIScene extends Scene {
 
     createDialoguePopup(info) {
         
-        let npc = info[0];
-        let chapter = info[1];
+        // let npc = info[0];
+        // let chapter = info[1];
 
         let style = this.getBasicStyle('#5d5d2f', 'left', '30px', 500);  
         this.container = this.add.container(this.game.config.width / 2, this.game.config.height - 145);
         this.uiBackground = this.add.image(this.x, this.y, 'speechEmpty');
         // this.currentTalkingFace = this.add.image(300, 10, chars[this.charIndex]);     
-        let d = new Dialogue(this.conversations);
-        d.startConversation();
+        // let d = new Dialogue(this.conversations);
+        // d.startConversation();
         // console.log(d);
         // this.speechText = this.add.text(
         //     this.container.width / 2 - 40, 

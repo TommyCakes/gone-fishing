@@ -94,7 +94,7 @@ export default class Pet extends Entity {
             //     this.resumeDogMovingAnimations();         
             // }       
     }
-
+    
     moveUp() {
         this.body.velocity.y = -this.getData("speed");
     }
