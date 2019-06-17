@@ -159,13 +159,46 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
                        
         
-        this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false; this.canBuyBait = false; this.canInteract = false;});            
-        this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false; this.canInteract = false;});            
-        this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false; this.canInteract = false;});            
-        this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false; this.canInteract = false;});            
-        this.physics.add.overlap(this.player, this.baitShopZone, () => { this.isShoppingForBait = true; this.canShop = false; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false; this.canInteract = false;});            
-        this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false; this.canBuyBait = false; this.canInteract = false;});            
-        this.physics.add.overlap(this.player, this.npcTestZone, () => { this.isInteracting = true; this.canSleep = false; this.canShop = false; this.canFish = false; this.canBuyBait = false; this.hasInteractedWithDog = false;});            
+        this.physics.add.overlap(this.player, this.waterZone, () => { 
+            this.resetCurrentActivity();
+            this.isFishing = true;
+            this.canFish = true;
+        });            
+        this.physics.add.overlap(this.player, this.waterZone2, () => { 
+            this.resetCurrentActivity();
+            this.isFishing = true;
+            this.canFish = true;
+        });            
+        this.physics.add.overlap(this.player, this.homeZone, () => { 
+            this.resetCurrentActivity();
+            this.isSleeping = true;
+            this.canSleep = true;
+        });            
+        this.physics.add.overlap(this.player, this.shopZone, () => { 
+            this.resetCurrentActivity();
+            this.isShopping = true;
+            this.canShop = true;
+        });            
+        this.physics.add.overlap(this.player, this.baitShopZone, () => { 
+            this.resetCurrentActivity();
+            this.isShoppingForBait = true;
+            this.canBuyBait = true;
+        });            
+        this.physics.add.overlap(this.player, this.dogZone, () => { 
+            this.resetCurrentActivity();
+            this.hasInteractedWithDog = true;
+        });            
+                
+        this.physics.add.overlap(this.player, this.caveEntrance, () => { 
+            this.scene.pause(); 
+            this.scene.start('InteriorScene');
+        });   
+
+        this.physics.add.overlap(this.player, this.npcTestZone, () => {             
+            this.resetCurrentActivity();
+            this.isInteracting = true; 
+            this.canInteract = true;
+        });            
         
         this.physics.add.overlap(this.player, this.caveEntrance, () => { this.scene.pause(); this.scene.start('InteriorScene')});            
         
@@ -241,6 +274,19 @@ export default class GameScene extends Scene {
         });                                      
     }  
     
+    resetCurrentActivity() {
+        // this.isFishing = false; 
+        // this.isSleeping = false; 
+        this.canShop = false; 
+        this.canSleep = false; 
+        this.canFish = false;
+        this.canBuyBait = false;    
+        this.hasInteractedWithDog = false; 
+        this.canInteract = false;           
+        // this.isInteracting = false;                                     
+                                          
+    }
+
     createEmote(emoteName, character) {
         let emote = this.physics.add.sprite(character.x, character.y - 20, emoteName);                    
         emote.setDepth(1);     
@@ -372,7 +418,8 @@ export default class GameScene extends Scene {
         let wasTouching = !this.player.body.wasTouching.none;
         
         if (touching && !wasTouching) { 
-
+        
+        // when player leaves zone any activity can be started
         } else if (!touching && wasTouching) { 
             this.isShopping = false; 
             this.canShop = true; 
