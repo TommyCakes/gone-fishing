@@ -122,6 +122,10 @@ export default class PreloadScene extends Scene {
             frameWidth: 48, 
             frameHeight: 64 
         });        
+        this.load.spritesheet('slime', 'assets/sprites/slimes.png', { 
+            frameWidth: 16, 
+            frameHeight: 16 
+        });        
         this.load.spritesheet('claris', 'assets/sprites/claris.png', { 
             frameWidth: 48, 
             frameHeight: 64 

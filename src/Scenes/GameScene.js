@@ -3,6 +3,7 @@ import Player from "../Sprites/Player";
 import Shop from '../Classes/Shop';
 import Fishing from '../Classes/Fishing';
 import Pet from '../Sprites/Pet';
+import Enemy from '../Sprites/Enemy';
 
 export default class GameScene extends Scene {
 
@@ -52,7 +53,7 @@ export default class GameScene extends Scene {
 
     create() {    
         // set up timer for day clock     
-        let dayLengthInMinutes = 3;
+        let dayLengthInMinutes = 3; //3
         let dayLengthInSeconds = dayLengthInMinutes * 60;  
         let hoursInDay = 16
         this.nextHourDelay = dayLengthInSeconds / hoursInDay; // gives us 3 minute days
@@ -109,7 +110,7 @@ export default class GameScene extends Scene {
         // this.doggo.anims.play('walk-right', true);
         // this.doggo.moveRight();
         this.doggo.anims.play('idle', true);
-        
+                        
         // Load map
         const map = this.make.tilemap({ key: "main-world" });
         const tileset = map.addTilesetImage("overworld", "tiles");
@@ -135,7 +136,6 @@ export default class GameScene extends Scene {
         this.baitShopKeeper.body.moves = false;
         this.baitShopKeeper.body.setCircle(25);        
         this.baitShopKeeper.setScale(0.4); 
-        this.baitShopKeeper.setDepth(2); 
         this.physics.add.collider(this.player, this.baitShopKeeper);  
 
         this.shopKeeper = this.physics.add.sprite(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 8); 
@@ -146,7 +146,6 @@ export default class GameScene extends Scene {
         this.shopKeeper.body.moves = false;
         this.shopKeeper.body.setCircle(25);        
         this.shopKeeper.setScale(0.5); 
-        this.shopKeeper.setDepth(2); 
         this.physics.add.collider(this.player, this.shopKeeper);  
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
                        
@@ -183,6 +182,8 @@ export default class GameScene extends Scene {
         this.hasFished = false;
         this.outOfCatchAttempts = false; 
         this.isTalking = false;
+        
+        this.night = false;
 
         this.events.on('pauseGame', () => {
             // this.scene.pause();
@@ -202,6 +203,8 @@ export default class GameScene extends Scene {
         this.mask.invertAlpha = true;  
         this.sky.setMask(this.mask);        
 
+        this.enemies = this.physics.add.group();
+
         this.events.on('nightTime', () => {                                  
             this.tweens.add({
                 targets: this.sky,
@@ -210,17 +213,31 @@ export default class GameScene extends Scene {
                 alphaBottomRight: { value: 0.9, duration: 10000, ease: 'Power1' },
                 alphaBottomLeft: { value: 0.9, duration: 10000, ease: 'Power1'},
                 hold: 50000,
-                yoyo: true,
-                repeat: 0,
+                // yoyo: true,
+                // repeat: 0,
 
             });
             this.nightTime();
         });  
         
-        this.events.on('resetDay', () => {
-            this.playerInfo.timeOfDay = 1;
+        this.events.on('resetDay', ((time) => {
+            this.playerInfo.timeOfDay = time;
+        }));
+
+        this.events.on('dayTime', () => {
+            this.playerInfo.timeOfDay = 7;
             this.dayTime();
-        });            
+            this.tweens.add({
+                targets: this.sky,
+                alphaTopLeft: { value: 0, duration: 2000, ease: 'Power1' },
+                alphaTopRight: { value: 0, duration: 2000, ease: 'Power1' },
+                alphaBottomRight: { value: 0, duration: 2000, ease: 'Power1' },
+                alphaBottomLeft: { value: 0, duration: 2000, ease: 'Power1'},
+                hold: 50000,
+                // yoyo: true,
+                // repeat: 0,
+            });
+        });                                      
     }  
     
     createEmote(emoteName, character) {
@@ -233,12 +250,15 @@ export default class GameScene extends Scene {
     }
 
     nightTime() {
+        this.night = true; 
         this.toggleCultist(true); 
-        this.setUpEnemySpawnPoint();       
+        this.createOrDestroyEnemies(true);          
     }
     
     dayTime() {
-        this.toggleCultist(false);        
+        this.night = false;  
+        this.toggleCultist(false);   
+        this.createOrDestroyEnemies();             
     }
     
     toggleCultist(visible) {
@@ -248,23 +268,62 @@ export default class GameScene extends Scene {
             this.cultist.body.moves = false;
             this.cultist.body.setCircle(45);        
             this.cultist.setScale(0.4); 
-            this.cultist.setDepth(2); 
             this.cultist.setActive(visible).setVisible(visible);
             this.physics.add.collider(this.player, this.cultist);   
         } else {
-            this.cultist.destroy();
+            this.cultist ? this.cultist.destroy() : null;
         }
-
-        
-        
     }
 
-    setUpEnemySpawnPoint() {
-        this.spawnEnemy();
+    createOrDestroyEnemies(visible) {
+
+        let slimePositions = [
+            [219, 268], 
+            [255, 513],        
+            [100, 400],         
+            [510, 574],         
+            [200, 644] 
+        ];
+                
+        if (visible) {                          
+            for (let i = 0; i < slimePositions.length; i += 1) {
+                let x = slimePositions[i][0];                
+                let y = slimePositions[i][1];                
+                  
+                this.enemies.add(this.spawnEnemy(x, y));
+            }
+        } else {
+            this.enemies.clear(true);            
+        }        
     }
 
-    spawnEnemy() {
+    spawnEnemy(x, y) {        
+            let slime = new Enemy(
+                this,
+                x,
+                y,
+                "slime"
+            );
+                               
+            slime.anims.play('moving');
+            slime.setActive(true).setVisible(true);
+            let tween = this.tweens.add({
+                targets: slime,
+                x: slime.x + 20,
+                ease: 'Power1',
+                duration: 3000,
+                flipX: true,
+                yoyo: true,
+                repeat: -1
+            });
 
+            this.physics.add.collider(this.player, slime, () => { 
+                this.events.emit('showUIPopup', "The monster knocked you out...");   
+                this.player.monsterAttack();  
+                console.log('opps!');              
+            });   
+
+            return slime;
     }
 
     spawnCoin(player) {        
@@ -286,11 +345,11 @@ export default class GameScene extends Scene {
     }
 
     update() {  
-                         
+                     
         this.player.update();   
         this.playerDirection = this.player.facing;   
         this.doggo.update();
-        
+                
         this.lampShape.x = this.player.x - 150;      
         this.lampShape.y = this.player.y - 210;      
                
