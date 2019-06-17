@@ -14,7 +14,11 @@ export default class Enemy extends Entity {
         
         // this.body.moves = false;
         this.body.setCircle(5);        
-        this.setScale(1); 
-        this.setDepth(2);                  
+        this.setScale(1);  
+    }
+
+    update() {
+
+        
     }
 }

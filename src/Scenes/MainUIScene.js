@@ -31,9 +31,10 @@ export default class MainUIScene extends Scene {
             this.gameScene.events.emit('nightTime');                    
             this.showUIPopup('You need to get home before the monsters come...');           
         } else if (data.timeOfDay === 23) {
-            this.showUIPopup('A new day has dawned!');
-            this.gameScene.events.emit('resetDay', 1);  
-        } 
+            this.showUIPopup('A new day has dawned!');             
+        } else if (data.timeOfDay === 4) {
+            this.gameScene.events.emit('resetDay', 4); 
+        }
 
         let time = this.refactorTimeDisplay(data.timeOfDay);        
         let cash = data.cash;
