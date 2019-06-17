@@ -293,8 +293,13 @@ export default class GameScene extends Scene {
                 this.enemies.add(this.spawnEnemy(x, y));
             }
         } else {
+            this.enemies.children.iterate(function (child) {
+                child.setActive(false).setVisible(false);
+                child.body.enable = false;
+            });
+
             this.enemies.clear(true);            
-        }        
+        }          
     }
 
     spawnEnemy(x, y) {        
@@ -306,7 +311,6 @@ export default class GameScene extends Scene {
             );
                                
             slime.anims.play('moving');
-            slime.setActive(true).setVisible(true);
             let tween = this.tweens.add({
                 targets: slime,
                 x: slime.x + 20,
