@@ -12,7 +12,7 @@ export default class Npc extends Entity {
     }
 
     talking () {
-        this.scene.events.emit('showDialoguePopup');
+        this.scene.events.emit('showDialoguePopup', this);
     }
 
     createEmote(emoteName) {

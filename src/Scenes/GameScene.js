@@ -85,6 +85,16 @@ export default class GameScene extends Scene {
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
+        // Activities
+        this.canFish = true;
+        this.canShop = true;
+        this.canBuyBait = true;
+        this.canSleep = true;                             
+        this.hasInteractedWithDog = false;          
+        this.hasFished = false;
+        this.outOfCatchAttempts = false; 
+        this.isTalking = false;                
+
         this.player = new Player(
             this,            
             150,
@@ -132,8 +142,9 @@ export default class GameScene extends Scene {
         this.baitShopZone = this.createNewZone(180, 300, 60, 40);        
         this.dogZone = this.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
         this.caveEntrance = this.createNewZone(350, 180, 20, 16);        
+        this.npcTestZone = this.createNewZone(120, 180, 50, 50);              
         
-        this.baitShopKeeper = this.createNewNpc(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'claris', 'Claris');
+        this.baitShopKeeper = this.createNewNpc(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'claris', 'claris');
         this.baitShopKeeper.setFrame(9);        
         this.physics.add.collider(this.player, this.baitShopKeeper);  
 
@@ -147,12 +158,14 @@ export default class GameScene extends Scene {
         this.physics.add.collider(this.player, this.shopKeeper);  
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
                        
-        this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
-        this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
-        this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
-        this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
-        this.physics.add.overlap(this.player, this.baitShopZone, () => { this.isShoppingForBait = true; this.canShop = false; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false});            
-        this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false; this.canBuyBait = false});            
+        
+        this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false; this.canBuyBait = false; this.canInteract = false;});            
+        this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false; this.canInteract = false;});            
+        this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false; this.canInteract = false;});            
+        this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false; this.canInteract = false;});            
+        this.physics.add.overlap(this.player, this.baitShopZone, () => { this.isShoppingForBait = true; this.canShop = false; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false; this.canInteract = false;});            
+        this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false; this.canBuyBait = false; this.canInteract = false;});            
+        this.physics.add.overlap(this.player, this.npcTestZone, () => { this.isInteracting = true; this.canSleep = false; this.canShop = false; this.canFish = false; this.canBuyBait = false; this.hasInteractedWithDog = false;});            
         
         this.physics.add.overlap(this.player, this.caveEntrance, () => { this.scene.pause(); this.scene.start('InteriorScene')});            
         
@@ -170,17 +183,7 @@ export default class GameScene extends Scene {
         this.cash = this.playerInfo.cash 
         this.totalFish = this.playerInventory.fish.length
 
-        this.shopObj = new Shop();
-        this.canFish = true;
-        this.canShop = true;
-        this.canBuyBait = true;
-        this.canSleep = true;                             
-        this.hasInteractedWithDog = false;  
-        
-        this.hasFished = false;
-        this.outOfCatchAttempts = false; 
-        this.isTalking = false;
-        
+        this.shopObj = new Shop();        
         this.night = false;
 
         this.events.on('pauseGame', () => {
@@ -380,6 +383,8 @@ export default class GameScene extends Scene {
             this.canBuyBait = true;
             this.isShoppingForBait = false;          
             this.hasInteracted = false;                 
+            this.isInteracting = false;                 
+            this.canInteract = true;                 
         }
 
         if (this.hasInteractedWithDog) {  
@@ -387,6 +392,14 @@ export default class GameScene extends Scene {
             this.doggo.anims.play('idle-happy', true); 
         } else {
             this.doggo.anims.play('idle', true); 
+        }
+
+        if (this.canInteract) {
+            if (touching && wasTouching) {
+                if (this.keySpace.isDown) {
+                    this.cultist.talking();
+                }
+            }
         }
 
         if (this.canSleep) {  
@@ -408,7 +421,8 @@ export default class GameScene extends Scene {
             if (touching && wasTouching) {
                 this.baitShopKeeper.createEmote('cash');                                                
                 if (this.keySpace.isDown) {    
-                    this.events.emit('showDialoguePopup', ['claris', this.player.chapter]);  
+                    // this.events.emit('showDialoguePopup', ['claris', this.player.chapter]);  
+                    this.baitShopKeeper.talking();
                     // this.events.emit('moveOnText'); 
                     this.keySpace.reset();                                                                                               
                         // this.events.emit('moveOnText');
