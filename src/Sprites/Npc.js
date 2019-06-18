@@ -8,7 +8,7 @@ export default class Npc extends Entity {
 
         this.body.moves = false;
         this.body.setCircle(25);        
-        this.setScale(0.4); 
+        this.setScale(0.4);          
     }
 
     talking () {
@@ -21,5 +21,11 @@ export default class Npc extends Entity {
         this.scene.time.delayedCall(500, () => {
             emote.destroy();
         });                        
+    }
+
+    createTalkingCollider(obj) {
+        this.scene.physics.add.collider(obj, this, () => {
+            this.talking();
+        }); 
     }
 }

@@ -139,14 +139,16 @@ export default class GameScene extends Scene {
 
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
-        this.baitShopZone = this.createNewZone(180, 300, 60, 40);        
+        // this.baitShopZone = this.createNewZone(180, 300, 60, 40);        
         this.dogZone = this.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
         this.caveEntrance = this.createNewZone(350, 180, 20, 16);        
-        this.npcTestZone = this.createNewZone(120, 180, 50, 50);              
+        // this.npcZone = this.createNewZone(120, 180, 50, 50);  
+        // this.npcZone.setName('cultist');            
         
-        this.baitShopKeeper = this.createNewNpc(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'claris', 'claris');
+        this.baitShopKeeper = this.createNewNpc(180, 300, 'claris', 'claris');
         this.baitShopKeeper.setFrame(9);        
-        this.physics.add.collider(this.player, this.baitShopKeeper);  
+        // this.physics.add.collider(this.player, this.baitShopKeeper);  
+        this.baitShopKeeper.createTalkingCollider(this.player);
 
         this.shopKeeper = this.createNewNpc(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 'Xaven'); 
         this.shopKeeper.setFrame(8);     
@@ -156,34 +158,28 @@ export default class GameScene extends Scene {
         this.sign.displayWidth = 24;
 
         this.physics.add.collider(this.player, this.shopKeeper);  
-        this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
-                       
+        this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1);                      
         
         this.physics.add.overlap(this.player, this.waterZone, () => { 
             this.resetCurrentActivity();
-            this.isFishing = true;
             this.canFish = true;
         });            
         this.physics.add.overlap(this.player, this.waterZone2, () => { 
             this.resetCurrentActivity();
-            this.isFishing = true;
             this.canFish = true;
         });            
         this.physics.add.overlap(this.player, this.homeZone, () => { 
             this.resetCurrentActivity();
-            this.isSleeping = true;
             this.canSleep = true;
         });            
         this.physics.add.overlap(this.player, this.shopZone, () => { 
             this.resetCurrentActivity();
-            this.isShopping = true;
             this.canShop = true;
         });            
-        this.physics.add.overlap(this.player, this.baitShopZone, () => { 
-            this.resetCurrentActivity();
-            this.isShoppingForBait = true;
-            this.canBuyBait = true;
-        });            
+        // this.physics.add.overlap(this.player, this.baitShopZone, () => { 
+        //     this.resetCurrentActivity();
+        //     this.canBuyBait = true;
+        // });            
         this.physics.add.overlap(this.player, this.dogZone, () => { 
             this.resetCurrentActivity();
             this.hasInteractedWithDog = true;
@@ -193,15 +189,7 @@ export default class GameScene extends Scene {
             this.scene.pause(); 
             this.scene.start('InteriorScene');
         });   
-
-        this.physics.add.overlap(this.player, this.npcTestZone, () => {             
-            this.resetCurrentActivity();
-            this.isInteracting = true; 
-            this.canInteract = true;
-        });            
-        
-        this.physics.add.overlap(this.player, this.caveEntrance, () => { this.scene.pause(); this.scene.start('InteriorScene')});            
-        
+                            
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(-50, -30);
@@ -274,17 +262,13 @@ export default class GameScene extends Scene {
         });                                      
     }  
     
-    resetCurrentActivity() {
-        // this.isFishing = false; 
-        // this.isSleeping = false; 
+    resetCurrentActivity() { 
         this.canShop = false; 
         this.canSleep = false; 
         this.canFish = false;
         this.canBuyBait = false;    
         this.hasInteractedWithDog = false; 
-        this.canInteract = false;           
-        // this.isInteracting = false;                                     
-                                          
+        this.canInteract = false;                                                     
     }
 
     createEmote(emoteName, character) {
@@ -314,7 +298,7 @@ export default class GameScene extends Scene {
             this.cultist = this.createNewNpc(120, 180, 'cultist', '???'); 
             this.cultist.setFrame(7);     
             this.cultist.setActive(visible).setVisible(visible);
-            this.physics.add.collider(this.player, this.cultist);   
+            this.cultist.createTalkingCollider(this.player);
         } else {
             this.cultist ? this.cultist.destroy() : null;
         }
@@ -421,16 +405,11 @@ export default class GameScene extends Scene {
         
         // when player leaves zone any activity can be started
         } else if (!touching && wasTouching) { 
-            this.isShopping = false; 
             this.canShop = true; 
-            this.isFishing = false;
             this.canFish = true;                 
-            this.isSleeping = false;
             this.canSleep = true;       
-            this.canBuyBait = true;
-            this.isShoppingForBait = false;          
-            this.hasInteracted = false;                 
-            this.isInteracting = false;                 
+            this.canBuyBait = true;      
+            this.hasInteractedWithDog = false;                                
             this.canInteract = true;                 
         }
 
@@ -441,13 +420,13 @@ export default class GameScene extends Scene {
             this.doggo.anims.play('idle', true); 
         }
 
-        if (this.canInteract) {
-            if (touching && wasTouching) {
-                if (this.keySpace.isDown) {
-                    this.cultist.talking();
-                }
-            }
-        }
+        // if (this.canInteract) {
+        //     if (touching && wasTouching) {                
+        //         if (this.keySpace.isDown) {                   
+        //             this.cultist.talking();
+        //         }
+        //     }
+        // }
 
         if (this.canSleep) {  
             if (touching && wasTouching) {        
@@ -495,7 +474,7 @@ export default class GameScene extends Scene {
                     
                     if (!this.hasFished) {
                         this.hasFished = true;
-                        this.events.emit('showUIPopup', "Press space to cast your rod");
+                        // this.events.emit('showUIPopup', "Press space to cast your rod");
                     }      
 
                     if (this.keySpace.isDown) {                                                                               
