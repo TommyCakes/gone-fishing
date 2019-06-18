@@ -162,7 +162,8 @@ export default class PreloadScene extends Scene {
         this.load.image("NEW_UI", "../assets/ui/NEW_UI@2x.png");
         this.load.image("catchesLeftUI", "../assets/ui/catches-left-ui.png");
         this.load.image("nightSky", "../assets/images/sky-test.png");
-        this.load.image("claris1", "../assets/faces/claris1.png");
+        this.load.image("claris-face", "../assets/faces/claris-face.png");
+        this.load.image("cultist-face", "../assets/faces/cultist-face.png");
         this.load.image("player1", "../assets/faces/player1.png");
 
         this.load.image("tiles", "../assets/sprites/overworld.png");

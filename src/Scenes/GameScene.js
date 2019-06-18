@@ -4,6 +4,7 @@ import Shop from '../Classes/Shop';
 import Fishing from '../Classes/Fishing';
 import Pet from '../Sprites/Pet';
 import Enemy from '../Sprites/Enemy';
+import Npc from '../Sprites/Npc';
 
 export default class GameScene extends Scene {
 
@@ -84,6 +85,16 @@ export default class GameScene extends Scene {
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
+        // Activities
+        this.canFish = true;
+        this.canShop = true;
+        this.canBuyBait = true;
+        this.canSleep = true;                             
+        this.hasInteractedWithDog = false;          
+        this.hasFished = false;
+        this.outOfCatchAttempts = false; 
+        this.isTalking = false;                
+
         this.player = new Player(
             this,            
             150,
@@ -128,36 +139,57 @@ export default class GameScene extends Scene {
 
         this.homeZone = this.createNewZone(120, 60, 60, 50);        
         this.shopZone = this.createNewZone(380, 420, 120, 80);        
-        this.baitShopZone = this.createNewZone(180, 300, 60, 40);        
+        // this.baitShopZone = this.createNewZone(180, 300, 60, 40);        
         this.dogZone = this.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
         this.caveEntrance = this.createNewZone(350, 180, 20, 16);        
+        // this.npcZone = this.createNewZone(120, 180, 50, 50);  
+        // this.npcZone.setName('cultist');            
         
-        this.baitShopKeeper = this.physics.add.sprite(this.baitShopZone.x + (this.baitShopZone.width / 2 - 10), this.baitShopZone.y + 20, 'claris', 9); 
-        this.baitShopKeeper.body.moves = false;
-        this.baitShopKeeper.body.setCircle(25);        
-        this.baitShopKeeper.setScale(0.4); 
-        this.physics.add.collider(this.player, this.baitShopKeeper);  
+        this.baitShopKeeper = this.createNewNpc(180, 300, 'claris', 'claris');
+        this.baitShopKeeper.setFrame(9);        
+        // this.physics.add.collider(this.player, this.baitShopKeeper);  
+        this.baitShopKeeper.createTalkingCollider(this.player);
 
-        this.shopKeeper = this.physics.add.sprite(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 8); 
+        this.shopKeeper = this.createNewNpc(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 'Xaven'); 
+        this.shopKeeper.setFrame(8);     
+
         this.sign = this.add.sprite(this.shopKeeper.x + 30, this.shopZone.y + 40, 'fishSign');
         this.sign.displayHeight = 24;
         this.sign.displayWidth = 24;
 
-        this.shopKeeper.body.moves = false;
-        this.shopKeeper.body.setCircle(25);        
-        this.shopKeeper.setScale(0.5); 
         this.physics.add.collider(this.player, this.shopKeeper);  
-        this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1); 
-                       
-        this.physics.add.overlap(this.player, this.waterZone, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
-        this.physics.add.overlap(this.player, this.waterZone2, () => { this.isFishing = true; this.canShop = false; this.canSleep = false; this.hasInteractedWithDog = false;});            
-        this.physics.add.overlap(this.player, this.homeZone, () => { this.isSleeping = true; this.canShop = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
-        this.physics.add.overlap(this.player, this.shopZone, () => { this.isShopping = true; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false; this.canBuyBait = false});            
-        this.physics.add.overlap(this.player, this.baitShopZone, () => { this.isShoppingForBait = true; this.canShop = false; this.canSleep = false; this.canFish = false; this.hasInteractedWithDog = false});            
-        this.physics.add.overlap(this.player, this.dogZone, () => { this.hasInteractedWithDog = true; this.canSleep = false; this.canShop = false; this.canFish = false; this.canBuyBait = false});            
+        this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1);                      
         
-        this.physics.add.overlap(this.player, this.caveEntrance, () => { this.scene.pause(); this.scene.start('InteriorScene')});            
-        
+        this.physics.add.overlap(this.player, this.waterZone, () => { 
+            this.resetCurrentActivity();
+            this.canFish = true;
+        });            
+        this.physics.add.overlap(this.player, this.waterZone2, () => { 
+            this.resetCurrentActivity();
+            this.canFish = true;
+        });            
+        this.physics.add.overlap(this.player, this.homeZone, () => { 
+            this.resetCurrentActivity();
+            this.canSleep = true;
+        });            
+        this.physics.add.overlap(this.player, this.shopZone, () => { 
+            this.resetCurrentActivity();
+            this.canShop = true;
+        });            
+        // this.physics.add.overlap(this.player, this.baitShopZone, () => { 
+        //     this.resetCurrentActivity();
+        //     this.canBuyBait = true;
+        // });            
+        this.physics.add.overlap(this.player, this.dogZone, () => { 
+            this.resetCurrentActivity();
+            this.hasInteractedWithDog = true;
+        });            
+                
+        this.physics.add.overlap(this.player, this.caveEntrance, () => { 
+            this.scene.pause(); 
+            this.scene.start('InteriorScene');
+        });   
+                            
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(-50, -30);
@@ -172,17 +204,7 @@ export default class GameScene extends Scene {
         this.cash = this.playerInfo.cash 
         this.totalFish = this.playerInventory.fish.length
 
-        this.shopObj = new Shop();
-        this.canFish = true;
-        this.canShop = true;
-        this.canBuyBait = true;
-        this.canSleep = true;                             
-        this.hasInteractedWithDog = false;  
-        
-        this.hasFished = false;
-        this.outOfCatchAttempts = false; 
-        this.isTalking = false;
-        
+        this.shopObj = new Shop();        
         this.night = false;
 
         this.events.on('pauseGame', () => {
@@ -240,6 +262,15 @@ export default class GameScene extends Scene {
         });                                      
     }  
     
+    resetCurrentActivity() { 
+        this.canShop = false; 
+        this.canSleep = false; 
+        this.canFish = false;
+        this.canBuyBait = false;    
+        this.hasInteractedWithDog = false; 
+        this.canInteract = false;                                                     
+    }
+
     createEmote(emoteName, character) {
         let emote = this.physics.add.sprite(character.x, character.y - 20, emoteName);                    
         emote.setDepth(1);     
@@ -263,13 +294,11 @@ export default class GameScene extends Scene {
     
     toggleCultist(visible) {
         // only appears at night, warns you of monsters
-        if (visible) {
-            this.cultist = this.physics.add.sprite(120, 180, 'cultist', 7); 
-            this.cultist.body.moves = false;
-            this.cultist.body.setCircle(45);        
-            this.cultist.setScale(0.4); 
+        if (visible) {            
+            this.cultist = this.createNewNpc(120, 180, 'cultist', '???'); 
+            this.cultist.setFrame(7);     
             this.cultist.setActive(visible).setVisible(visible);
-            this.physics.add.collider(this.player, this.cultist);   
+            this.cultist.createTalkingCollider(this.player);
         } else {
             this.cultist ? this.cultist.destroy() : null;
         }
@@ -330,6 +359,17 @@ export default class GameScene extends Scene {
             return slime;
     }
 
+
+    createNewNpc(x, y, key, name) {
+        return new Npc(
+            this,
+            x,
+            y,
+            key, 
+            name
+        );
+    }
+
     spawnCoin(player) {        
         let coin = this.physics.add.sprite(player.x, player.y - 20, 'goldCoin', 2);         
         this.anims.create({
@@ -362,17 +402,15 @@ export default class GameScene extends Scene {
         let wasTouching = !this.player.body.wasTouching.none;
         
         if (touching && !wasTouching) { 
-
+        
+        // when player leaves zone any activity can be started
         } else if (!touching && wasTouching) { 
-            this.isShopping = false; 
             this.canShop = true; 
-            this.isFishing = false;
             this.canFish = true;                 
-            this.isSleeping = false;
             this.canSleep = true;       
-            this.canBuyBait = true;
-            this.isShoppingForBait = false;          
-            this.hasInteracted = false;                 
+            this.canBuyBait = true;      
+            this.hasInteractedWithDog = false;                                
+            this.canInteract = true;                 
         }
 
         if (this.hasInteractedWithDog) {  
@@ -381,6 +419,14 @@ export default class GameScene extends Scene {
         } else {
             this.doggo.anims.play('idle', true); 
         }
+
+        // if (this.canInteract) {
+        //     if (touching && wasTouching) {                
+        //         if (this.keySpace.isDown) {                   
+        //             this.cultist.talking();
+        //         }
+        //     }
+        // }
 
         if (this.canSleep) {  
             if (touching && wasTouching) {        
@@ -399,9 +445,10 @@ export default class GameScene extends Scene {
         
         if (this.canBuyBait && this.playerInfo.cash !== 0) {   
             if (touching && wasTouching) {
-                this.createEmote('cash', this.baitShopKeeper);                                                
+                this.baitShopKeeper.createEmote('cash');                                                
                 if (this.keySpace.isDown) {    
-                    this.events.emit('showDialoguePopup', ['claris', this.player.chapter]);  
+                    // this.events.emit('showDialoguePopup', ['claris', this.player.chapter]);  
+                    this.baitShopKeeper.talking();
                     // this.events.emit('moveOnText'); 
                     this.keySpace.reset();                                                                                               
                         // this.events.emit('moveOnText');
@@ -419,7 +466,7 @@ export default class GameScene extends Scene {
             } else if (this.cooldown === 0) {                                
                 this.fishingtimer.paused = true;  
                 if (touching && wasTouching) {   
-
+                    
                     if (this.outOfCatchAttempts) {
                         this.events.emit('showUIPopup', "You're all fished out for the day!");
                         return;
@@ -427,7 +474,7 @@ export default class GameScene extends Scene {
                     
                     if (!this.hasFished) {
                         this.hasFished = true;
-                        this.events.emit('showUIPopup', "Press space to cast your rod");
+                        // this.events.emit('showUIPopup', "Press space to cast your rod");
                     }      
 
                     if (this.keySpace.isDown) {                                                                               
@@ -465,15 +512,16 @@ export default class GameScene extends Scene {
             } 
         } 
                 
-        if (this.canShop && this.playerInventory.fish.length > 0) {                                              
-            if (this.keySpace.isDown) {                    
-                if (touching && wasTouching) {                         
-                        this.events.emit('updateUI', this.playerInfo);                                                                                                                                                                      
-                        this.shopObj.sellAllFish(this.player);  
-                        this.spawnCoin(this.player);                          
-                        this.events.emit('showUIPopup', `You sold all your fish! And made a total of $${this.shopObj.getTotalOfSale()}`);   
-                        this.playerInventory.fish.length = 0;      
-                        this.events.emit('updateUI', this.playerInfo);                                                          
+        if (this.canShop && this.playerInventory.fish.length > 0) { 
+            if (touching && wasTouching) {   
+                this.shopKeeper.createEmote('cash');                                                  
+                if (this.keySpace.isDown) {                                                 
+                    this.events.emit('updateUI', this.playerInfo);                                                                                                                                                                      
+                    this.shopObj.sellAllFish(this.player);  
+                    this.spawnCoin(this.player);                          
+                    this.events.emit('showUIPopup', `You sold all your fish! And made a total of $${this.shopObj.getTotalOfSale()}`);   
+                    this.playerInventory.fish.length = 0;      
+                    this.events.emit('updateUI', this.playerInfo);                                                          
                 }
             }                   
         } 
