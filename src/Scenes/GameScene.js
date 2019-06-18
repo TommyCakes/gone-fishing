@@ -145,7 +145,7 @@ export default class GameScene extends Scene {
         // this.npcZone = this.createNewZone(120, 180, 50, 50);  
         // this.npcZone.setName('cultist');            
         
-        this.baitShopKeeper = this.createNewNpc(180, 300, 'claris', 'claris');
+        this.baitShopKeeper = this.createNewNpc(180, 300, 'claris', 'Claris');
         this.baitShopKeeper.setFrame(9);        
         // this.physics.add.collider(this.player, this.baitShopKeeper);  
         this.baitShopKeeper.createTalkingCollider(this.player);
@@ -215,7 +215,8 @@ export default class GameScene extends Scene {
             // });
         });
 
-        this.input.keyboard.on('keydown_A', function (event) {            
+        this.input.keyboard.on('keydown_SPACE', function (event) {   
+            console.log('space hit!');         
         }); 
 
         this.sky = this.add.image(0, 0, 'nightSky').setAlpha(0);
@@ -295,7 +296,7 @@ export default class GameScene extends Scene {
     toggleCultist(visible) {
         // only appears at night, warns you of monsters
         if (visible) {            
-            this.cultist = this.createNewNpc(120, 180, 'cultist', '???'); 
+            this.cultist = this.createNewNpc(120, 180, 'cultist', 'Sinister looking man'); 
             this.cultist.setFrame(7);     
             this.cultist.setActive(visible).setVisible(visible);
             this.cultist.createTalkingCollider(this.player);

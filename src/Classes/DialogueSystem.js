@@ -20,19 +20,15 @@ export default class DialogueSystem {
         //  vvvvv
         
         // text to pass to create new Text method in UI Scene
-        this.currentText = "";
-
-        // this.speechText = this.add.text(
-        //     this.container.width / 2 - 40, 
-        //     this.uiBackground.y, 
-        //     ""
-        // );
-        // this.speechText.setText("");
-        // this.speechText.setText(convo[chars[this.charIndex]][0]);
+        this.currentTextIndex = 0;
     }
 
-    startConversation(key) {        
-        console.log(this.conversations);
+    startConversation() {        
+        let chap = this.currentChapter.toString();
+        let keyIndex = this.character.conversationKeyIndex;
+        let key = this.conversations["keys"][keyIndex];
+        let text = this.conversations[chap][this.character.name][key]["words"][this.currentTextIndex][this.character.name];
+        return text;
     }
 
     stopConversation() {
