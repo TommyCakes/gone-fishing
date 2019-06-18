@@ -27,7 +27,7 @@ export default class DialogueSystem {
         let chap = this.currentChapter.toString();
         let keyIndex = this.character.conversationKeyIndex;
         let key = this.conversations["keys"][keyIndex];
-        let text = this.conversations[chap][this.character.name][key]["words"][this.currentTextIndex][this.character.name];
+        let text = this.conversations[chap][this.character.name][key]["words"][this.currentTextIndex][this.character.name];        
         return text;
     }
 

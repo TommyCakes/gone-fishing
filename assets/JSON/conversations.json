@@ -1,5 +1,12 @@
 {
     "conversations": {
+      "keys": [
+        "intro", 
+        "unrelated", 
+        "helpful", 
+        "quest", 
+        "end"
+      ],
       "1": {
         "Claris": {
           "intro": {
@@ -27,7 +34,7 @@
         }
       },
       "Doggo": {
-          "key": "intro",
+        "intro": {
           "words": [
             {
               "Doggo": "Woof woof!",
@@ -38,27 +45,36 @@
               "Player": "..."
             }             
           ]
-        }
+        }        
+      },
+      "Xaven": {
+        "intro": {
+          "words": [
+            {
+              "Xaven": "Come one, come all and sell me Fresh Fish!",
+              "Player": "You're in luck I have fish! Is this fresh enough?"
+            },
+            {
+              "Xaven": "Meh, it will do I spose",
+              "Player": "..."
+            }             
+          ]
+        }        
       },
       "Cultist": {
-        "key": "intro",
-        "words": [
-          {
-            "Cultist": "You shouldn't be out this late...",
-            "Player": "What, why? I just want to a spot of night fishing :)"
-          },
-          {
-            "Doggo": "Foolish mortal",
-            "Player": "???"
-          }             
-        ]
-      },
-      "keys": [
-        "intro", 
-        "unrelated", 
-        "helpful", 
-        "quest", 
-        "end"
-      ]      
-    }
+        "intro": {
+          "words": [
+            {
+              "Cultist": "You shouldn't be out this late...",
+              "Player": "What, why? I just want to a spot of night fishing :)"
+            },
+            {
+              "Doggo": "Foolish mortal",
+              "Player": "???"
+            }             
+          ]
+        }        
+      }
+    }        
   }
+}

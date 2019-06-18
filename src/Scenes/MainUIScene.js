@@ -181,6 +181,7 @@ export default class MainUIScene extends Scene {
         let key = info.texture.key;
         // let chapter = info[1];
 
+        console.log(info);
         let style = this.getBasicStyle('#5d5d2f', 'left', '30px', 500);  
         this.container = this.add.container(this.game.config.width / 2, this.game.config.height - 145);
         this.uiBackground = this.add.image(this.x, this.y, 'speechEmpty'); 
@@ -188,7 +189,8 @@ export default class MainUIScene extends Scene {
         this.speechText = this.add.text(
             this.container.width / 2 - 40, 
             this.uiBackground.y, 
-            ""
+            "",
+            style
         );
         let conversations = this.gameScene.conversations.conversations;
         let d = new Dialogue(conversations, info, 1); //chapter 1 hardcoded for testing
