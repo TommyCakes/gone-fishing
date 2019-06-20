@@ -164,7 +164,8 @@ export default class PreloadScene extends Scene {
         this.load.image("nightSky", "../assets/images/sky-test.png");
         this.load.image("claris-face", "../assets/faces/claris-face.png");
         this.load.image("cultist-face", "../assets/faces/cultist-face.png");
-        this.load.image("player1", "../assets/faces/player1.png");
+        this.load.image("player-face", "../assets/faces/player-face.png");
+        this.load.image("doggo-face", "../assets/faces/doggo-face.png");
 
         this.load.image("tiles", "../assets/sprites/overworld.png");
         this.load.tilemapTiledJSON("main-world", "../assets/JSON/fishing-map.json");

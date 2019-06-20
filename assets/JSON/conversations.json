@@ -1,43 +1,80 @@
 {
     "conversations": {
+      "keys": [
+        "intro", 
+        "unrelated", 
+        "helpful", 
+        "quest", 
+        "end"
+      ],
       "1": {
         "Claris": {
-          "key": "claris-intro",
+          "intro": {
+            "words": [
+            {
+              "Claris": "HELLO! So are you the new guy that just moved in?",
+              "Player": "Uhhh no? I've lived here for the 10 years."
+            },
+            {
+              "Claris": "Oh sorry I didn't know that was your grandpa...",
+              "Player": "You knew my Grandpa?!"
+            },
+            {
+              "Claris": "Yes actually, he was a great man was obsessed with catching that monster fish, never let up about it",
+              "Player": "I remember the stories! He's gone off to try and track it down... Sadly I'm not ready to join him yet."
+            },
+            {
+              "Claris": "Well I can teach you basics if you want?",
+              "Player": "Oh really, well that would be helpful"
+            },
+            {
+              "Claris": "Great! Well follow me then!"
+            }
+          ]          
+        }
+      },
+      "Doggo": {
+        "intro": {
           "words": [
             {
-              "claris": "HELLO! So are you the new guy that just moved in?",
-              "player": "Uhhh no? I've lived here for the 10 years."
+              "Doggo": "Woof woof!",
+              "Player": "Hey Doggo, who's a good boy!"
             },
             {
-              "claris": "Oh sorry I didn't know that was your grandpa...",
-              "player": "You knew my Grandpa?!"
-            },
-            {
-              "claris": "Yes actually, he was a great man was obsessed with catching that monster fish, never let up about it",
-              "player": "I remember the stories! He's gone off to try and track it down... Sadly I'm not ready to join him yet."
-            },
-            {
-              "claris": "Well I can teach you basics if you want?",
-              "player": "Oh really, well that would be helpful"
-            },
-            {
-              "claris": "Great! Well follow me then!"
-            }
+              "Doggo": "Woof?",
+              "Player": "..."
+            }             
           ]
-        },
-        "Doggo": {
-            "key": "dog",
-            "words": [
-              {
-                "doggo": "Woof woof!",
-                "player": "Hey doggo, who's a good boy!"
-              },
-              {
-                "doggo": "Woof?",
-                "player": "..."
-              }             
-            ]
-        }
+        }        
+      },
+      "Xaven": {
+        "intro": {
+          "words": [
+            {
+              "Xaven": "Come one, come all and sell me Fresh Fish!",
+              "Player": "You're in luck I have fish! Is this fresh enough?"
+            },
+            {
+              "Xaven": "Meh, it will do I spose",
+              "Player": "..."
+            }             
+          ]
+        }        
+      },
+      "Cultist": {
+        "intro": {
+          "words": [
+            {
+              "Cultist": "You shouldn't be out this late...",
+              "Player": "What, why? I just want to a spot of night fishing :)"
+            },
+            {
+              "Doggo": "Foolish mortal",
+              "Player": "???"
+            }             
+          ]
+        }        
       }
-    }
+    }        
   }
+}

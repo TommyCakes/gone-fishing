@@ -8,7 +8,8 @@ export default class Npc extends Entity {
 
         this.body.moves = false;
         this.body.setCircle(25);        
-        this.setScale(0.4);          
+        this.setScale(0.4);    
+        this.conversationKeyIndex = 0;      
     }
 
     talking () {

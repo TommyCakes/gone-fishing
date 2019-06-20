@@ -167,39 +167,42 @@ export default class MainUIScene extends Scene {
         return container;                                                                                          
     }
 
-    // moveOnText() {
-    //     // change character
-    //     this.charIndex += 1;                     
-    //     if (this.charIndex === 2) {
-    //         this.charIndex = 0;  
-    //     }
-    // }
+    moveOnText() {
+        // change character
+        // this.charIndex += 1;                     
+        // if (this.charIndex === 2) {
+        //     this.charIndex = 0;  
+        // }
+
+    }
 
     createDialoguePopup(info) {   
         console.log(info.name);
         let key = info.texture.key;
         // let chapter = info[1];
 
+        console.log(info);
         let style = this.getBasicStyle('#5d5d2f', 'left', '30px', 500);  
         this.container = this.add.container(this.game.config.width / 2, this.game.config.height - 145);
         this.uiBackground = this.add.image(this.x, this.y, 'speechEmpty'); 
-        // let d = new Dialogue(this.conversations);
-        // d.startConversation();
-        // console.log(d);
         this.currentTalkingFace = this.add.image(300, 10, `${key}-face`);    
         this.speechText = this.add.text(
             this.container.width / 2 - 40, 
             this.uiBackground.y, 
-            ""
+            "",
+            style
         );
-        this.speechText.setText("");
-        // this.speechText.setText(convo[chars[this.charIndex]][0]);
+        let conversations = this.gameScene.conversations.conversations;
+        let d = new Dialogue(conversations, info, 1); //chapter 1 hardcoded for testing
+                
+        // this.speechText.setText("");
+        this.speechText.setText(d.startConversation());
         
         this.uiBackground.setScale(0.6);
         this.currentTalkingFace.setScale(2.3);
         this.speechText.setOrigin(0.5, 0.5);   
         this.container.add([this.uiBackground, this.currentTalkingFace, this.speechText]);
-        // this.removeUI(this.container, 5000);
+        this.removeUI(this.container, 2000);
     }
 
     removeUI(ui, delay = 2000) {

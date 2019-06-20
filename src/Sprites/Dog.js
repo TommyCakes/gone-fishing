@@ -1,15 +1,17 @@
 import Entity from './Entity';
 import Game from '../Scenes/GameScene'
 
-export default class Pet extends Entity {
+export default class Dog extends Entity {
     
     constructor(scene, x, y, key) {        
-        super(scene, x, y, key, "Pet");
+        super(scene, x, y, key);
         
         this.setData("speed", 30);
         this.body.moves = true;  
         this.body.immovable = true;
         this.setDepth(1);
+        this.name = "Doggo";
+        this.conversationKeyIndex = 0;      
 
         this.scene.anims.create({
             key: 'idle',
@@ -111,6 +113,16 @@ export default class Pet extends Entity {
     moveRight() {
         this.body.velocity.x = this.getData("speed");
         this.anims.play('walk-right');
+    }
+
+    talking () {
+        this.scene.events.emit('showDialoguePopup', this);
+    }
+
+    createTalkingCollider(obj) {
+        this.scene.physics.add.collider(obj, this, () => {
+            this.talking();
+        }); 
     }
 
     update() {

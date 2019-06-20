@@ -2,7 +2,7 @@ import { Scene } from 'phaser';
 import Player from "../Sprites/Player";
 import Shop from '../Classes/Shop';
 import Fishing from '../Classes/Fishing';
-import Pet from '../Sprites/Pet';
+import Dog from '../Sprites/Dog';
 import Enemy from '../Sprites/Enemy';
 import Npc from '../Sprites/Npc';
 
@@ -111,7 +111,7 @@ export default class GameScene extends Scene {
             .fillCircleShape(new Phaser.Geom.Circle(this.player.x, this.player.y, 20));
         this.lampShape.alpha = 0.5;
         
-        this.doggo = new Pet(
+        this.doggo = new Dog(
             this,
             210,
             200,
@@ -121,6 +121,7 @@ export default class GameScene extends Scene {
         // this.doggo.anims.play('walk-right', true);
         // this.doggo.moveRight();
         this.doggo.anims.play('idle', true);
+        this.doggo.createTalkingCollider(this.player);
                         
         // Load map
         const map = this.make.tilemap({ key: "main-world" });
@@ -145,13 +146,15 @@ export default class GameScene extends Scene {
         // this.npcZone = this.createNewZone(120, 180, 50, 50);  
         // this.npcZone.setName('cultist');            
         
-        this.baitShopKeeper = this.createNewNpc(180, 300, 'claris', 'claris');
+        this.baitShopKeeper = this.createNewNpc(180, 300, 'claris', 'Claris');
         this.baitShopKeeper.setFrame(9);        
         // this.physics.add.collider(this.player, this.baitShopKeeper);  
         this.baitShopKeeper.createTalkingCollider(this.player);
 
-        this.shopKeeper = this.createNewNpc(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 'Xaven'); 
+        this.shopKeeper = this.createNewNpc(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 'Xaven');         
         this.shopKeeper.setFrame(8);     
+
+        this.shopKeeper.createTalkingCollider(this.player);
 
         this.sign = this.add.sprite(this.shopKeeper.x + 30, this.shopZone.y + 40, 'fishSign');
         this.sign.displayHeight = 24;
@@ -194,10 +197,10 @@ export default class GameScene extends Scene {
         this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
         this.cameras.main.setFollowOffset(-50, -30);
         this.cameras.main.zoom = 4;
-        this.physics.add.collider(this.player, worldLayer);
-        this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);
-        this.physics.add.collider(this.player, waterLayer, () => this.doggo.bumpCount += 1);           
-        this.physics.add.collider(this.doggo, waterLayer);           
+        this.physics.add.collider(this.player, worldLayer);        
+        // this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);
+        // this.physics.add.collider(this.doggo, waterLayer);        
+        this.physics.add.collider(this.player, waterLayer, () => this.doggo.bumpCount += 1);                      
         this.events.emit('updateUI', this.playerInfo);               
         
         this.catchesRemaining = this.playerInfo.catchesRemainingForTheDay 
@@ -215,7 +218,8 @@ export default class GameScene extends Scene {
             // });
         });
 
-        this.input.keyboard.on('keydown_A', function (event) {            
+        this.input.keyboard.on('keydown_SPACE', function (event) {   
+            console.log('space hit!');         
         }); 
 
         this.sky = this.add.image(0, 0, 'nightSky').setAlpha(0);
@@ -295,7 +299,7 @@ export default class GameScene extends Scene {
     toggleCultist(visible) {
         // only appears at night, warns you of monsters
         if (visible) {            
-            this.cultist = this.createNewNpc(120, 180, 'cultist', '???'); 
+            this.cultist = this.createNewNpc(120, 180, 'cultist', 'Cultist'); 
             this.cultist.setFrame(7);     
             this.cultist.setActive(visible).setVisible(visible);
             this.cultist.createTalkingCollider(this.player);
