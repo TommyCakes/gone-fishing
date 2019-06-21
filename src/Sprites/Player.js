@@ -2,6 +2,7 @@ import Entity from './Entity';
 import Bobble from './Bobble';
 import Game from '../Scenes/GameScene'
 import Level from '../Classes/Level';
+import Rod from '../Classes/Rod';
 
 export default class Player extends Entity {
         
@@ -13,6 +14,11 @@ export default class Player extends Entity {
         this.setData("timerFishingDelay", 5000);
         this.body.moves = true;  
         this.setDepth(1);
+        
+        let startingRod = this.scene.rodList[0];
+        // load starting rod 
+        let rod = new Rod(startingRod);
+        // check to see if there is a better rod equipped
 
         /* The player object */        
         this.info = {
@@ -35,7 +41,7 @@ export default class Player extends Entity {
 
                 ],
                 rods: [
-                    
+                    rod
                 ],
                 baits: [
             
@@ -197,35 +203,7 @@ export default class Player extends Entity {
         this.spawnSplash();
         return fishCaught;
     }
-    
-    // TODO: add fish helper to make more DRY
-    amountOfExperiencePointsOnRarity(rarity) {
-        let xpAmount;
-
-        switch(rarity) {
-            case 'common':
-                xpAmount = 5;
-                break;
-            case 'uncommon':
-                xpAmount = 15;
-                break;
-            case 'rare':
-                xpAmount = 40
-                break;
-            case 'super rare':
-                xpAmount = 100;
-                break;
-            case 'legendary':
-                xpAmount = 250;
-                break;
-            default:
-                xpAmount = 0;
-        }
-
-        console.log(`xp earned = ${xpAmount}`)
-        return xpAmount;
-    }
-
+        
     collectFish(fish) {   
 
         if (this.checkForFish()) {                     

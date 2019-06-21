@@ -72,6 +72,7 @@ export default class GameScene extends Scene {
         
         this.UIScene = this.scene.get('UIScene');  
         let fishList = this.cache.json.get('fishList').fish.type;
+        this.rodList = this.cache.json.get('rodList').rod.type;
         this.fishingObj = new Fishing(fishList);
         this.conversations = this.cache.json.get('conversations');
         console.log(this.conversations);  
