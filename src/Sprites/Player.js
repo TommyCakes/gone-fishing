@@ -25,7 +25,7 @@ export default class Player extends Entity {
             name: "TommyCakes",
             level: 1,    
             // for testing...
-            catchesRemainingForTheDay: 5,
+            catchesRemainingForTheDay: rod.maxCatchAttempts,
             cash: 10,
             rarestFishCaught: "",
             level: 0,
@@ -184,21 +184,21 @@ export default class Player extends Entity {
     getRandomIntBetween(max) {
         return Math.floor(Math.random() * max);
     }
-        
+    
+    getFishCatchChance() {
+        // return this.info.inventory.rods[0].chanceToLandFish;
+    }
+
     checkForFish() {
         let rdmNum = this.getRandomIntBetween(101);
         let fishCaught = false;
-    
-        // if (rdmNum <= 40) { 
-        //     fishCaught = false;
-        // } else if (rdmNum <= 60) {
-        //     fishCaught = false;
-        // } else if (rdmNum <= 80) {
-        //     fishCaught = false;
-        // } else 
-        if (rdmNum < 100) {
+        
+        if (rdmNum <= this.getFishCatchChance) { 
             fishCaught = true;
+        } else {
+            fishCaught = false;
         }
+
         this.bobble.destroy();
         this.spawnSplash();
         return fishCaught;
@@ -275,13 +275,7 @@ export default class Player extends Entity {
         // Better rod = faster catch time && cooldown                
         this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.collectFish, [fish], this);                                                                                                                                                                                                                  
     }
-
-    setRandomCatchAttempts() {
-        this.info.catchesRemainingForTheDay = 0;
-        // TODO: set catch attempt based on quality of rod
-        this.info.catchesRemainingForTheDay = getRandomIntBetween(10);
-    }    
-    
+ 
     saveGame() {
         localStorage.setItem('save', JSON.stringify(this.info));
     }
