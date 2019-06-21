@@ -35,33 +35,9 @@ export default class Level {
         return levels            
     }
     
-    amountOfExperiencePointsOnRarity(rarity) {
-        let xpAmount;
-
-        switch(rarity) {
-            case 'common':
-                xpAmount = 5;
-                break;
-            case 'uncommon':
-                xpAmount = 15;
-                break;
-            case 'rare':
-                xpAmount = 40
-                break;
-            case 'super rare':
-                xpAmount = 100;
-                break;
-            case 'legendary':
-                xpAmount = 250;
-                break;
-            default:
-                xpAmount = 0;
-        }
-        return xpAmount;
-    }
 
     showExperienceText(fish) {
-        let amount = this.amountOfExperiencePointsOnRarity(fish.rarity);
+        let amount = fish.checkExpReturnedForCatch();
         console.log(fish.rarity);
         this.scene.events.emit('showTextPopup', [`${amount} XP`, this.player]);   
     }

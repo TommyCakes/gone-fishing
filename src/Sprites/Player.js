@@ -35,7 +35,7 @@ export default class Player extends Entity {
 
                 ],
                 rods: [
-                
+                    
                 ],
                 baits: [
             
@@ -229,7 +229,7 @@ export default class Player extends Entity {
     collectFish(fish) {   
 
         if (this.checkForFish()) {                     
-            let amountOfXP = this.amountOfExperiencePointsOnRarity(fish.rarity)
+            let amountOfXP = fish.checkExpReturnedForCatch();
             this.info.inventory.fish.push(fish);   
             this.info.xpPool += amountOfXP;          
             this.scene.events.emit('showFishUIPopup', fish);                          

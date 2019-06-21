@@ -471,11 +471,11 @@ export default class GameScene extends Scene {
                 this.fishingtimer.paused = true;  
                 if (touching && wasTouching) {   
                     
-                    if (this.outOfCatchAttempts) {
-                        this.events.emit('showUIPopup', "You're all fished out for the day!");
-                        return;
-                    }                    
-                    
+                    // if (this.outOfCatchAttempts) {
+                    //     this.events.emit('showUIPopup', "You're all fished out for the day!");
+                    //     return;
+                    // }                    
+                                    
                     if (!this.hasFished) {
                         this.hasFished = true;
                         // this.events.emit('showUIPopup', "Press space to cast your rod");
@@ -497,7 +497,7 @@ export default class GameScene extends Scene {
                         });
 
                         this.fishingtimer.paused = false;                                                                                         
-                        this.player.fishing(this.fishingObj.getRandomFish(), this.playerDirection);                                                                        
+                        this.player.fishing(this.fishingObj.getRandomFish(this.player), this.playerDirection);                                                                        
                         this.events.on('fishBit', () => {
                             this.createEmote('exclamation', this.player);                                 
                         });                                    
