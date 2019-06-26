@@ -2,6 +2,7 @@ import Entity from './Entity';
 import Bobble from './Bobble';
 import Game from '../Scenes/GameScene'
 import Level from '../Classes/Level';
+import Rod from '../Classes/Rod';
 
 export default class Player extends Entity {
         
@@ -13,13 +14,18 @@ export default class Player extends Entity {
         this.setData("timerFishingDelay", 5000);
         this.body.moves = true;  
         this.setDepth(1);
+        
+        let startingRod = this.scene.rodList[0];
+        // load starting rod 
+        let rod = new Rod(startingRod);
+        // check to see if there is a better rod equipped
 
         /* The player object */        
         this.info = {
             name: "TommyCakes",
             level: 1,    
             // for testing...
-            catchesRemainingForTheDay: 5,
+            catchesRemainingForTheDay: rod.maxCatchAttempts,
             cash: 10,
             rarestFishCaught: "",
             level: 0,
@@ -35,7 +41,7 @@ export default class Player extends Entity {
 
                 ],
                 rods: [
-                
+                    rod
                 ],
                 baits: [
             
@@ -178,58 +184,31 @@ export default class Player extends Entity {
     getRandomIntBetween(max) {
         return Math.floor(Math.random() * max);
     }
-        
+    
+    getFishCatchChance() {
+        console.log(`Your chance is currently : ${this.info.inventory.rods[0].chanceToLandFish}`);
+        return this.info.inventory.rods[0].chanceToLandFish;
+    }
+
     checkForFish() {
         let rdmNum = this.getRandomIntBetween(101);
         let fishCaught = false;
-    
-        // if (rdmNum <= 40) { 
-        //     fishCaught = false;
-        // } else if (rdmNum <= 60) {
-        //     fishCaught = false;
-        // } else if (rdmNum <= 80) {
-        //     fishCaught = false;
-        // } else 
-        if (rdmNum < 100) {
+        
+        if (rdmNum <= this.getFishCatchChance()) { 
             fishCaught = true;
+        } else {
+            fishCaught = false;
         }
+
         this.bobble.destroy();
         this.spawnSplash();
         return fishCaught;
     }
-    
-    // TODO: add fish helper to make more DRY
-    amountOfExperiencePointsOnRarity(rarity) {
-        let xpAmount;
-
-        switch(rarity) {
-            case 'common':
-                xpAmount = 5;
-                break;
-            case 'uncommon':
-                xpAmount = 15;
-                break;
-            case 'rare':
-                xpAmount = 40
-                break;
-            case 'super rare':
-                xpAmount = 100;
-                break;
-            case 'legendary':
-                xpAmount = 250;
-                break;
-            default:
-                xpAmount = 0;
-        }
-
-        console.log(`xp earned = ${xpAmount}`)
-        return xpAmount;
-    }
-
+        
     collectFish(fish) {   
 
         if (this.checkForFish()) {                     
-            let amountOfXP = this.amountOfExperiencePointsOnRarity(fish.rarity)
+            let amountOfXP = fish.checkExpReturnedForCatch();
             this.info.inventory.fish.push(fish);   
             this.info.xpPool += amountOfXP;          
             this.scene.events.emit('showFishUIPopup', fish);                          
@@ -284,7 +263,6 @@ export default class Player extends Entity {
         });
         this.splash.anims.play('catch', true);
     }
-
     decreaseCatchesRemaining() {      
         this.info.catchesRemainingForTheDay -= 1;                   
     }
@@ -297,13 +275,7 @@ export default class Player extends Entity {
         // Better rod = faster catch time && cooldown                
         this.scene.time.delayedCall(this.getData("timerFishingDelay"), this.collectFish, [fish], this);                                                                                                                                                                                                                  
     }
-
-    setRandomCatchAttempts() {
-        this.info.catchesRemainingForTheDay = 0;
-        // TODO: set catch attempt based on quality of rod
-        this.info.catchesRemainingForTheDay = getRandomIntBetween(10);
-    }    
-    
+ 
     saveGame() {
         localStorage.setItem('save', JSON.stringify(this.info));
     }

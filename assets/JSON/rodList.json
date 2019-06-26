@@ -1,0 +1,60 @@
+{
+    "rod": {
+      "type": [
+        {
+          "name": "Wooden",
+          "description": "Just you're standard fishing rod",  
+          "chanceToLandFish":  45,
+          "chanceToGetTreasure": 2,
+          "maxCatchAttempts": 5,        
+          "value": "25",
+          "rarity": "trash"
+        },
+        {
+          "name": "Bamboo",
+          "description": "Just you're standard fishing rod",  
+          "chanceToLandFish":  35,
+          "chanceToGetTreasure": 10,
+          "maxCatchAttempts": 6,           
+          "value": "200",
+          "rarity": "uncommon"
+        },
+        {
+          "name": "Fiberglass",
+          "description": "Just you're standard fishing rod",  
+          "chanceToLandFish":  55,
+          "chanceToGetTreasure": 22,
+          "maxCatchAttempts": 7,           
+          "value": "750",
+          "rarity": "common"
+        },
+        {
+          "name": "Graphite",
+          "description": "Just you're standard fishing rod",
+          "chanceToLandFish":  75,
+          "chanceToGetTreasure": 30,
+          "maxCatchAttempts": 9,   
+          "value": "1200",
+          "rarity": "rare"
+        },
+        {
+          "name": "Carbon Fibre",
+          "description": "Just you're standard fishing rod!",  
+          "chanceToLandFish":  85,
+          "chanceToGetTreasure": 48,
+          "maxCatchAttempts": 10,           
+          "value": "3000",
+          "rarity": "ultra rare"
+        },
+        {
+          "name": "Diamond rod of Hooking and Landing",
+          "description": "Just you're standard fishing rod!",  
+          "chanceToLandFish":  97,
+          "chanceToGetTreasure": 62,
+          "maxCatchAttempts":15,           
+          "value": "50000",
+          "rarity": "legendary"
+        }
+      ]
+    }
+  }
