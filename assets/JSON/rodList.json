@@ -4,7 +4,7 @@
         {
           "name": "Wooden",
           "description": "Just you're standard fishing rod",  
-          "chanceToLandFish":  25,
+          "chanceToLandFish":  45,
           "chanceToGetTreasure": 2,
           "maxCatchAttempts": 5,        
           "value": "25",

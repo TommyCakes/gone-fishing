@@ -186,14 +186,15 @@ export default class Player extends Entity {
     }
     
     getFishCatchChance() {
-        // return this.info.inventory.rods[0].chanceToLandFish;
+        console.log(`Your chance is currently : ${this.info.inventory.rods[0].chanceToLandFish}`);
+        return this.info.inventory.rods[0].chanceToLandFish;
     }
 
     checkForFish() {
         let rdmNum = this.getRandomIntBetween(101);
         let fishCaught = false;
         
-        if (rdmNum <= this.getFishCatchChance) { 
+        if (rdmNum <= this.getFishCatchChance()) { 
             fishCaught = true;
         } else {
             fishCaught = false;
@@ -262,7 +263,6 @@ export default class Player extends Entity {
         });
         this.splash.anims.play('catch', true);
     }
-
     decreaseCatchesRemaining() {      
         this.info.catchesRemainingForTheDay -= 1;                   
     }
