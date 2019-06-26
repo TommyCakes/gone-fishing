@@ -77,7 +77,7 @@ export default class GameScene extends Scene {
         this.conversations = this.cache.json.get('conversations');
         console.log(this.conversations);  
                 
-        // Setup input keys                                
+        // Setup input keys                                        
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -85,7 +85,19 @@ export default class GameScene extends Scene {
         this.cursors = this.input.keyboard.createCursorKeys();            
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.keys = {
+            'w': this.keyW, 
+            's': this.keyS, 
+            'a': this.keyA, 
+            'd': this.keyD, 
+            'cursors': this.cursors, 
+            'e': this.keyE, 
+            'space': this.keySpace
+        };
         
+        const {w, s, a, d, cursors, e, space } = this.keys;
+
         // Activities
         this.canFish = true;
         this.canShop = true;
@@ -100,7 +112,8 @@ export default class GameScene extends Scene {
             this,            
             150,
             210,
-            "sprPlayer"
+            "sprPlayer",
+            this.keys
         );
         
         this.playerInfo = this.player.getInfo();
@@ -531,22 +544,6 @@ export default class GameScene extends Scene {
             }                   
         } 
                 
-        if (this.keyW.isDown || this.cursors.up.isDown ) {
-            this.player.moveUp();
-            this.player.anims.play('up', true);               
-        } else if (this.keyS.isDown || this.cursors.down.isDown) {
-            this.player.moveDown();
-            this.player.anims.play('down', true);
-        } else if (this.keyA.isDown || this.cursors.left.isDown) {
-            this.player.moveLeft();           
-
-            this.player.anims.play('left', true);
-        } else if (this.keyD.isDown || this.cursors.right.isDown) {
-            this.player.moveRight();
-            this.player.anims.play('right', true);
-        } else {                                            
-        }
-        
         this.player.body.velocity.normalize().scale(this.player.getData("speed"));
         this.doggo.body.velocity.normalize().scale(this.doggo.getData("speed"));
     }
