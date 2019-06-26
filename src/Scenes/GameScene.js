@@ -40,7 +40,6 @@ export default class GameScene extends Scene {
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
     }
-
     
     create() {            
         // set up timer for day clock     
@@ -77,14 +76,14 @@ export default class GameScene extends Scene {
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
         // Activities
-        // this.canFish = true;
-        // this.canShop = true;
-        // this.canBuyBait = true;
-        // this.canSleep = true;                             
-        // this.hasInteractedWithDog = false;          
-        // this.hasFished = false;
-        // this.outOfCatchAttempts = false; 
-        // this.isTalking = false;                
+        this.canFish = true;
+        this.canShop = true;
+        this.canBuyBait = true;
+        this.canSleep = true;                             
+        this.hasInteractedWithDog = false;          
+        this.hasFished = false;
+        this.outOfCatchAttempts = false; 
+        this.isTalking = false;                
 
         this.player = new Player(
             this,            
@@ -99,10 +98,7 @@ export default class GameScene extends Scene {
         // sceneHelper class
         this.sceneHelper = new SceneHelper(this);
         this.sceneHelper.setup();
-        
-        let {keyW, keyS, keyA, keyD, cursors, keyE, keySpace} = this.sceneHelper.getKeys(); 
-        console.log(keyW, keyS, keyA, keyD, cursors, keyE, keySpace);   
-
+                 
         // torch light for player
         this.lampShape = this.make.graphics({ 
             fillStyle: { color: 0x000000 }, add: false})

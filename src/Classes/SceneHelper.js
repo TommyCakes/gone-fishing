@@ -7,6 +7,17 @@ export default class Helper {
         this.scene = scene;
     }
 
+    setup() {
+        this.setupCamera();         
+    }
+
+    setupCamera() {
+        this.scene.cameras.main.startFollow(this.scene.player);
+        this.scene.cameras.main.setBounds(0, 0, this.scene.game.width, this.scene.game.height);
+        this.scene.cameras.main.setFollowOffset(-50, -30);
+        this.scene.cameras.main.zoom = 4;
+    }
+
     createNewZone(x, y, w, h) {
         let zone = this.scene.add.zone(x, y).setSize(w, h);
         this.scene.physics.world.enable(zone, 0);
