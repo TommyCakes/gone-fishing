@@ -6,9 +6,11 @@ import Rod from '../Classes/Rod';
 
 export default class Player extends Entity {
         
-    constructor(scene, x, y, key) {        
+    constructor(scene, x, y, key, keys) {        
         super(scene, x, y, key, "Player");
         
+        this.keys = keys;
+
         this.setData("speed", 100);
         this.setData("isFishing", false);
         this.setData("timerFishingDelay", 5000);
@@ -337,6 +339,10 @@ export default class Player extends Entity {
         this.sleep(true, true);
     }
 
+    create() {
+                
+    }
+
     update() {        
 
         if (this.body.velocity.x === 0 && this.body.velocity.y === 0 && !this.isFishing) {
@@ -357,6 +363,23 @@ export default class Player extends Entity {
         }
 
         this.body.setVelocity(0, 0);
+
+        if (this.keys.w.isDown || this.keys.cursors.up.isDown ) {
+            this.moveUp();
+            this.anims.play('up', true);               
+        } else if (this.keys.s.isDown || this.keys.cursors.down.isDown) {
+            this.moveDown();
+            this.anims.play('down', true);
+        } else if (this.keys.a.isDown || this.keys.cursors.left.isDown) {
+            this.moveLeft();           
+            this.anims.play('left', true);
+        } else if (this.keys.d.isDown || this.keys.cursors.right.isDown) {
+            this.moveRight();
+            this.anims.play('right', true);
+        } else {   
+            //                                         
+        }
+        
         
         this.x = Phaser.Math.Clamp(this.x, 0, this.scene.game.config.width);
         this.y = Phaser.Math.Clamp(this.y, 0, this.scene.game.config.height);        
