@@ -65,12 +65,10 @@
         "intro": {
           "words": [
             {
-              "Cultist": "You shouldn't be out this late...",
-              "Player": "What, why? I just want to a spot of night fishing :)"
+              "Cultist": "You shouldn't be out this late..."
             },
             {
-              "Doggo": "Foolish mortal",
-              "Player": "???"
+              "Cultist": "Foolish mortal"
             }             
           ]
         }        
