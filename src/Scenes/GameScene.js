@@ -145,27 +145,47 @@ export default class GameScene extends Scene {
         this.waterZone = this.sceneHelper.createNewZone(0, 0, 70, 900);
         this.waterZone2 = this.sceneHelper.createNewZone(230, 180, 100, 180);
 
-        this.homeZone = this.sceneHelper.createNewZone(120, 60, 60, 50);        
-        this.shopZone = this.sceneHelper.createNewZone(380, 420, 120, 80);        
-        // this.baitShopZone = this.sceneHelper.createNewZone(180, 300, 60, 40);        
-        this.dogZone = this.sceneHelper.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
+        this.homeZone = this.sceneHelper.createNewZone(120, 60, 60, 50);
+        this.shopZone = this.sceneHelper.createNewZone(380, 420, 120, 80);                        
         this.caveEntrance = this.sceneHelper.createNewZone(350, 180, 20, 16);        
         // this.npcZone = this.sceneHelper.createNewZone(120, 180, 50, 50);  
         // this.npcZone.setName('cultist');            
-        
-        this.baitShopKeeper = this.sceneHelper.createNewNpc(180, 300, 'claris', 'Claris');
-        this.baitShopKeeper.setFrame(9);        
-        // this.physics.add.collider(this.player, this.baitShopKeeper);  
-        this.baitShopKeeper.createTalkingCollider(this.player);
-
+                     
         this.shopKeeper = this.sceneHelper.createNewNpc(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 'Xaven');         
         this.shopKeeper.setFrame(8);     
-
         this.shopKeeper.createTalkingCollider(this.player);
 
         this.sign = this.add.sprite(this.shopKeeper.x + 30, this.shopZone.y + 40, 'fishSign');
         this.sign.displayHeight = 24;
         this.sign.displayWidth = 24;
+                              
+        this.dogZone = this.sceneHelper.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50); 
+        
+        // this.baitShopContainer = this.add.container(180, 300);        
+        this.baitShopKeeper = this.sceneHelper.createNewNpc(180, 300, 'claris', 'Claris');
+        this.baitShopKeeper.setFrame(9);    
+        this.baitShopKeeper.setDepth(1);             
+        this.baitShopKeeper.createTalkingCollider(this.player);
+        this.baitShopKeeper.zone.name = this.baitShopKeeper.name;
+        // this.npcZone = this.sceneHelper.createNewZone(this.baitShopKeeper.x, 300, 60, 40);  
+        // this.baitShopContainer.add([this.baitShopKeeper]);
+        // this.baitShopContainer.setDepth(1);  
+        
+        this.cultist = this.sceneHelper.createNewNpc(120, 180, 'cultist', 'Cultist'); 
+        this.cultist.setFrame(7);     
+        // this.cultist.setActive(visible).setVisible(visible);
+        this.cultist.createTalkingCollider(this.player);
+        this.cultist.body.enable = false;
+
+        this.physics.add.overlap(this.player, this.baitShopKeeper.zone, () => { 
+            this.resetCurrentActivity(this.baitShopKeeper.zone);
+            this.getAndSetZoneAndNpc(this.baitShopKeeper, this.baitShopKeeper.zone)            
+        }); 
+
+        this.physics.add.overlap(this.player, this.cultist.zone, () => { 
+            this.resetCurrentActivity();
+            this.getAndSetZoneAndNpc(this.cultist, this.cultist.zone)                  
+        }); 
 
         this.physics.add.collider(this.player, this.shopKeeper);  
         this.physics.add.collider(this.player, this.doggo, () => this.doggo.bumpCount += 1);                      
@@ -186,10 +206,7 @@ export default class GameScene extends Scene {
             this.resetCurrentActivity();
             this.canShop = true;
         });            
-        // this.physics.add.overlap(this.player, this.baitShopZone, () => { 
-        //     this.resetCurrentActivity();
-        //     this.canBuyBait = true;
-        // });            
+                   
         this.physics.add.overlap(this.player, this.dogZone, () => { 
             this.resetCurrentActivity();
             this.hasInteractedWithDog = true;
@@ -213,6 +230,10 @@ export default class GameScene extends Scene {
         this.shopObj = new Shop();        
         this.night = false;
 
+        this.npcInteractedWith = "";
+        this.isInteractingWithNpc = false;
+        this.currentZone = "";
+
         this.events.on('pauseGame', () => {
             // this.scene.pause();
             this.events.emit('showLevelUpPopup', this.player.info.level);              
@@ -222,7 +243,7 @@ export default class GameScene extends Scene {
         });
 
         this.input.keyboard.on('keydown_SPACE', function (event) {   
-            console.log('space hit!');         
+            console.log('space hit!');                 
         }); 
 
         this.sky = this.add.image(0, 0, 'nightSky').setAlpha(0);
@@ -266,9 +287,16 @@ export default class GameScene extends Scene {
                 // yoyo: true,
                 // repeat: 0,
             });
-        });                                      
+        });                
     }  
     
+    getAndSetZoneAndNpc(npc, zone) {
+        this.isInteractingWithNpc = true;
+        this.npcInteractedWith = npc;
+        this.currentZone = zone;
+        console.log(`Hi! ${this.npcInteractedWith.name}`);
+    }
+
     resetCurrentActivity() { 
         this.canShop = false; 
         this.canSleep = false; 
@@ -302,12 +330,9 @@ export default class GameScene extends Scene {
     toggleCultist(visible) {
         // only appears at night, warns you of monsters
         if (visible) {            
-            this.cultist = this.sceneHelper.createNewNpc(120, 180, 'cultist', 'Cultist'); 
-            this.cultist.setFrame(7);     
-            this.cultist.setActive(visible).setVisible(visible);
-            this.cultist.createTalkingCollider(this.player);
+           this.cultist.body.enable = true;
         } else {
-            this.cultist ? this.cultist.destroy() : null;
+            this.cultist.body.enable = false;
         }
     }
 
@@ -360,7 +385,9 @@ export default class GameScene extends Scene {
             this.canSleep = true;       
             this.canBuyBait = true;      
             this.hasInteractedWithDog = false;                                
-            this.canInteract = true;                 
+            this.canInteract = true;      
+            this.isInteractingWithNpc = false;  
+            this.npcInteractedWith = null;        
         }
 
         if (this.hasInteractedWithDog) {  
@@ -370,14 +397,19 @@ export default class GameScene extends Scene {
             this.doggo.anims.play('idle', true); 
         }
 
-        // if (this.canInteract) {
-        //     if (touching && wasTouching) {                
-        //         if (this.keySpace.isDown) {                   
-        //             this.cultist.talking();
-        //         }
-        //     }
-        // }
-
+        if (touching && wasTouching) {
+            if (this.isInteractingWithNpc) {
+                if (this.keySpace.isDown) {
+                    this.npcInteractedWith.talking();
+                    this.keySpace.reset();  
+                    if (this.keySpace.isDown) {
+                        this.npcInteractedWith.currentTextIndex += 1;
+                        this.npcInteractedWith.talking();  
+                    }
+                }
+            }  
+        }
+ 
         if (this.canSleep) {  
             if (touching && wasTouching) {        
                 // this.events.emit('showUIPopup', "Do you want to turn in for the day?");                                                                      
@@ -393,22 +425,22 @@ export default class GameScene extends Scene {
             }
         } 
         
-        if (this.canBuyBait && this.playerInfo.cash !== 0) {   
-            if (touching && wasTouching) {
-                this.baitShopKeeper.createEmote('cash');                                                
-                if (this.keySpace.isDown) {    
+        // if (this.canBuyBait && this.playerInfo.cash !== 0) {   
+        //     if (touching && wasTouching) {
+        //         this.baitShopKeeper.createEmote('cash');                                                
+                // if (this.keySpace.isDown) {    
                     // this.events.emit('showDialoguePopup', ['claris', this.player.chapter]);  
-                    this.baitShopKeeper.talking();
+                    // this.baitShopKeeper.isTalking = true;
                     // this.events.emit('moveOnText'); 
-                    this.keySpace.reset();                                                                                               
+                    // this.keySpace.reset();                                                                                               
                         // this.events.emit('moveOnText');
                         // this.events.emit('showUIPopup', "You bought some more bait!");                          
                         // this.playerInfo.catchesRemainingForTheDay += 1;
                         // this.playerInfo.cash -= 10;
                         // this.events.emit('updateUI', this.playerInfo);  
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
         
         if (this.player.info.catchesRemainingForTheDay >= 0 && this.canFish) {             
             if (this.cooldown > 0) {                            
