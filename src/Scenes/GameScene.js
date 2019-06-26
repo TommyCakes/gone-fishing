@@ -1,10 +1,10 @@
 import { Scene } from 'phaser';
 import Player from "../Sprites/Player";
 import Shop from '../Classes/Shop';
+import SceneHelper from '../Classes/SceneHelper';
 import Fishing from '../Classes/Fishing';
 import Dog from '../Sprites/Dog';
 import Enemy from '../Sprites/Enemy';
-import Npc from '../Sprites/Npc';
 
 export default class GameScene extends Scene {
 
@@ -20,7 +20,7 @@ export default class GameScene extends Scene {
     
     updateClock() {
         this.player.info.timeOfDay += 1;           
-        this.triggerUIUpdate();    
+        this.sceneHelper.triggerUIUpdate(this.playerInfo);    
     }
 
     createNewTimer(delay, func) {
@@ -31,11 +31,7 @@ export default class GameScene extends Scene {
             loop: true
         });
     }
-    
-    triggerUIUpdate() {
-        this.events.emit('updateUI', this.playerInfo);     
-    }
-
+       
     toggleKeyboard(bool) {
         this.keyW.enabled = bool;
         this.keyS.enabled = bool;
@@ -44,15 +40,8 @@ export default class GameScene extends Scene {
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
     }
-
-    createNewZone(x, y, w, h) {
-        this.zone = this.add.zone(x, y).setSize(w, h);
-        this.physics.world.enable(this.zone, 0);
-        this.zone.body.moves = false;
-        return this.zone;
-    }
-
-    create() {    
+    
+    create() {            
         // set up timer for day clock     
         let dayLengthInMinutes = 3; //3
         let dayLengthInSeconds = dayLengthInMinutes * 60;  
@@ -77,7 +66,7 @@ export default class GameScene extends Scene {
         this.conversations = this.cache.json.get('conversations');
         console.log(this.conversations);  
                 
-        // Setup input keys                                        
+        // Setup input keys                                             
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -119,6 +108,10 @@ export default class GameScene extends Scene {
         this.playerInfo = this.player.getInfo();
         this.playerInventory = this.player.getInventory();  
         
+        // sceneHelper class
+        this.sceneHelper = new SceneHelper(this);
+        this.sceneHelper.setup();
+                 
         // torch light for player
         this.lampShape = this.make.graphics({ 
             fillStyle: { color: 0x000000 }, add: false})
@@ -149,23 +142,23 @@ export default class GameScene extends Scene {
         waterLayer.setCollisionByProperty({ collides: true });
         worldLayer.setCollisionByProperty({ collides: true });
         
-        this.waterZone = this.createNewZone(0, 0, 70, 900);
-        this.waterZone2 = this.createNewZone(230, 180, 100, 180);
+        this.waterZone = this.sceneHelper.createNewZone(0, 0, 70, 900);
+        this.waterZone2 = this.sceneHelper.createNewZone(230, 180, 100, 180);
 
-        this.homeZone = this.createNewZone(120, 60, 60, 50);        
-        this.shopZone = this.createNewZone(380, 420, 120, 80);        
-        // this.baitShopZone = this.createNewZone(180, 300, 60, 40);        
-        this.dogZone = this.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
-        this.caveEntrance = this.createNewZone(350, 180, 20, 16);        
-        // this.npcZone = this.createNewZone(120, 180, 50, 50);  
+        this.homeZone = this.sceneHelper.createNewZone(120, 60, 60, 50);        
+        this.shopZone = this.sceneHelper.createNewZone(380, 420, 120, 80);        
+        // this.baitShopZone = this.sceneHelper.createNewZone(180, 300, 60, 40);        
+        this.dogZone = this.sceneHelper.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50);        
+        this.caveEntrance = this.sceneHelper.createNewZone(350, 180, 20, 16);        
+        // this.npcZone = this.sceneHelper.createNewZone(120, 180, 50, 50);  
         // this.npcZone.setName('cultist');            
         
-        this.baitShopKeeper = this.createNewNpc(180, 300, 'claris', 'Claris');
+        this.baitShopKeeper = this.sceneHelper.createNewNpc(180, 300, 'claris', 'Claris');
         this.baitShopKeeper.setFrame(9);        
         // this.physics.add.collider(this.player, this.baitShopKeeper);  
         this.baitShopKeeper.createTalkingCollider(this.player);
 
-        this.shopKeeper = this.createNewNpc(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 'Xaven');         
+        this.shopKeeper = this.sceneHelper.createNewNpc(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 'Xaven');         
         this.shopKeeper.setFrame(8);     
 
         this.shopKeeper.createTalkingCollider(this.player);
@@ -206,11 +199,7 @@ export default class GameScene extends Scene {
             this.scene.pause(); 
             this.scene.start('InteriorScene');
         });   
-                            
-        this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, this.game.width, this.game.height);
-        this.cameras.main.setFollowOffset(-50, -30);
-        this.cameras.main.zoom = 4;
+        
         this.physics.add.collider(this.player, worldLayer);        
         // this.physics.add.collider(this.doggo, worldLayer, () => this.doggo.bumpCount += 1);
         // this.physics.add.collider(this.doggo, waterLayer);        
@@ -313,7 +302,7 @@ export default class GameScene extends Scene {
     toggleCultist(visible) {
         // only appears at night, warns you of monsters
         if (visible) {            
-            this.cultist = this.createNewNpc(120, 180, 'cultist', 'Cultist'); 
+            this.cultist = this.sceneHelper.createNewNpc(120, 180, 'cultist', 'Cultist'); 
             this.cultist.setFrame(7);     
             this.cultist.setActive(visible).setVisible(visible);
             this.cultist.createTalkingCollider(this.player);
@@ -324,7 +313,7 @@ export default class GameScene extends Scene {
 
     createOrDestroyEnemies(visible) {
 
-        let slimePositions = [
+        let enemyPositions = [
             [219, 268], 
             [255, 513],        
             [100, 400],         
@@ -333,11 +322,11 @@ export default class GameScene extends Scene {
         ];
                 
         if (visible) {                          
-            for (let i = 0; i < slimePositions.length; i += 1) {
-                let x = slimePositions[i][0];                
-                let y = slimePositions[i][1];                
+            for (let i = 0; i < enemyPositions.length; i += 1) {
+                let x = enemyPositions[i][0];                
+                let y = enemyPositions[i][1];                
                   
-                this.enemies.add(this.spawnEnemy(x, y));
+                this.enemies.add(this.sceneHelper.spawnEnemy(x, y, 'slime', this.player));
             }
         } else {
             this.enemies.children.iterate(function (child) {
@@ -348,64 +337,7 @@ export default class GameScene extends Scene {
             this.enemies.clear(true);            
         }          
     }
-
-    spawnEnemy(x, y) {        
-            let slime = new Enemy(
-                this,
-                x,
-                y,
-                "slime"
-            );
-                               
-            slime.anims.play('moving');
-            let tween = this.tweens.add({
-                targets: slime,
-                x: slime.x + 20,
-                ease: 'Power1',
-                duration: 3000,
-                flipX: true,
-                yoyo: true,
-                repeat: -1
-            });
-
-            this.physics.add.collider(this.player, slime, () => { 
-                this.events.emit('showUIPopup', "The monster knocked you out...");   
-                this.player.monsterAttack();  
-                console.log('opps!');              
-            });   
-
-            return slime;
-    }
-
-
-    createNewNpc(x, y, key, name) {
-        return new Npc(
-            this,
-            x,
-            y,
-            key, 
-            name
-        );
-    }
-
-    spawnCoin(player) {        
-        let coin = this.physics.add.sprite(player.x, player.y - 20, 'goldCoin', 2);         
-        this.anims.create({
-            key: 'spinning',
-            frames: this.anims.generateFrameNumbers('goldCoin', { start: 0, end: 7
-        }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        coin.setDepth(1); 
-        coin.setScale(0.5); 
-        coin.anims.play('spinning');   
-        this.time.delayedCall(1500, () => {
-            coin.destroy();
-        });   
-    }
-
+    
     update() {  
                      
         this.player.update();   
@@ -536,7 +468,7 @@ export default class GameScene extends Scene {
                 if (this.keySpace.isDown) {                                                 
                     this.events.emit('updateUI', this.playerInfo);                                                                                                                                                                      
                     this.shopObj.sellAllFish(this.player);  
-                    this.spawnCoin(this.player);                          
+                    this.sceneHelper.spawnCoin('gold', this.player);                          
                     this.events.emit('showUIPopup', `You sold all your fish! And made a total of $${this.shopObj.getTotalOfSale()}`);   
                     this.playerInventory.fish.length = 0;      
                     this.events.emit('updateUI', this.playerInfo);                                                          
