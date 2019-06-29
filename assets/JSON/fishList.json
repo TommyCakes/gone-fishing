@@ -1,41 +1,132 @@
 {
     "fish": {
-      "type": [
-        {
-          "name": "Shark",
-          "description": "Actually a really friendly guy, unless you happen to be a seal",
-          "weight": "10",
-          "value": "53",
-          "rarity": "rare"
-        },
-        {
-          "name": "Seabass",
-          "description": "Just your standard sea-dweller, like to be called Baz for short",
-          "weight": "3",
-          "value": "18",
-          "rarity": "uncommon"
-        },
-        {
-          "name": "Prawn",
-          "description": "Became famous after numerous references in the film 'District 9'",
-          "weight": "1",
-          "value": "2",
-          "rarity": "common"
-        },
-        {
-          "name": "Sand-Eel",
-          "description": "Loves to build sand castles on the weekend",
-          "weight": "2",
-          "value": "5",
-          "rarity": "common"
-        },
-        {
-          "name": "Sardine",
-          "description": "Good on toast!",
-          "weight": "1",
-          "value": "3",
-          "rarity": "common"
-        }
-      ]
+      "type": {
+        "trash": [
+          {
+            "name": "Prawn",
+            "description": "Became famous after numerous references in the film 'District 9'",
+            "weight": "1",
+            "value": "2",
+            "rarity": "trash"
+          },
+          {
+            "name": "Sardine",
+            "description": "Good on toast!",
+            "weight": "1",
+            "value": "3",
+            "rarity": "trash"
+          }
+        ],
+        "common": [   
+          {
+            "name": "Sand-Eel",
+            "description": "Loves to build sand castles on the weekend",
+            "weight": "2",
+            "value": "5",
+            "rarity": "common"
+          },   
+          {
+            "name": "Seabass",
+            "description": "Just your standard sea-dweller, like to be called Baz for short",
+            "weight": "15",
+            "value": "18",
+            "rarity": "common"
+          },
+          {
+            "name": "Pollybait",
+            "description": "!",
+            "weight": "2",
+            "value": "25",
+            "rarity": "common"
+          },
+          {
+            "name": "Carp",
+            "description": "Favourite food is mud, wash before eating!",
+            "weight": "7",
+            "value": "25",
+            "rarity": "common"
+          }
+        ],
+        "uncommon": [
+          {
+            "name": "Yellowbanded perch",
+            "description": "Not actually yellow...",
+            "weight": "34",
+            "value": "58",
+            "rarity": "uncommon"
+            
+          },
+          {
+            "name": "Yellowbanded perch",
+            "description": "Not actually yellow...",
+            "weight": "14",
+            "value": "58",
+            "rarity": "uncommon"
+            
+          }
+        ],
+        "rare": [
+          {
+            "name": "Shark",
+            "description": "Actually a really friendly guy, unless you happen to be a seal",
+            "weight": "100",
+            "value": "90",
+            "rarity": "rare"
+          },
+          {
+            "name": "Sunfish",
+            "description": "",
+            "weight": "80",
+            "value": "120",
+            "rarity": "rare"
+          }
+        ],
+        "superRare": [
+          {
+            "name": "Moonfish",
+            "description": "Bites!",
+            "weight": "200",
+            "value": "5000",
+            "rarity": "superRare"
+          },
+          {
+            "name": "Triggerfish.",
+            "description": "Do not swim near their nest, otherwise prepare to be hunted",
+            "weight": "30",
+            "value": "20000",
+            "rarity": "superRare"
+          },
+          {
+            "name": "Wolf Fish",
+            "description": "A wolf crossed with a fish?",
+            "weight": "300",
+            "value": "100000",
+            "rarity": "superRare"
+          }
+        ],
+        "legendary": [
+          {
+            "name": "Leviathan",
+            "description": "N/A",
+            "weight": "10000",
+            "value": "250000",
+            "rarity": "legendary"
+          },
+          {
+            "name": "Space Devil",
+            "description": "N/A",
+            "weight": "100000",
+            "value": "600000",
+            "rarity": "legendary"
+          },
+          {
+            "name": "Megladon",
+            "description": "N/A",
+            "weight": "30000",
+            "value": "1000000",
+            "rarity": "legendary"
+          }
+        ]
+      }
     }
   }
