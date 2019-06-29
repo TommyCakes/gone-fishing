@@ -92,6 +92,7 @@ export default class PreloadScene extends Scene {
         this.load.json('conversations', 'assets/JSON/conversations.json');
         
         this.load.image('fishSign', 'assets/images/fish_sign.png');
+        this.load.image('bait', 'assets/images/aqua_ball.png');
         this.load.image('heart', 'assets/images/emote_heart.png');
         this.load.image('anger', 'assets/images/emote_anger.png');
         this.load.image('exclamation', 'assets/images/emote_exclamation.png');

@@ -112,12 +112,15 @@ export default class GameScene extends Scene {
         // sceneHelper class
         this.sceneHelper = new SceneHelper(this);
         this.sceneHelper.setup();
-                 
+              
         // torch light for player
         this.lampShape = this.make.graphics({ 
             fillStyle: { color: 0x000000 }, add: false})
             .fillCircleShape(new Phaser.Geom.Circle(this.player.x, this.player.y, 20));
         this.lampShape.alpha = 0.5;
+        
+        // Start game event
+        this.events.emit('startGame', this.playerInfo);  
         
         this.doggo = new Dog(
             this,
