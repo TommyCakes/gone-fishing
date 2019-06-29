@@ -57,16 +57,13 @@ export default class MainUIScene extends Scene {
     }
 
     updateSubUI (data) {    
-        console.log(this.subUI);
-        console.log(this.subUI.children);
-
         let baitAmount = data.catchesRemainingForTheDay;
         let currentBaitHeld = baitAmount;
 
         if (currentBaitHeld < 5) {  
             var children = this.subUI.getChildren();
             this.subUI.killAndHide(children[data.catchesRemainingForTheDay]);
-        }        
+        } 
     }
 
 
@@ -74,7 +71,6 @@ export default class MainUIScene extends Scene {
         let baitAmount = data.catchesRemainingForTheDay;
         
         let baitPos = [76, 141, 211, 276, 338];
-        
         
         this.subUI = this.add.group();                        
         this.uiBg = this.add.image(210, 46, 'catchesLeftUI').setScrollFactor(0);  
@@ -85,8 +81,7 @@ export default class MainUIScene extends Scene {
             this.subUI.add(bait); 
         }
                 
-        this.uiBg.setScale(1.7);                   
-                                
+        this.uiBg.setScale(1.7);                                                   
         this.subUI.add(this.uiBg);        
     }
 
