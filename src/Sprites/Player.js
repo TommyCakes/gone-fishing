@@ -208,22 +208,32 @@ export default class Player extends Entity {
     }
         
     collectFish(fish) {   
+        
+        if (this.checkForFish()) {    
+            if (fish === 'junk') {
+                let junk = {
+                    name: 'junk',
+                    description: 'A rubbish catch, literally..fish.',
+                    rarity: 'junk'
+                }
+                
+                this.scene.events.emit('showFishUIPopup', junk); 
+            } else {   
+                let amountOfXP = fish.checkExpReturnedForCatch();
+                this.info.inventory.fish.push(fish);   
+                this.info.xpPool += amountOfXP;          
+                this.scene.events.emit('showFishUIPopup', fish);   
+                
+                this.scene.events.emit('updateUI', this.info);  
 
-        if (this.checkForFish()) {                     
-            let amountOfXP = fish.checkExpReturnedForCatch();
-            this.info.inventory.fish.push(fish);   
-            this.info.xpPool += amountOfXP;          
-            this.scene.events.emit('showFishUIPopup', fish);                          
+                if (!this.level.checkForLevelUp()) {
+                    this.level.showExperienceText(fish); 
+                } 
+            }                               
         } else {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }        
- 
-        this.scene.events.emit('updateUI', this.info);  
 
-        if (!this.level.checkForLevelUp()) {
-            this.level.showExperienceText(fish); 
-        } 
-        
         this.isFishing = false;
 
         console.log(this.info);                
@@ -269,7 +279,7 @@ export default class Player extends Entity {
         this.info.catchesRemainingForTheDay -= 1;                   
     }
 
-    fishing(fish, direction) {                                         
+    fishing(fish, direction) {                                
         this.spawnBobble(direction);
         this.decreaseCatchesRemaining();  
         this.isFishing = true;      
