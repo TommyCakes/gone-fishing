@@ -111,6 +111,12 @@ export default class PreloadScene extends Scene {
         this.load.image('prawn', 'assets/images/fish/red-fish.png');
         this.load.image('sardine', 'assets/images/fish/green-fish.png');
         this.load.image('sand-eel', 'assets/images/fish/brown-fish.png');
+        this.load.image('carp', 'assets/images/fish/carp.png');
+        this.load.image('pollybait', 'assets/images/fish/pollybait.png');        
+        this.load.image('yellowPerch', 'assets/images/fish/yellow-perch.png');        
+        this.load.image('sunfish', 'assets/images/fish/sun-fish.png');
+        this.load.image('moonfish', 'assets/images/fish/moon-fish.png');
+        this.load.image('moonfish', 'assets/images/fish/moon-fish.png');
         this.load.image('xpChunk', 'assets/ui/xp-chunk.png');
         this.load.image('speech', 'assets/ui/speech.png');
         this.load.image('speechEmpty', 'assets/ui/speech-empty.png');

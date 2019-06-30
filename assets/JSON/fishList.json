@@ -49,7 +49,7 @@
         ],
         "uncommon": [
           {
-            "name": "Yellowbanded perch",
+            "name": "YellowPerch",
             "description": "Not actually yellow...",
             "weight": "34",
             "value": "58",
@@ -57,7 +57,7 @@
             
           },
           {
-            "name": "Yellowbanded perch",
+            "name": "Yellowbanded Perch",
             "description": "Not actually yellow...",
             "weight": "14",
             "value": "58",
