@@ -14,7 +14,8 @@ export default class MainUIScene extends Scene {
         super({ key: 'UIScene', active: true });        
         this.style = { font: '24px Arial', fill: '#7729DE', align: 'center' }  
         this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }   
-        this.endOfDay = false;                           
+        this.endOfDay = false;    
+        this.subUI = null;                       
     }
     
     refactorTimeDisplay(time) {
@@ -55,34 +56,33 @@ export default class MainUIScene extends Scene {
         return this.ui;
     }
 
-    addFishToUI(fishAmount) {
-        let fishPos = [76, 141, 211, 276, 406];
-        console.log(fishAmount);
-        if (fishAmount >= 1) {
-            let fish = this.add.image(fishPos[fishAmount - 1], 94, 'fish').setScrollFactor(0);          
-            fish.setScale(0.7); 
-            return fish;
-        }                       
+    updateSubUI (data) {    
+        let baitAmount = data.catchesRemainingForTheDay;
+        let currentBaitHeld = baitAmount;
+
+        if (currentBaitHeld < 5) {  
+            var children = this.subUI.getChildren();
+            this.subUI.killAndHide(children[data.catchesRemainingForTheDay]);
+        } 
     }
 
-    updateSubUI (data) {                       
-        let catchesLeft = data.catchesRemainingForTheDay;
-        let maxFishHeld = data.maximumAmountOfFishHeld;
-        let fishAmount = data.inventory.fish.length;
-        
-        this.ui = this.add.group();                        
-        this.uiBg = this.add.image(210, 46, 'catchesLeftUI').setScrollFactor(0);          
-        this.uiBg.setScale(1.7);                   
-        
-        this.ui.clear(true, this);
 
-        if (fishAmount <= maxFishHeld) {
-            let fish = this.addFishToUI(fishAmount);
-            fish ? this.ui.add(fish) : null; 
-        }
+    createSubUI (data) {                 
+        let baitAmount = data.catchesRemainingForTheDay;
         
-        this.ui.add(this.uiBg);        
-        return this.ui;
+        let baitPos = [76, 141, 211, 276, 338];
+        
+        this.subUI = this.add.group();                        
+        this.uiBg = this.add.image(210, 46, 'catchesLeftUI').setScrollFactor(0);  
+
+        for (let i = 0; i <= baitAmount - 1; i += 1) {
+            let bait = this.add.image(baitPos[i], 94, 'bait').setScrollFactor(0);          
+            bait.setScale(2);            
+            this.subUI.add(bait); 
+        }
+                
+        this.uiBg.setScale(1.7);                                                   
+        this.subUI.add(this.uiBg);        
     }
 
     createBasicUIContainer(text, innerUiSize = 400) { 
@@ -226,10 +226,13 @@ export default class MainUIScene extends Scene {
 
         this.gameScene.events.on('endOfDay', () => this.endOfDay = true);
         
+        this.gameScene.events.on('startGame', ((data) => {
+            this.createSubUI(data);           
+        }));
+
         this.gameScene.events.on('updateUI', ((data) => {
             this.updateMainUI(data);  
-            this.updateSubUI(data);                  
-                     
+            this.updateSubUI(data);                                       
         })); 
                 
         this.gameScene.events.on('showUIPopup', ((data) => {
