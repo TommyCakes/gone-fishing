@@ -3,15 +3,19 @@ import Game from '../Scenes/GameScene'
 
 export default class Dog extends Entity {
     
-    constructor(scene, x, y, key) {        
-        super(scene, x, y, key);
+    constructor(scene, x, y, name) {        
+        super(scene, x, y, "doggo");
         
+        this.name = name;
         this.setData("speed", 30);
         this.body.moves = true;  
         this.body.immovable = true;
         this.setDepth(1);
-        this.name = "Doggo";
-        this.conversationKeyIndex = 0;      
+        this.conversationKeyIndex = 0;  
+        this.currentTextIndex = 0;   
+        this.zone = this.scene.add.zone(this.x - 25, this.y - 16).setSize(50, 50);
+        this.zone.name = this.name
+        this.scene.physics.world.enable(this.zone, 0);     
 
         this.scene.anims.create({
             key: 'idle',

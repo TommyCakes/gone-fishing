@@ -9,13 +9,13 @@ export default class Npc extends Entity {
         this.body.moves = false;
         this.body.setCircle(25);        
         this.setScale(0.4);    
-        this.conversationKeyIndex = 0;      
+        this.conversationKeyIndex = 0;  
+        this.currentTextIndex = 0;
+        this.zone = this.scene.add.zone(this.x - 25, this.y - 16).setSize(50, 50);
+        this.zone.name = this.name
+        this.scene.physics.world.enable(this.zone, 0);        
     }
-
-    talking () {
-        this.scene.events.emit('showDialoguePopup', this);
-    }
-
+    
     createEmote(emoteName) {
         let emote = this.scene.physics.add.sprite(this.x, this.y - 20, emoteName);                    
         emote.setDepth(1);     
@@ -26,7 +26,17 @@ export default class Npc extends Entity {
 
     createTalkingCollider(obj) {
         this.scene.physics.add.collider(obj, this, () => {
-            this.talking();
+            this.isTalking = true;
         }); 
+    }
+
+    talking () {
+        this.scene.events.emit('showDialoguePopup', this);
+    }
+
+    create() {       
+        if (this.isTalking) {
+            this.scene.events.emit('showDialoguePopup', this);
+        }
     }
 }

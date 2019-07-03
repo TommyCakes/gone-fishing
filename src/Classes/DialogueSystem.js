@@ -1,7 +1,8 @@
 export default class DialogueSystem {
 
-    constructor(conversations, character, currentChapter) {
+    constructor(scene, conversations, character, currentChapter) {
 
+        this.scene = scene;
         this.conversations = conversations;
         this.character = character;
         this.currentChapter = currentChapter;
@@ -17,29 +18,29 @@ export default class DialogueSystem {
 
         // conversation are stored in json
         // and is load when system is created
-        //  vvvvv
-        
-        // text to pass to create new Text method in UI Scene
-        this.currentTextIndex = 0;
+        //  vvvvv                
     }
 
-    startConversation() {        
-        let chap = this.currentChapter.toString();
+    startConversation(index) {          
+        let chap = this.currentChapter.toString();        
         let keyIndex = this.character.conversationKeyIndex;
         let key = this.conversations["keys"][keyIndex];
-        let text = this.conversations[chap][this.character.name][key]["words"][this.currentTextIndex][this.character.name];        
-        return text;
+        let length = this.conversations[chap][this.character.name][key]["words"].length;
+
+        if (this.hasConversationFinished(index, length)) {             
+            this.scene.events.emit('finishedConversation'); 
+            index = 0;                                    
+        } else {   
+            this.character.conversationKeyIndex = 0;         
+            return this.conversations[chap][this.character.name][key]["words"][index][this.character.name];                
+        }                
     }
 
-    stopConversation() {
+    hasConversationFinished (index, length) {
+        if (index > length - 1) {                                    
+            return true;   
+        } 
 
-    }
-
-    moveOnCoversation() {
-        // change character
-        // this.charIndex += 1;                     
-        // if (this.charIndex === 2) {
-        //     this.charIndex = 0;  
-        // }
+        return false;
     }
 }

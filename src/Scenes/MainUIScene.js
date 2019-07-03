@@ -14,6 +14,7 @@ export default class MainUIScene extends Scene {
         super({ key: 'UIScene', active: true });        
         this.style = { font: '24px Arial', fill: '#7729DE', align: 'center' }  
         this.bigStyle = { font: '34px Arial', fill: '#7729DE', align: 'center' }   
+        this.conversationFinished = false;                        
         this.endOfDay = false;    
         this.subUI = null;                       
     }
@@ -55,6 +56,7 @@ export default class MainUIScene extends Scene {
         this.ui.add(this.levelText);        
         return this.ui;
     }
+
 
     updateSubUI (data) {    
         let baitAmount = data.catchesRemainingForTheDay;
@@ -176,33 +178,52 @@ export default class MainUIScene extends Scene {
 
     }
 
-    createDialoguePopup(info) {   
-        console.log(info.name);
+    createDialoguePopup(info) {                
+        // console.log(info.name);
         let key = info.texture.key;
         // let chapter = info[1];
-
-        console.log(info);
+        // console.log(info);
+        let index = info.currentTextIndex;
         let style = this.getBasicStyle('#5d5d2f', 'left', '30px', 500);  
-        this.container = this.add.container(this.game.config.width / 2, this.game.config.height - 145);
-        this.uiBackground = this.add.image(this.x, this.y, 'speechEmpty'); 
-        this.currentTalkingFace = this.add.image(300, 10, `${key}-face`);    
-        this.speechText = this.add.text(
-            this.container.width / 2 - 40, 
-            this.uiBackground.y, 
-            "",
-            style
-        );
-        let conversations = this.gameScene.conversations.conversations;
-        let d = new Dialogue(conversations, info, 1); //chapter 1 hardcoded for testing
-                
-        // this.speechText.setText("");
-        this.speechText.setText(d.startConversation());
         
-        this.uiBackground.setScale(0.6);
-        this.currentTalkingFace.setScale(2.3);
-        this.speechText.setOrigin(0.5, 0.5);   
-        this.container.add([this.uiBackground, this.currentTalkingFace, this.speechText]);
-        this.removeUI(this.container, 2000);
+        let conversations = this.gameScene.conversations.conversations;
+        let d = new Dialogue(this, conversations, info, 1); //chapter 1 hardcoded for testing
+        
+        if (!this.conversationFinished) {
+            this.container = this.add.container(this.game.config.width / 2, this.game.config.height - 145);
+            this.uiBackground = this.add.image(this.x, this.y, 'speechEmpty'); 
+            this.currentTalkingFace = this.add.image(300, 10, `${key}-face`);
+            
+            this.speechText = this.add.text(
+                this.container.width / 2 - 40, 
+                this.uiBackground.y, 
+                "",
+                style
+            );
+            
+            this.speechText.setText(d.startConversation(index));   
+            
+            info.currentTextIndex += 1;
+                                        
+            this.uiBackground.setScale(0.6);
+            this.currentTalkingFace.setScale(2.3);
+            this.speechText.setOrigin(0.5, 0.5);   
+            this.container.add([this.uiBackground, this.currentTalkingFace, this.speechText]);
+            this.removeUI(this.container, 5000);            
+        }        
+
+        this.events.on('finishedConversation', () => {
+            this.conversationFinished = true;   
+            this.removeUI(this.container, 0); 
+            this.time.delayedCall(2500, () => {                             
+                info.currentTextIndex = 0;
+                this.conversationFinished = false;   
+             }, [], info);  
+        });
+
+        console.log(this.conversationFinished);
+
+        // return false;        
     }
 
     removeUI(ui, delay = 2000) {
