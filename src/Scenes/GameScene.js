@@ -117,19 +117,7 @@ export default class GameScene extends Scene {
             fillStyle: { color: 0x000000 }, add: false})
             .fillCircleShape(new Phaser.Geom.Circle(this.player.x, this.player.y, 20));
         this.lampShape.alpha = 0.5;
-        
-        this.doggo = new Dog(
-            this,
-            210,
-            200,
-            "doggo"            
-        );
-                                       
-        // this.doggo.anims.play('walk-right', true);
-        // this.doggo.moveRight();
-        this.doggo.anims.play('idle', true);
-        this.doggo.createTalkingCollider(this.player);
-                        
+                                        
         // Load map
         const map = this.make.tilemap({ key: "main-world" });
         const tileset = map.addTilesetImage("overworld", "tiles");
@@ -148,33 +136,35 @@ export default class GameScene extends Scene {
         this.homeZone = this.sceneHelper.createNewZone(120, 60, 60, 50);
         this.shopZone = this.sceneHelper.createNewZone(380, 420, 120, 80);                        
         this.caveEntrance = this.sceneHelper.createNewZone(350, 180, 20, 16);        
-        // this.npcZone = this.sceneHelper.createNewZone(120, 180, 50, 50);  
-        // this.npcZone.setName('cultist');            
-                     
+                            
         this.shopKeeper = this.sceneHelper.createNewNpc(this.shopZone.x + (this.shopZone.width / 2 - 10), this.shopZone.y + 20, 'shopKeeper', 'Xaven');         
         this.shopKeeper.setFrame(8);     
-        this.shopKeeper.createTalkingCollider(this.player);
 
         this.sign = this.add.sprite(this.shopKeeper.x + 30, this.shopZone.y + 40, 'fishSign');
         this.sign.displayHeight = 24;
         this.sign.displayWidth = 24;
-                              
-        this.dogZone = this.sceneHelper.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50); 
         
-        // this.baitShopContainer = this.add.container(180, 300);        
+        this.doggo = new Dog(
+            this,
+            210,
+            200,
+            "doggo"            
+        );
+                                       
+        // this.doggo.anims.play('walk-right', true);
+        // this.doggo.moveRight();
+        this.doggo.anims.play('idle', true);
+        this.doggo.createTalkingCollider(this.player);
+        
+        this.dogZone = this.sceneHelper.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50); 
+         
         this.baitShopKeeper = this.sceneHelper.createNewNpc(180, 300, 'claris', 'Claris');
         this.baitShopKeeper.setFrame(9);    
         this.baitShopKeeper.setDepth(1);             
-        this.baitShopKeeper.createTalkingCollider(this.player);
         this.baitShopKeeper.zone.name = this.baitShopKeeper.name;
-        // this.npcZone = this.sceneHelper.createNewZone(this.baitShopKeeper.x, 300, 60, 40);  
-        // this.baitShopContainer.add([this.baitShopKeeper]);
-        // this.baitShopContainer.setDepth(1);  
         
         this.cultist = this.sceneHelper.createNewNpc(120, 180, 'cultist', 'Cultist'); 
-        this.cultist.setFrame(7);     
-        // this.cultist.setActive(visible).setVisible(visible);
-        this.cultist.createTalkingCollider(this.player);
+        this.cultist.setFrame(7);            
         this.cultist.body.enable = false;
 
         this.physics.add.overlap(this.player, this.baitShopKeeper.zone, () => { 
