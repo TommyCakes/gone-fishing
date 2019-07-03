@@ -61,6 +61,7 @@ export default class GameScene extends Scene {
         
         this.UIScene = this.scene.get('UIScene');  
         let fishList = this.cache.json.get('fishList').fish.type;
+        console.log(fishList)
         this.rodList = this.cache.json.get('rodList').rod.type;
         this.fishingObj = new Fishing(fishList);
         this.conversations = this.cache.json.get('conversations');
@@ -110,13 +111,15 @@ export default class GameScene extends Scene {
         // sceneHelper class
         this.sceneHelper = new SceneHelper(this);
         this.sceneHelper.setup();
-                 
+              
         // torch light for player
         this.lampShape = this.make.graphics({ 
             fillStyle: { color: 0x000000 }, add: false})
             .fillCircleShape(new Phaser.Geom.Circle(this.player.x, this.player.y, 20));
         this.lampShape.alpha = 0.5;
-                                        
+        
+        // Start game event
+        this.events.emit('startGame', this.playerInfo);      
         // Load map
         const map = this.make.tilemap({ key: "main-world" });
         const tileset = map.addTilesetImage("overworld", "tiles");
@@ -463,7 +466,7 @@ export default class GameScene extends Scene {
                         });
 
                         this.fishingtimer.paused = false;                                                                                         
-                        this.player.fishing(this.fishingObj.getRandomFish(this.player), this.playerDirection);                                                                        
+                        this.player.fishing(this.fishingObj.getRandomFishRarity(this.player), this.playerDirection);                                                                        
                         this.events.on('fishBit', () => {
                             this.createEmote('exclamation', this.player);                                 
                         });                                    
