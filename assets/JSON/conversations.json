@@ -37,12 +37,10 @@
         "intro": {
           "words": [
             {
-              "Doggo": "Woof woof!",
-              "Player": "Hey Doggo, who's a good boy!"
+              "Doggo": "Woof woof!"            
             },
             {
-              "Doggo": "Woof?",
-              "Player": "..."
+              "Doggo": "Woof?"
             }             
           ]
         }        

@@ -11,7 +11,7 @@ export default class Npc extends Entity {
         this.setScale(0.4);    
         this.conversationKeyIndex = 0;  
         this.currentTextIndex = 0;
-        this.zone = this.scene.add.zone(this.x, this.y).setSize(20, 20);
+        this.zone = this.scene.add.zone(this.x - 25, this.y - 16).setSize(50, 50);
         this.zone.name = this.name
         this.scene.physics.world.enable(this.zone, 0);        
     }

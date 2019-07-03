@@ -148,13 +148,12 @@ export default class GameScene extends Scene {
             this,
             210,
             200,
-            "doggo"            
+            "Doggo"            
         );
                                        
         // this.doggo.anims.play('walk-right', true);
         // this.doggo.moveRight();
-        this.doggo.anims.play('idle', true);
-        this.doggo.createTalkingCollider(this.player);
+        this.doggo.anims.play('idle', true);        
         
         this.dogZone = this.sceneHelper.createNewZone(this.doggo.x - 32, this.doggo.y - 20, 50, 50); 
          
@@ -175,6 +174,11 @@ export default class GameScene extends Scene {
         this.physics.add.overlap(this.player, this.cultist.zone, () => { 
             this.resetCurrentActivity();
             this.getAndSetZoneAndNpc(this.cultist, this.cultist.zone)                  
+        }); 
+
+        this.physics.add.overlap(this.player, this.doggo.zone, () => { 
+            this.resetCurrentActivity();
+            this.getAndSetZoneAndNpc(this.doggo, this.doggo.zone)                  
         }); 
 
         this.physics.add.collider(this.player, this.shopKeeper);  
