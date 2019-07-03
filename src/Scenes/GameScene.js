@@ -64,7 +64,6 @@ export default class GameScene extends Scene {
         this.rodList = this.cache.json.get('rodList').rod.type;
         this.fishingObj = new Fishing(fishList);
         this.conversations = this.cache.json.get('conversations');
-        console.log(this.conversations);  
                 
         // Setup input keys                                             
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -283,8 +282,7 @@ export default class GameScene extends Scene {
     getAndSetZoneAndNpc(npc, zone) {
         this.isInteractingWithNpc = true;
         this.npcInteractedWith = npc;
-        this.currentZone = zone;
-        console.log(`Hi! ${this.npcInteractedWith.name}`);
+        this.currentZone = zone;        
     }
 
     resetCurrentActivity() { 
