@@ -208,12 +208,17 @@ export default class MainUIScene extends Scene {
             this.currentTalkingFace.setScale(2.3);
             this.speechText.setOrigin(0.5, 0.5);   
             this.container.add([this.uiBackground, this.currentTalkingFace, this.speechText]);
-            this.removeUI(this.container, 10000);            
+            this.removeUI(this.container, 5000);            
         }        
 
-        this.events.on('finishedConversation', ((data) => {
-            this.conversationFinished = data;      
-        }));
+        this.events.on('finishedConversation', () => {
+            this.conversationFinished = true;   
+            this.removeUI(this.container, 0); 
+            this.time.delayedCall(2500, () => {                             
+                info.currentTextIndex = 0;
+                this.conversationFinished = false;   
+             }, [], info);  
+        });
 
         console.log(this.conversationFinished);
 

@@ -242,10 +242,6 @@ export default class GameScene extends Scene {
             // });
         });
 
-        this.input.keyboard.on('keydown_SPACE', function (event) {   
-            console.log('space hit!');                 
-        }); 
-
         this.sky = this.add.image(0, 0, 'nightSky').setAlpha(0);
         this.sky.setDepth(1)
         this.sky.setScale(2);        

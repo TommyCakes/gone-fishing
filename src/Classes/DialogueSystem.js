@@ -28,17 +28,17 @@ export default class DialogueSystem {
         let length = this.conversations[chap][this.character.name][key]["words"].length;
 
         if (this.hasConversationFinished(index, length)) {             
-            this.scene.events.emit('finishedConversation', true);            
+            this.scene.events.emit('finishedConversation'); 
+            index = 0;                                    
         } else {   
-            this.scene.events.emit('finishedConversation', false);
             this.character.conversationKeyIndex = 0;         
             return this.conversations[chap][this.character.name][key]["words"][index][this.character.name];                
         }                
     }
 
     hasConversationFinished (index, length) {
-        if (index > length - 1) {
-            return true;             
+        if (index > length - 1) {                                    
+            return true;   
         } 
 
         return false;
