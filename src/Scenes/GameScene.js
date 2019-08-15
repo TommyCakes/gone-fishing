@@ -8,10 +8,14 @@ import Enemy from '../Sprites/Enemy';
 
 export default class GameScene extends Scene {
 
+    init (data) {
+        this.startScene = this.scene.get('Start');        
+    }
+
     constructor() {
         super('Game');   
         this.style = { font: '13px Arial', fill: '#fff', align: 'center' }                                         
-        this.smallStyleGold = { font: '10px Arial', fill: '#C0D825', align: 'right' }                                               
+        this.smallStyleGold = { font: '10px Arial', fill: '#C0D825', align: 'right' }                                                    
     }
 
     updateTime() {                
@@ -42,6 +46,10 @@ export default class GameScene extends Scene {
     }
     
     create() {            
+
+        this.choice = this.startScene;
+        console.log(this.startScene);   
+        
         // set up timer for day clock     
         let dayLengthInMinutes = 3; //3
         let dayLengthInSeconds = dayLengthInMinutes * 60;  
