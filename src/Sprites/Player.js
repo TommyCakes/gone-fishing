@@ -275,10 +275,10 @@ export default class Player extends Entity {
         this.isFishing = false;
 
         console.log(this.info);                
-        // this.scene.time.delayedCall(100, () => {             
-            // this.splash.destroy();
+        this.scene.time.delayedCall(100, () => {             
+            this.splash.destroy();
             this.scene.events.emit('fishCaught')
-        // }, [], this);                                                                                                                   
+        }, [], this);                                                                                                                   
     }
     
     spawnBobble(direction) {
