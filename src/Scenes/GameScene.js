@@ -45,11 +45,7 @@ export default class GameScene extends Scene {
         this.player.body.velocity.y = 0;
     }
     
-    create() {            
-
-        this.choice = this.startScene;
-        console.log(this.startScene);   
-        
+    create() {                             
         // set up timer for day clock     
         let dayLengthInMinutes = 3; //3
         let dayLengthInSeconds = dayLengthInMinutes * 60;  
@@ -104,13 +100,14 @@ export default class GameScene extends Scene {
         this.hasFished = false;
         this.outOfCatchAttempts = false; 
         this.isTalking = false;                
-
+                
         this.player = new Player(
             this,            
             150,
             210,
             "sprPlayer",
-            this.keys
+            this.keys,
+            this.startScene.choice
         );
         
         this.playerInfo = this.player.getInfo();
