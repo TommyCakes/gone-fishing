@@ -8,10 +8,14 @@ import Enemy from '../Sprites/Enemy';
 
 export default class GameScene extends Scene {
 
+    init (data) {
+        this.startScene = this.scene.get('Start');        
+    }
+
     constructor() {
         super('Game');   
         this.style = { font: '13px Arial', fill: '#fff', align: 'center' }                                         
-        this.smallStyleGold = { font: '10px Arial', fill: '#C0D825', align: 'right' }                                               
+        this.smallStyleGold = { font: '10px Arial', fill: '#C0D825', align: 'right' }                                                    
     }
 
     updateTime() {                
@@ -41,7 +45,7 @@ export default class GameScene extends Scene {
         this.player.body.velocity.y = 0;
     }
     
-    create() {            
+    create() {                             
         // set up timer for day clock     
         let dayLengthInMinutes = 3; //3
         let dayLengthInSeconds = dayLengthInMinutes * 60;  
@@ -96,13 +100,14 @@ export default class GameScene extends Scene {
         this.hasFished = false;
         this.outOfCatchAttempts = false; 
         this.isTalking = false;                
-
+                
         this.player = new Player(
             this,            
             150,
             210,
             "sprPlayer",
-            this.keys
+            this.keys,
+            this.startScene.choice
         );
         
         this.playerInfo = this.player.getInfo();

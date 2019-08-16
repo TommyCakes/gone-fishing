@@ -13,7 +13,7 @@ export default class PreloadScene extends Scene {
     ready() {
         this.readyCount += 1;
         if (this.readyCount === 2 ) {
-            this.scene.start('Game');                        
+            this.scene.start('Start');                        
         }
     }
 
@@ -91,6 +91,11 @@ export default class PreloadScene extends Scene {
         this.load.json('rodList', 'assets/JSON/rodList.json');
         this.load.json('conversations', 'assets/JSON/conversations.json');
         
+        this.load.image('bowIcon', 'assets/images/bow-icon.png');
+        this.load.image('bookIcon', 'assets/images/book-icon.png');
+        this.load.image('bookIcon', 'assets/images/book-icon.png');
+        this.load.image('coinsIcon', 'assets/images/coins-icon.png');
+
         this.load.image('fishSign', 'assets/images/fish_sign.png');
         this.load.image('bait', 'assets/images/aqua_ball.png');
         this.load.image('heart', 'assets/images/emote_heart.png');
@@ -104,6 +109,7 @@ export default class PreloadScene extends Scene {
         // this.load.image('bg', 'assets/grass.png');
         this.load.image('greyButton', 'assets/ui/greyButton.png');
         this.load.image('panel', 'assets/ui/panel.png');
+        this.load.image('bluePanel', 'assets/ui/bluePanel.png');
         this.load.image('brownPanel', 'assets/ui/longBrown.png');
         this.load.image('crossBrown', 'assets/ui/crossBrown.png');
         this.load.image('checkBlue', 'assets/ui/checkBlue.png');
@@ -120,7 +126,7 @@ export default class PreloadScene extends Scene {
         this.load.image('moonfish', 'assets/images/fish/moon-fish.png');
         this.load.image('xpChunk', 'assets/ui/xp-chunk.png');
         this.load.image('speech', 'assets/ui/speech.png');
-        this.load.image('speechEmpty', 'assets/ui/speech-empty.png');
+        this.load.image('speechEmpty', 'assets/ui/speech-empty.png');        
 
         this.load.spritesheet('sprPlayer', 'assets/sprites/yan-fixed?.png', { 
             frameWidth: 48, 
