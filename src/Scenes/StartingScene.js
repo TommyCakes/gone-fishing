@@ -17,8 +17,8 @@ export default class StartingScene extends Scene {
         this.titleText = this.add.text(400, 100, "Choose your class!", style).setScrollFactor(0);
 
         this.createNewUIBox("The Ranger", "A verteran at hunting animals on land, but still has the edge in the sea.", "5% catch rate UP!", 290, 10, "bowIcon");
-        this.createNewUIBox("The Bargain Hunter", "Has an eye for a deal, and is known to haggle even at the pound store..", "Fish Sell for 5% more than normal!", 290, 4, "coinsIcon");        
-        this.createNewUIBox("The Student", "An esteemed student, studies hard and is known for learning quickly.", "A 5% boost to XP gained from Fishing!",  290, 2.5, "bookIcon");        
+        this.createNewUIBox("The Bargain Hunter", "Has an eye for a deal, and is known to haggle even at the pound store..", "Fish Sell for 25% more than normal!", 290, 4, "coinsIcon");        
+        this.createNewUIBox("The Student", "An esteemed student, studies hard and is known for learning quickly.", "A 15% boost to XP gained from Fishing!",  290, 2.5, "bookIcon");        
         this.choice = "";
     }
             

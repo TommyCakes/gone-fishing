@@ -6,10 +6,11 @@ import Rod from '../Classes/Rod';
 
 export default class Player extends Entity {
         
-    constructor(scene, x, y, key, keys) {        
+    constructor(scene, x, y, key, keys, selectedClass) {        
         super(scene, x, y, key, "Player");
         
         this.keys = keys;
+        this.selectedClass = selectedClass;
 
         this.setData("speed", 100);
         this.setData("isFishing", false);
@@ -26,15 +27,16 @@ export default class Player extends Entity {
         this.info = {
             name: "TommyCakes",
             level: 1,    
+            class: this.selectedClass,
             // for testing...
-            catchesRemainingForTheDay: rod.maxCatchAttempts,
+            catchesRemainingForTheDay: 100, //rod.maxCatchAttempts,
             cash: 10,
             rarestFishCaught: "",
             level: 0,
             xpPool: 0,
             chapter: 1,
             // build day / month / time class
-            timeOfDay: 19,
+            timeOfDay: 8,
             maximumAmountOfFishHeld: 5,
             dayOfTheWeek: 'Mon',
             inventory: {
@@ -54,8 +56,15 @@ export default class Player extends Entity {
                 outfits: [
                     
                 ]
+            },
+            passiveSkills: {
+                catchRateIncrease: 0,
+                saleIncrease: 0,
+                xpBoostIncrease: 0,
             }            
-        }
+        }        
+        this.getStartingSkillFrom(this.info.class);
+        this.fishCatchChance = (this.info.inventory.rods[0].chanceToLandFish + this.info.passiveSkills.catchRateIncrease);
 
         this.facing = "";
         this.isFishing = false;
@@ -151,6 +160,40 @@ export default class Player extends Entity {
         console.log(this.getInfo());
     }
     
+    getStartingSkillFrom(choice) {  
+        let startingSkill;
+        switch (choice) {
+            case "The Ranger":
+                startingSkill = "catchRateUp";
+                break;
+            case "The Bargain Hunter":                
+                startingSkill = "sellPriceUp";
+                break;
+            case "The Student":                
+                startingSkill = "expGainedUp";
+                break;
+        }        
+        this.setStartingSkill(startingSkill);        
+    }
+
+    setStartingSkill(skill) {
+        switch (skill) {
+            case "catchRateUp":
+                this.info.passiveSkills.catchRateIncrease = 5;
+                break;
+            case "sellPriceUp":
+                this.info.passiveSkills.saleIncrease = 25;
+                break;
+            case "expGainedUp":
+                this.info.passiveSkills.xpBoostIncrease = 20;
+                break;
+        }
+    }
+
+    getPercentageOfSkill(skill) {
+        return skill / 100;
+    }
+
     getInfo() {
         return this.info;
     }
@@ -188,8 +231,8 @@ export default class Player extends Entity {
     }
     
     getFishCatchChance() {
-        console.log(`Your chance is currently : ${this.info.inventory.rods[0].chanceToLandFish}`);
-        return this.info.inventory.rods[0].chanceToLandFish;
+        console.log(`Your chance is currently : ${this.fishCatchChance}`);
+        return this.fishCatchChance;
     }
 
     checkForFish() {
@@ -210,26 +253,21 @@ export default class Player extends Entity {
     collectFish(fish) {   
         
         if (this.checkForFish()) {    
-            if (fish === 'junk') {
-                let junk = {
-                    name: 'junk',
-                    description: 'A rubbish catch, literally..fish.',
-                    rarity: 'junk'
-                }
-                
-                this.scene.events.emit('showFishUIPopup', junk); 
-            } else {   
-                let amountOfXP = fish.checkExpReturnedForCatch();
-                this.info.inventory.fish.push(fish);   
-                this.info.xpPool += amountOfXP;          
-                this.scene.events.emit('showFishUIPopup', fish);   
-                
-                this.scene.events.emit('updateUI', this.info);  
+            let skills = this.info.passiveSkills;
+            let amountOfXP = fish.checkExpReturnedForCatch();
+            // add multiplier to fish xp and price
+            amountOfXP += Math.round(fish.checkExpReturnedForCatch() * (this.getPercentageOfSkill(skills.xpBoostIncrease)));            
+            fish.value +=  Math.round(fish.value * this.getPercentageOfSkill(skills. saleIncrease));
 
-                if (!this.level.checkForLevelUp()) {
-                    this.level.showExperienceText(fish); 
-                } 
-            }                               
+            this.info.inventory.fish.push(fish);               
+            this.info.xpPool += amountOfXP;          
+            this.scene.events.emit('showFishUIPopup', fish);   
+            
+            this.scene.events.emit('updateUI', this.info);  
+
+            if (!this.level.checkForLevelUp()) {
+                this.level.showExperienceText(fish); 
+            }
         } else {
             this.scene.events.emit('showUIPopup', "Unlucky your line came up empty...");           
         }        
@@ -238,7 +276,7 @@ export default class Player extends Entity {
 
         console.log(this.info);                
         // this.scene.time.delayedCall(100, () => {             
-            this.splash.destroy();
+            // this.splash.destroy();
             this.scene.events.emit('fishCaught')
         // }, [], this);                                                                                                                   
     }
@@ -275,6 +313,7 @@ export default class Player extends Entity {
         });
         this.splash.anims.play('catch', true);
     }
+
     decreaseCatchesRemaining() {      
         this.info.catchesRemainingForTheDay -= 1;                   
     }
