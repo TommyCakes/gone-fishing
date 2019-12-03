@@ -1,5 +1,6 @@
 # Gone Fishing
 
+## A small fishing RPG created with Phaser 3 
 
 ### Requirements
 
